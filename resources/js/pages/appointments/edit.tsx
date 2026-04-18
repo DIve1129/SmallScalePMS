@@ -105,6 +105,7 @@ export default function EditAppointment({
               <option value="Cancelled" className="bg-black">Cancelled</option>
               <option value="No-show" className="bg-black">No-show</option>
               <option value="Rescheduled" className="bg-black">Rescheduled</option>
+              <option value="Ongoing" className="bg-black">Ongoing</option>
             </select>
             {errors.status && <p className="mt-2 text-sm text-red-400">{errors.status}</p>}
           </div>

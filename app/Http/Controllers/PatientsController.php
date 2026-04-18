@@ -160,7 +160,46 @@ public function appointments($id)
 public function billing($id)
 {
     $patient = Patient::where('patient_id', $id)->firstOrFail();
-    return Inertia::render('patients/billing', ['patient' => $patient]);
+
+    $billings = \App\Models\Appointment::query()
+        ->where('patient_id', $id)
+        ->where('claim_status', 'Billed') // 🔥 only billed records
+        ->orderBy('appointment_Date', 'desc')
+        ->get([
+            'appointment_id',
+            'patient_id',
+            'app_reason',
+            'appointment_Date',
+            'bill_amount',
+            'additional_charge',
+            'responsibility',
+            'claim_status',
+            'status',
+        ])
+        ->map(function ($a) {
+            $base = (float) ($a->bill_amount ?? 0);
+            $extra = (float) ($a->additional_charge ?? 0);
+
+            return [
+                'appointment_id' => $a->appointment_id,
+                'patient_id' => $a->patient_id,
+                'service' => $a->app_reason ?? '-',
+                'date' => $a->appointment_Date,
+                'bill_amount' => $base,
+                'additional_charge' => $extra,
+                'total_amount' => $base + $extra, //  total calculation
+                'responsibility' => $a->responsibility ?? 'Patient',
+                'claim_status' => $a->claim_status ?? 'Pending',
+                'appointment_status' => $a->status ?? '-',
+            ];
+        })
+        ->values();
+
+    return Inertia::render('patients/billing', [
+        'patient' => $patient,
+        'patientId' => $id,
+        'billings' => $billings,
+    ]);
 }
 
 }

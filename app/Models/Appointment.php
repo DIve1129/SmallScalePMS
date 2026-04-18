@@ -10,12 +10,19 @@ class Appointment extends Model
     protected $primaryKey = 'appointment_id';
 
     protected $fillable = [
-        'appointment_Date',
-        'doctor_id',
-        'patient_id',
-        'app_reason',
-        'scheduled_at',
-        'status',
+            'patient_id',
+            'doctor_id',
+            'app_reason',
+            'scheduled_at',
+            'appointment_Date',
+            'status',
+            'bill_amount',
+            'balance',
+            'responsibility',
+            'claim_status',
+            'additional_services',
+            'notes',
+            'additional_charge',
 ];
 
 public function patient()

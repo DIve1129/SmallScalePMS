@@ -68,8 +68,10 @@ Route::middleware(['auth','verified','role:admin'])->group(function () {
 
 Route::middleware(['auth', 'verified', 'role:admin,billing'])->group(function () {
     Route::get('/billing', [BillingController::class, 'index'])->name('billing.index');
+    Route::get('/billing/{appointment}/edit', [BillingController::class, 'edit'])->name('billing.edit');
+    Route::put('/billing/{appointment}', [BillingController::class, 'update'])->name('billing.update');
     Route::put('/billing/{appointment}/update-status', [BillingController::class, 'updateStatus'])
-    ->name('billing.updateStatus');
+        ->name('billing.updateStatus');
 });
 
 });

@@ -1,5 +1,6 @@
 import AppSidebarLayout from '@/layouts/app/app-sidebar-layout';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
+import { useEffect, useState } from 'react';
 
 type Appointment = {
   appointment_id: number;
@@ -7,7 +8,7 @@ type Appointment = {
   patient_name?: string | null;
   doctor_id?: number | string | null;
   appointment_date?: string | null;
-  appointment_type?: string | null;
+  appointment_reason?: string | null;
   bill_amount?: number | string | null;
   balance?: number | string | null;
   responsibility?: string | null;
@@ -17,6 +18,11 @@ type Appointment = {
 function formatCurrency(amount: number | string | null | undefined) {
   const value = Number(amount ?? 0);
   return `Rs ${value.toFixed(2)}`;
+}
+
+function formatBalance(amount: number | string | null | undefined) {
+  const value = Number(amount ?? 0);
+  return value.toFixed(2);
 }
 
 function getClaimStatusClasses(status: string | null | undefined) {
@@ -31,17 +37,80 @@ function getClaimStatusClasses(status: string | null | undefined) {
   }
 }
 
-export default function BillingIndex({ appointments }: { appointments: Appointment[] }) {
+export default function BillingIndex({
+  appointments = [],
+  from,
+  to,
+}: {
+  appointments?: Appointment[];
+  from?: string;
+  to?: string;
+}) {
+  const today = new Date().toISOString().slice(0, 10);
+
+  const [fromDate, setFromDate] = useState(from ?? today);
+  const [toDate, setToDate] = useState(to ?? today);
+
+  useEffect(() => {
+    setFromDate(from ?? today);
+  }, [from, today]);
+
+  useEffect(() => {
+    setToDate(to ?? today);
+  }, [to, today]);
+
   return (
     <AppSidebarLayout breadcrumbs={[{ title: 'Billing', href: '/billing' }]}>
       <Head title="Billing" />
 
-      <div className="p-6 space-y-6">
+      <div className="space-y-6 p-6">
         <div>
           <h1 className="text-2xl font-semibold text-white">Billing Module</h1>
           <p className="text-sm text-white/60">
             Billing queue for completed and no-show appointments
           </p>
+        </div>
+
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:gap-4">
+          <div className="flex flex-col gap-2">
+            <label className="text-sm text-white/70">From</label>
+            <input
+              type="date"
+              value={fromDate}
+              onChange={(e) => setFromDate(e.target.value)}
+              className="w-full rounded-md border border-white/10 bg-transparent px-4 py-3 text-sm outline-none"
+            />
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label className="text-sm text-white/70">To</label>
+            <input
+              type="date"
+              value={toDate}
+              onChange={(e) => setToDate(e.target.value)}
+              className="w-full rounded-md border border-white/10 bg-transparent px-4 py-3 text-sm outline-none"
+            />
+          </div>
+
+          <button
+            type="button"
+            onClick={() => {
+              router.get(
+                '/billing',
+                {
+                  from: fromDate,
+                  to: toDate,
+                },
+                {
+                  preserveState: true,
+                  preserveScroll: true,
+                }
+              );
+            }}
+            className="h-[46px] rounded-md border border-white/10 px-5 py-3 text-sm hover:bg-white/5"
+          >
+            Filter
+          </button>
         </div>
 
         <div className="overflow-hidden rounded-lg border border-white/10">
@@ -59,19 +128,20 @@ export default function BillingIndex({ appointments }: { appointments: Appointme
           </div>
 
           <div className="divide-y divide-white/10">
-            {appointments?.length ? (
+            {appointments.length ? (
               appointments.map((a) => (
                 <div
                   key={a.appointment_id}
-                  className="grid grid-cols-12 items-center px-5 py-4 text-sm hover:bg-white/5"
+                  className="grid grid-cols-12 px-5 py-4 text-sm hover:bg-white/5"
                 >
                   <div className="col-span-1">{a.appointment_id}</div>
                   <div className="col-span-1">{a.patient_id ?? '-'}</div>
                   <div className="col-span-2">{a.patient_name ?? '-'}</div>
                   <div className="col-span-1">{a.doctor_id ?? '-'}</div>
                   <div className="col-span-2">{a.appointment_date ?? '-'}</div>
+                  <div className="col-span-1">{a.appointment_reason ?? '-'}</div>
                   <div className="col-span-1">{formatCurrency(a.bill_amount)}</div>
-                  <div className="col-span-1">{Number(a.balance ?? 0).toFixed(2)}</div>
+                  <div className="col-span-1">{formatBalance(a.balance)}</div>
                   <div className="col-span-1">{a.responsibility ?? 'Patient'}</div>
                   <div className="col-span-1">
                     <span
@@ -103,6 +173,12 @@ export default function BillingIndex({ appointments }: { appointments: Appointme
                       className="rounded-md border border-white/10 bg-white/5 px-3 py-1.5 text-xs hover:bg-white/10"
                     >
                       Add Clinical Data
+                    </Link>
+                    <Link
+                      href={`/billing/${a.appointment_id}/edit`}
+                      className="rounded-md border border-white/10 bg-white/5 px-3 py-1.5 text-xs hover:bg-white/10"
+                    >
+                      Edit
                     </Link>
                   </div>
                 </div>
