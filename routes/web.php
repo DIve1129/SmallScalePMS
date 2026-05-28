@@ -27,6 +27,8 @@ Route::middleware(['role:admin,receptionist,billing'])->group(function () {
     Route::get('/patients/{id}', [PatientsController::class, 'show'])->name('patients.show');
     Route::get('/patients/{id}/appointments', [PatientsController::class, 'appointments'])->name('patients.appointments');
     Route::get('/patients/{id}/billing', [PatientsController::class, 'billing'])->name('patients.billing');
+    Route::get('/patients/{id}/edit', [PatientsController::class, 'edit'])->name('patients.edit');
+    Route::put('/patients/{id}', [PatientsController::class, 'update'])->name('patients.update');
 });
 
 Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
@@ -66,12 +68,16 @@ Route::middleware(['auth','verified','role:admin'])->group(function () {
     Route::post('/insurance', [InsuranceController::class,'store'])->name('insurance.store');
 });
 
-Route::middleware(['auth', 'verified', 'role:admin,billing'])->group(function () {
+Route::middleware(['auth', 'verified', 'role:admin,billing,doctor'])->group(function () {
     Route::get('/billing', [BillingController::class, 'index'])->name('billing.index');
     Route::get('/billing/{appointment}/edit', [BillingController::class, 'edit'])->name('billing.edit');
     Route::put('/billing/{appointment}', [BillingController::class, 'update'])->name('billing.update');
-    Route::put('/billing/{appointment}/update-status', [BillingController::class, 'updateStatus'])
-        ->name('billing.updateStatus');
+    Route::put('/billing/{appointment}/update-status', [BillingController::class, 'updateStatus'])->name('billing.updateStatus');
+    Route::get('/billing/{appointment}/payment', [BillingController::class, 'payment'])->name('billing.payment');
+    Route::put('/billing/{appointment}/payment', [BillingController::class, 'storePayment'])->name('billing.storePayment');
+    Route::get('/billing/{appointment}/bill', [BillingController::class, 'bill'])->name('billing.bill');
+    Route::get('/billing/{appointment_id}/download', [BillingController::class, 'downloadBill'])
+    ->name('billing.download');
 });
 
 });

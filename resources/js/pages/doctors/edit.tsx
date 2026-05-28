@@ -31,127 +31,108 @@ export default function Edit({ doctor }: { doctor: Doctor }) {
     put(`/doctors/${doctor.doctor_id}`);
   };
 
+  const inputClass =
+    'w-full rounded-md border border-border bg-background px-4 py-3 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring';
+
+  const labelClass = 'mb-2 block text-sm font-medium text-foreground';
+
+  const buttonPrimary =
+    'rounded-md bg-muted px-5 py-3 text-sm text-foreground transition hover:bg-accent disabled:opacity-50';
+
+  const buttonSecondary =
+    'rounded-md border border-border bg-background px-5 py-3 text-sm text-foreground transition hover:bg-accent';
+
   return (
     <AppSidebarLayout breadcrumbs={[{ title: 'Doctors', href: '/doctors' }]}>
       <Head title="Edit Doctor" />
 
-      <div className="p-6">
+      <div className="p-6 text-foreground">
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-2xl font-semibold text-white">Edit Doctor</h1>
+          <h1 className="text-2xl font-semibold text-foreground">
+            Edit Doctor
+          </h1>
 
-          <div className="flex gap-2">
-            <Link
-              href={`/doctors/${doctor.doctor_id}`}
-              className="rounded-md border border-white/10 bg-white/5 px-4 py-2 text-sm text-white hover:bg-white/10"
-            >
-              Cancel
-            </Link>
-          </div>
+          <Link
+            href={`/doctors/${doctor.doctor_id}`}
+            className={buttonSecondary}
+          >
+            Cancel
+          </Link>
         </div>
 
-        <form onSubmit={submit} className="space-y-6">
-          <div>
-            <label className="mb-2 block text-sm text-white">Doctor Code</label>
-            <input
-              type="text"
-              value={data.doctor_code}
-              onChange={(e) => setData('doctor_code', e.target.value)}
-              className="w-full rounded-md border border-white/10 bg-transparent px-4 py-3 text-white outline-none"
-            />
-            {errors.doctor_code && <p className="mt-1 text-sm text-red-400">{errors.doctor_code}</p>}
-          </div>
+        <form onSubmit={submit} className="space-y-6 max-w-3xl">
+          <Field
+            label="Doctor Code"
+            value={data.doctor_code}
+            onChange={(v) => setData('doctor_code', v)}
+            error={errors.doctor_code}
+          />
+
+          <Field
+            label="First Name"
+            value={data.first_name}
+            onChange={(v) => setData('first_name', v)}
+            error={errors.first_name}
+          />
+
+          <Field
+            label="Last Name"
+            value={data.last_name}
+            onChange={(v) => setData('last_name', v)}
+            error={errors.last_name}
+          />
+
+          <Field
+            label="Speciality"
+            value={data.speciality}
+            onChange={(v) => setData('speciality', v)}
+            error={errors.speciality}
+          />
+
+          <Field
+            label="SLMC Number"
+            value={data.slmc_number}
+            onChange={(v) => setData('slmc_number', v)}
+            error={errors.slmc_number}
+          />
+
+          <Field
+            label="Phone"
+            value={data.phone}
+            onChange={(v) => setData('phone', v)}
+            error={errors.phone}
+          />
+
+          <Field
+            label="Email"
+            value={data.email}
+            onChange={(v) => setData('email', v)}
+            error={errors.email}
+          />
 
           <div>
-            <label className="mb-2 block text-sm text-white">First Name</label>
-            <input
-              type="text"
-              value={data.first_name}
-              onChange={(e) => setData('first_name', e.target.value)}
-              className="w-full rounded-md border border-white/10 bg-transparent px-4 py-3 text-white outline-none"
-            />
-            {errors.first_name && <p className="mt-1 text-sm text-red-400">{errors.first_name}</p>}
-          </div>
-
-          <div>
-            <label className="mb-2 block text-sm text-white">Last Name</label>
-            <input
-              type="text"
-              value={data.last_name}
-              onChange={(e) => setData('last_name', e.target.value)}
-              className="w-full rounded-md border border-white/10 bg-transparent px-4 py-3 text-white outline-none"
-            />
-            {errors.last_name && <p className="mt-1 text-sm text-red-400">{errors.last_name}</p>}
-          </div>
-
-          <div>
-            <label className="mb-2 block text-sm text-white">Speciality</label>
-            <input
-              type="text"
-              value={data.speciality}
-              onChange={(e) => setData('speciality', e.target.value)}
-              className="w-full rounded-md border border-white/10 bg-transparent px-4 py-3 text-white outline-none"
-            />
-            {errors.speciality && <p className="mt-1 text-sm text-red-400">{errors.speciality}</p>}
-          </div>
-
-          <div>
-            <label className="mb-2 block text-sm text-white">SLMC Number</label>
-            <input
-              type="text"
-              value={data.slmc_number}
-              onChange={(e) => setData('slmc_number', e.target.value)}
-              className="w-full rounded-md border border-white/10 bg-transparent px-4 py-3 text-white outline-none"
-            />
-            {errors.slmc_number && <p className="mt-1 text-sm text-red-400">{errors.slmc_number}</p>}
-          </div>
-
-          <div>
-            <label className="mb-2 block text-sm text-white">Phone</label>
-            <input
-              type="text"
-              value={data.phone}
-              onChange={(e) => setData('phone', e.target.value)}
-              className="w-full rounded-md border border-white/10 bg-transparent px-4 py-3 text-white outline-none"
-            />
-            {errors.phone && <p className="mt-1 text-sm text-red-400">{errors.phone}</p>}
-          </div>
-
-          <div>
-            <label className="mb-2 block text-sm text-white">Email</label>
-            <input
-              type="email"
-              value={data.email}
-              onChange={(e) => setData('email', e.target.value)}
-              className="w-full rounded-md border border-white/10 bg-transparent px-4 py-3 text-white outline-none"
-            />
-            {errors.email && <p className="mt-1 text-sm text-red-400">{errors.email}</p>}
-          </div>
-
-          <div>
-            <label className="mb-2 block text-sm text-white">Status</label>
+            <label className={labelClass}>Status</label>
             <select
               value={data.status}
               onChange={(e) => setData('status', e.target.value)}
-              className="w-full rounded-md border border-white/10 bg-transparent px-4 py-3 text-white outline-none"
+              className={inputClass}
             >
-              <option value="Active" className="bg-black">Active</option>
-              <option value="Inactive" className="bg-black">Inactive</option>
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
             </select>
-            {errors.status && <p className="mt-1 text-sm text-red-400">{errors.status}</p>}
+            {errors.status && (
+              <p className="mt-1 text-sm text-red-500">{errors.status}</p>
+            )}
           </div>
 
           <div className="flex gap-3 pt-4">
-            <button
-              type="submit"
-              disabled={processing}
-              className="rounded-md bg-white/10 px-5 py-3 text-sm text-white hover:bg-white/20 disabled:opacity-50"
-            >
+            <button type="submit" disabled={processing} className={buttonPrimary}>
               {processing ? 'Updating...' : 'Update Doctor'}
             </button>
 
             <Link
               href={`/doctors/${doctor.doctor_id}`}
-              className="rounded-md border border-white/10 bg-white/5 px-5 py-3 text-sm text-white hover:bg-white/10"
+              className={buttonSecondary}
             >
               Cancel
             </Link>
@@ -159,5 +140,31 @@ export default function Edit({ doctor }: { doctor: Doctor }) {
         </form>
       </div>
     </AppSidebarLayout>
+  );
+}
+
+function Field({
+  label,
+  value,
+  onChange,
+  error,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  error?: string;
+}) {
+  return (
+    <div>
+      <label className="mb-2 block text-sm font-medium text-foreground">
+        {label}
+      </label>
+      <input
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full rounded-md border border-border bg-background px-4 py-3 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring"
+      />
+      {error && <p className="mt-1 text-sm text-red-500">{error}</p>}
+    </div>
   );
 }

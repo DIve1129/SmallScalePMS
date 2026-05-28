@@ -1,25 +1,40 @@
 import AppSidebarLayout from '@/layouts/app/app-sidebar-layout';
 import { Head, Link, useForm } from '@inertiajs/react';
 
-export default function PatientCreate() {
-  const { data, setData, post, processing, errors } = useForm({
-    patient_id: '',
-    first_name: '',
-    last_name: '',
-    dob: '',
-    age: '',
-    nic: '',
-    address: '',
-    phone: '',
-    email: '',
-    insurance_name: '',
-    insurance_id: '',
-    notes: '',
+type Patient = {
+  patient_id: string;
+  first_name: string;
+  last_name: string;
+  dob?: string | null;
+  age?: string | number | null;
+  nic?: string | null;
+  address?: string | null;
+  phone?: string | null;
+  email?: string | null;
+  insurance_name?: string | null;
+  insurance_id?: string | null;
+  notes?: string | null;
+};
+
+export default function PatientEdit({ patient }: { patient: Patient }) {
+  const { data, setData, put, processing, errors } = useForm({
+    patient_id: String(patient.patient_id ?? ''),
+    first_name: patient.first_name ?? '',
+    last_name: patient.last_name ?? '',
+    dob: patient.dob ?? '',
+    age: String(patient.age ?? ''),
+    nic: patient.nic ?? '',
+    address: patient.address ?? '',
+    phone: patient.phone ?? '',
+    email: patient.email ?? '',
+    insurance_name: patient.insurance_name ?? '',
+    insurance_id: patient.insurance_id ?? '',
+    notes: patient.notes ?? '',
   });
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    post('/patients');
+    put(`/patients/${patient.patient_id}`);
   };
 
   const inputClass =
@@ -37,15 +52,15 @@ export default function PatientCreate() {
     <AppSidebarLayout
       breadcrumbs={[
         { title: 'Patients', href: '/patients' },
-        { title: 'Add Patient', href: '/patients/create' },
+        { title: 'Edit Patient', href: '/patients/edit' },
       ]}
     >
-      <Head title="Add Patient" />
+      <Head title="Edit Patient" />
 
       <div className="p-6 text-foreground">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-semibold text-foreground">Add Patient</h1>
+            <h1 className="text-2xl font-semibold text-foreground">Edit Patient</h1>
             <p className="text-sm text-muted-foreground">Demographic details</p>
           </div>
 

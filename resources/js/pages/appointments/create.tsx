@@ -1,39 +1,45 @@
 import AppSidebarLayout from '@/layouts/app/app-sidebar-layout';
 import { Head, Link, useForm } from '@inertiajs/react';
 
-/**
- * We receive patients from the controller to show in a dropdown.
- */
 type PatientLite = {
   patient_id: number;
   first_name: string | null;
   last_name: string | null;
 };
 
-export default function AppointmentCreate({ patients }: { patients: PatientLite[] }) {
-  /**
-   * useForm is Inertia's helper for forms.
-   * - data: your form values
-   * - setData: update values when typing
-   * - post: submit to backend
-   * - processing: true while saving
-   * - errors: validation errors from Laravel
-   */
+type ChargeMaster = {
+  billing_id: number;
+  service_name: string;
+  amount: number | string;
+};
+
+export default function AppointmentCreate({
+  patients,
+  chargeMasters = [],
+}: {
+  patients: PatientLite[];
+  chargeMasters?: ChargeMaster[];
+}) {
   const { data, setData, post, processing, errors } = useForm({
     patient_id: '',
     doctor_id: '',
     app_reason: '',
     scheduled_at: '',
     status: 'Scheduled',
+    amount_1: '',
   });
 
-  /**
-   * When user clicks "Save", submit the form to POST /appointments
-   */
   function submit(e: React.FormEvent) {
     e.preventDefault();
     post('/appointments');
   }
+
+  const inputClass =
+    'w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring';
+
+  const selectClass = inputClass;
+
+  const labelClass = 'mb-2 block text-sm font-medium text-foreground';
 
   return (
     <AppSidebarLayout
@@ -44,40 +50,47 @@ export default function AppointmentCreate({ patients }: { patients: PatientLite[
     >
       <Head title="New Appointment" />
 
-      <div className="p-6">
-        <div className="flex items-center justify-between mb-6">
+      <div className="p-6 text-foreground">
+        <div className="mb-6 flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-semibold">New Appointment</h1>
-            <p className="text-sm text-white/60">Fill appointment details and save</p>
+            <h1 className="text-2xl font-semibold text-foreground">
+              New Appointment
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              Fill appointment details and save
+            </p>
           </div>
 
           <Link
             href="/appointments"
-            className="rounded-md border border-white/10 px-4 py-2 text-sm hover:bg-white/5"
+            className="rounded-md border border-border bg-background px-4 py-2 text-sm text-foreground transition hover:bg-accent"
           >
             Back
           </Link>
         </div>
 
-        {/* Form card (same style as Add Patient) */}
         <form
           onSubmit={submit}
-          className="max-w-xl rounded-lg border border-white/10 bg-white/[0.02] p-6 space-y-5"
+          className="max-w-xl space-y-5 rounded-lg border border-border bg-background p-6"
         >
-          <h2 className="text-lg font-medium">Appointment Details</h2>
+          <h2 className="text-lg font-medium text-foreground">
+            Appointment Details
+          </h2>
 
-          {/* Patient dropdown */}
+          {/* Patient */}
           <div>
-            <label className="block text-sm text-white/70 mb-2">Patient</label>
+            <label className={labelClass}>Patient</label>
             <select
-              className="w-full rounded-md border border-white/10 bg-transparent px-3 py-2 text-sm outline-none"
+              className={selectClass}
               value={data.patient_id}
               onChange={(e) => setData('patient_id', e.target.value)}
             >
               <option value="">Select a patient...</option>
               {patients.map((p) => {
                 const fullName =
-                  `${p.first_name ?? ''} ${p.last_name ?? ''}`.trim() || `Patient #${p.patient_id}`;
+                  `${p.first_name ?? ''} ${p.last_name ?? ''}`.trim() ||
+                  `Patient #${p.patient_id}`;
+
                 return (
                   <option key={p.patient_id} value={p.patient_id}>
                     {p.patient_id} - {fullName}
@@ -85,10 +98,14 @@ export default function AppointmentCreate({ patients }: { patients: PatientLite[
                 );
               })}
             </select>
-            {errors.patient_id && <div className="mt-2 text-xs text-red-400">{errors.patient_id}</div>}
+            {errors.patient_id && (
+              <div className="mt-2 text-xs text-red-500">
+                {errors.patient_id}
+              </div>
+            )}
           </div>
 
-          {/* Doctor ID */}
+          {/* Doctor */}
           <Field
             label="Doctor ID"
             placeholder="Example D_ID"
@@ -98,39 +115,90 @@ export default function AppointmentCreate({ patients }: { patients: PatientLite[
           />
 
           {/* Reason */}
-          <Field
-            label="Reason"
-            placeholder="Checkup / Consultation / Follow-up"
-            value={data.app_reason}
-            onChange={(v) => setData('app_reason', v)}
-            error={errors.app_reason}
-          />
-
-          {/* Date & Time */}
           <div>
-            <label className="block text-sm text-white/70 mb-2">Scheduled Date & Time</label>
+            <label className={labelClass}>Reason</label>
+            <select
+              className={selectClass}
+              value={data.app_reason}
+              onChange={(e) => {
+                const selected = chargeMasters.find(
+                  (c) => c.service_name === e.target.value
+                );
+
+                setData((current) => ({
+                  ...current,
+                  app_reason: e.target.value,
+                  amount_1: selected ? String(selected.amount) : '',
+                }));
+              }}
+            >
+              <option value="">Select service...</option>
+              {chargeMasters.map((c) => (
+                <option key={c.billing_id} value={c.service_name}>
+                  {c.service_name} - Rs{' '}
+                  {Number(c.amount ?? 0).toFixed(2)}
+                </option>
+              ))}
+            </select>
+            {errors.app_reason && (
+              <div className="mt-2 text-xs text-red-500">
+                {errors.app_reason}
+              </div>
+            )}
+          </div>
+
+          {/* Amount */}
+          <div>
+            <label className={labelClass}>Base Amount</label>
+            <input
+              type="number"
+              step="0.01"
+              readOnly
+              className="w-full rounded-md border border-border bg-muted px-3 py-2 text-sm text-foreground"
+              value={data.amount_1}
+              placeholder="Auto-filled from selected service"
+            />
+            {errors.amount_1 && (
+              <div className="mt-2 text-xs text-red-500">
+                {errors.amount_1}
+              </div>
+            )}
+          </div>
+
+          {/* Date */}
+          <div>
+            <label className={labelClass}>Scheduled Date & Time</label>
             <input
               type="datetime-local"
-              className="w-full rounded-md border border-white/10 bg-transparent px-3 py-2 text-sm outline-none"
+              className={inputClass}
               value={data.scheduled_at}
               onChange={(e) => setData('scheduled_at', e.target.value)}
             />
-            {errors.scheduled_at && <div className="mt-2 text-xs text-red-400">{errors.scheduled_at}</div>}
+            {errors.scheduled_at && (
+              <div className="mt-2 text-xs text-red-500">
+                {errors.scheduled_at}
+              </div>
+            )}
           </div>
 
           {/* Status */}
           <div>
-            <label className="block text-sm text-white/70 mb-2">Status</label>
+            <label className={labelClass}>Status</label>
             <select
-              className="w-full rounded-md border border-white/10 bg-transparent px-3 py-2 text-sm outline-none"
+              className={selectClass}
               value={data.status}
               onChange={(e) => setData('status', e.target.value)}
             >
               <option value="Scheduled">Scheduled</option>
+              <option value="Ongoing">Ongoing</option>
               <option value="Completed">Completed</option>
               <option value="Cancelled">Cancelled</option>
             </select>
-            {errors.status && <div className="mt-2 text-xs text-red-400">{errors.status}</div>}
+            {errors.status && (
+              <div className="mt-2 text-xs text-red-500">
+                {errors.status}
+              </div>
+            )}
           </div>
 
           {/* Buttons */}
@@ -138,14 +206,14 @@ export default function AppointmentCreate({ patients }: { patients: PatientLite[
             <button
               type="submit"
               disabled={processing}
-              className="rounded-md bg-white/10 px-4 py-2 text-sm hover:bg-white/20 disabled:opacity-50"
+              className="rounded-md border border-border bg-muted px-4 py-2 text-sm text-foreground transition hover:bg-accent disabled:opacity-50"
             >
               {processing ? 'Saving...' : 'Save Appointment'}
             </button>
 
             <Link
               href="/appointments"
-              className="rounded-md border border-white/10 px-4 py-2 text-sm hover:bg-white/5"
+              className="rounded-md border border-border bg-background px-4 py-2 text-sm text-foreground transition hover:bg-accent"
             >
               Cancel
             </Link>
@@ -156,9 +224,6 @@ export default function AppointmentCreate({ patients }: { patients: PatientLite[
   );
 }
 
-/**
- * Reusable input (same idea as Add Patient page)
- */
 function Field({
   label,
   placeholder,
@@ -174,14 +239,16 @@ function Field({
 }) {
   return (
     <div>
-      <label className="block text-sm text-white/70 mb-2">{label}</label>
+      <label className="mb-2 block text-sm font-medium text-foreground">
+        {label}
+      </label>
       <input
-        className="w-full rounded-md border border-white/10 bg-transparent px-3 py-2 text-sm outline-none"
+        className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring"
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
       />
-      {error && <div className="mt-2 text-xs text-red-400">{error}</div>}
+      {error && <div className="mt-2 text-xs text-red-500">{error}</div>}
     </div>
   );
 }

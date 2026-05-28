@@ -38,110 +38,133 @@ export default function EditAppointment({
     put(`/appointments/${appointment.appointment_id}`);
   }
 
+  const inputClass =
+    'w-full rounded-md border border-border bg-background px-4 py-3 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring';
+
+  const labelClass = 'mb-2 block text-sm font-medium text-foreground';
+
+  const selectClass =
+    'w-full rounded-md border border-border bg-background px-4 py-3 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring';
+
+  const buttonPrimary =
+    'rounded-md bg-muted px-5 py-3 text-sm text-foreground transition hover:bg-accent disabled:opacity-50';
+
+  const buttonSecondary =
+    'rounded-md border border-border bg-background px-5 py-3 text-sm text-foreground transition hover:bg-accent';
+
   return (
-    <AppSidebarLayout breadcrumbs={[
-      { title: 'Appointments', href: '/appointments' },
-      { title: 'Edit Appointment', href: `/appointments/${appointment.appointment_id}/edit` },
-    ]}>
+    <AppSidebarLayout
+      breadcrumbs={[
+        { title: 'Appointments', href: '/appointments' },
+        {
+          title: 'Edit Appointment',
+          href: `/appointments/${appointment.appointment_id}/edit`,
+        },
+      ]}
+    >
       <Head title="Edit Appointment" />
 
-      <div className="p-6 space-y-6">
+      <div className="p-6 space-y-6 text-foreground">
         <div>
-          <h1 className="text-2xl font-semibold">Edit Appointment</h1>
-          <p className="text-sm text-white/60">
+          <h1 className="text-2xl font-semibold text-foreground">Edit Appointment</h1>
+          <p className="text-sm text-muted-foreground">
             Update appointment details and status.
           </p>
         </div>
 
         <form onSubmit={submit} className="max-w-3xl space-y-6">
           <div>
-            <label className="mb-2 block text-sm text-white/70">Patient</label>
+            <label className={labelClass}>Patient</label>
             <select
               value={data.patient_id}
               onChange={(e) => setData('patient_id', e.target.value)}
-              className="w-full rounded-md border border-white/10 bg-transparent px-4 py-3 text-sm outline-none"
+              className={selectClass}
             >
-              <option value="" className="bg-black">Select patient</option>
+              <option value="">Select patient</option>
               {patients.map((p) => (
-                <option key={p.patient_id} value={p.patient_id} className="bg-black">
+                <option key={p.patient_id} value={p.patient_id}>
                   {p.patient_id} - {p.first_name} {p.last_name}
                 </option>
               ))}
             </select>
-            {errors.patient_id && <p className="mt-2 text-sm text-red-400">{errors.patient_id}</p>}
+            {errors.patient_id && (
+              <p className="mt-2 text-sm text-red-500">{errors.patient_id}</p>
+            )}
           </div>
 
           <div>
-            <label className="mb-2 block text-sm text-white/70">Doctor ID</label>
+            <label className={labelClass}>Doctor ID</label>
             <input
               type="text"
               value={data.doctor_id}
               onChange={(e) => setData('doctor_id', e.target.value)}
-              className="w-full rounded-md border border-white/10 bg-transparent px-4 py-3 text-sm outline-none"
+              className={inputClass}
             />
-            {errors.doctor_id && <p className="mt-2 text-sm text-red-400">{errors.doctor_id}</p>}
+            {errors.doctor_id && (
+              <p className="mt-2 text-sm text-red-500">{errors.doctor_id}</p>
+            )}
           </div>
 
           <div>
-            <label className="mb-2 block text-sm text-white/70">Appointment Type / Reason</label>
+            <label className={labelClass}>Appointment Type / Reason</label>
             <input
               type="text"
               value={data.app_reason}
               onChange={(e) => setData('app_reason', e.target.value)}
-              className="w-full rounded-md border border-white/10 bg-transparent px-4 py-3 text-sm outline-none"
+              className={inputClass}
             />
-            {errors.app_reason && <p className="mt-2 text-sm text-red-400">{errors.app_reason}</p>}
+            {errors.app_reason && (
+              <p className="mt-2 text-sm text-red-500">{errors.app_reason}</p>
+            )}
           </div>
 
           <div>
-            <label className="mb-2 block text-sm text-white/70">Status</label>
+            <label className={labelClass}>Status</label>
             <select
               value={data.status}
               onChange={(e) => setData('status', e.target.value)}
-              className="w-full rounded-md border border-white/10 bg-transparent px-4 py-3 text-sm outline-none"
+              className={selectClass}
             >
-              <option value="Scheduled" className="bg-black">Scheduled</option>
-              <option value="Completed" className="bg-black">Completed</option>
-              <option value="Cancelled" className="bg-black">Cancelled</option>
-              <option value="No-show" className="bg-black">No-show</option>
-              <option value="Rescheduled" className="bg-black">Rescheduled</option>
-              <option value="Ongoing" className="bg-black">Ongoing</option>
+              <option value="Scheduled">Scheduled</option>
+              <option value="Completed">Completed</option>
+              <option value="Cancelled">Cancelled</option>
+              <option value="No-show">No-show</option>
+              <option value="Rescheduled">Rescheduled</option>
+              <option value="Ongoing">Ongoing</option>
             </select>
-            {errors.status && <p className="mt-2 text-sm text-red-400">{errors.status}</p>}
+            {errors.status && (
+              <p className="mt-2 text-sm text-red-500">{errors.status}</p>
+            )}
           </div>
 
           <div>
-            <label className="mb-2 block text-sm text-white/70">
+            <label className={labelClass}>
               {data.status === 'Rescheduled' ? 'New Date & Time' : 'Date & Time'}
             </label>
             <input
               type="datetime-local"
               value={data.scheduled_at}
               onChange={(e) => setData('scheduled_at', e.target.value)}
-              className="w-full rounded-md border border-white/10 bg-transparent px-4 py-3 text-sm outline-none"
+              className={inputClass}
             />
-            {errors.scheduled_at && <p className="mt-2 text-sm text-red-400">{errors.scheduled_at}</p>}
+            {errors.scheduled_at && (
+              <p className="mt-2 text-sm text-red-500">{errors.scheduled_at}</p>
+            )}
           </div>
 
           {data.status === 'Rescheduled' && (
-            <div className="rounded-md border border-yellow-500/20 bg-yellow-500/10 px-4 py-3 text-sm text-yellow-300">
-              Appointment will be marked as rescheduled and saved with the new date/time.
+            <div className="rounded-md border border-yellow-500/30 bg-yellow-500/10 px-4 py-3 text-sm text-yellow-600 dark:text-yellow-400">
+              Appointment will be marked as rescheduled and saved with the new
+              date/time.
             </div>
           )}
 
           <div className="flex gap-3">
-            <button
-              type="submit"
-              disabled={processing}
-              className="rounded-md bg-white/10 px-5 py-3 text-sm hover:bg-white/20 disabled:opacity-50"
-            >
+            <button type="submit" disabled={processing} className={buttonPrimary}>
               {processing ? 'Updating...' : 'Update Appointment'}
             </button>
 
-            <Link
-              href="/appointments"
-              className="rounded-md border border-white/10 px-5 py-3 text-sm hover:bg-white/5"
-            >
+            <Link href="/appointments" className={buttonSecondary}>
               Cancel
             </Link>
           </div>

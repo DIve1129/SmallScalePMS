@@ -124,11 +124,6 @@ export function AppSidebar() {
         ...(role === 'admin'
             ? [
                   {
-                      title: 'Receptionist',
-                      href: '/receptionist',
-                      icon: Handshake,
-                  },
-                  {
                       title: 'Insurances',
                       href: '/insurance',
                       icon: Warehouse,
@@ -136,7 +131,7 @@ export function AppSidebar() {
               ]
             : []),
 
-        ...((role === 'admin' || role === 'billing')
+        ...((role === 'admin' || role === 'billing'|| role === 'doctor')
             ? [
                   {
                       title: 'Billing',

@@ -84,10 +84,10 @@ public function index(Request $request)
      */
     public function update(Request $request, $id)
     {
-        $patient = Patient::findOrFail($id);
+        $patient = Patient::where('patient_id', $id)->firstOrFail();
 
         $validated = $request->validate([
-            'patient_id' => 'required|string|max:30|unique:patients,patient_id,' . $patient->id,
+            'patient_id' => 'required|string|max:30|unique:patients,patient_id,' . $patient->patient_id . ',patient_id',
             'first_name' => 'required|string|max:100',
             'last_name'  => 'required|string|max:100',
             'dob'        => 'nullable|date',
@@ -161,45 +161,45 @@ public function billing($id)
 {
     $patient = Patient::where('patient_id', $id)->firstOrFail();
 
-    $billings = \App\Models\Appointment::query()
-        ->where('patient_id', $id)
-        ->where('claim_status', 'Billed') // 🔥 only billed records
-        ->orderBy('appointment_Date', 'desc')
-        ->get([
-            'appointment_id',
-            'patient_id',
-            'app_reason',
-            'appointment_Date',
-            'bill_amount',
-            'additional_charge',
-            'responsibility',
-            'claim_status',
-            'status',
-        ])
+    $billings = \App\Models\Appointment::where('patient_id', $id)
+        ->whereIn('status', ['Completed', 'No-show', 'Ongoing'])
+        ->orderBy('scheduled_at', 'desc')
+        ->get()
         ->map(function ($a) {
-            $base = (float) ($a->bill_amount ?? 0);
-            $extra = (float) ($a->additional_charge ?? 0);
+            $amount1 = (float) ($a->amount_1 ?? 0);
+            $amount2 = (float) ($a->amount_2 ?? 0);
+            $amount3 = (float) ($a->amount_3 ?? 0);
+
+            $payment1 = (float) ($a->payment_1 ?? 0);
+            $payment2 = (float) ($a->payment_2 ?? 0);
+            $payment3 = (float) ($a->payment_3 ?? 0);
+
+            $totalAmount = $amount1 + $amount2 + $amount3;
+            $totalPayment = $payment1 + $payment2 + $payment3;
 
             return [
                 'appointment_id' => $a->appointment_id,
                 'patient_id' => $a->patient_id,
+                'dos' => $a->scheduled_at ?? $a->appointment_Date,
                 'service' => $a->app_reason ?? '-',
-                'date' => $a->appointment_Date,
-                'bill_amount' => $base,
-                'additional_charge' => $extra,
-                'total_amount' => $base + $extra, //  total calculation
-                'responsibility' => $a->responsibility ?? 'Patient',
-                'claim_status' => $a->claim_status ?? 'Pending',
-                'appointment_status' => $a->status ?? '-',
+                'amount' => $totalAmount,
+                'balance' => $totalAmount - $totalPayment,
             ];
         })
         ->values();
 
     return Inertia::render('patients/billing', [
-        'patient' => $patient,
-        'patientId' => $id,
+        'patientId' => $patient->patient_id,
         'billings' => $billings,
     ]);
 }
 
+    public function edit($id)
+    {
+        $patient = Patient::where('patient_id', $id)->firstOrFail();
+
+        return Inertia::render('patients/edit', [
+            'patient' => $patient,
+        ]);
+    }
 }

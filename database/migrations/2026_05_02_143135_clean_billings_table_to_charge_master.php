@@ -6,12 +6,11 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // This migration is intentionally disabled.
-        // The billings table is now used as a charge master.
+        //
     }
 
     public function down(): void
     {
-        // No rollback needed.
+        //
     }
 };

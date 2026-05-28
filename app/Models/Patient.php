@@ -15,13 +15,17 @@ class Patient extends Model
     protected $keyType = 'int';
 
     protected $fillable = [
-        'first_name',
-        'last_name',
-        'address',
-        'nic',
-        'phone',
-        'insurance_name',
-        'insurance_id',
-        'insurance_code',
-    ];
+    'patient_id',
+    'first_name',
+    'last_name',
+    'dob',
+    'age',
+    'nic',
+    'address',
+    'phone',
+    'email',
+    'insurance_name',
+    'insurance_id',
+    'notes',
+];
 }

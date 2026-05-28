@@ -31,22 +31,28 @@ export default function AppointmentsIndex({
 
   const rows = appointments ?? [];
 
+  const inputClass =
+    'w-full rounded-md border border-border bg-background px-4 py-3 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring';
+
+  const buttonClass =
+    'h-[46px] rounded-md border border-border bg-background px-5 py-3 text-sm text-foreground transition hover:bg-accent';
+
   return (
     <AppSidebarLayout breadcrumbs={[{ title: 'Appointments', href: '/appointments' }]}>
       <Head title="Appointments" />
 
-      <div className="space-y-6 p-6">
+      <div className="space-y-6 p-6 text-foreground">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-semibold">Appointments</h1>
-            <p className="text-sm text-white/60">
+            <h1 className="text-2xl font-semibold text-foreground">Appointments</h1>
+            <p className="text-sm text-muted-foreground">
               View appointments by date range and create new appointments.
             </p>
           </div>
 
           <Link
             href="/appointments/create"
-            className="rounded-md bg-white/10 px-5 py-3 text-sm hover:bg-white/20"
+            className="rounded-md border border-border bg-background px-5 py-3 text-sm text-foreground transition hover:bg-accent"
           >
             + New Appointment
           </Link>
@@ -54,22 +60,22 @@ export default function AppointmentsIndex({
 
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:gap-4">
           <div className="flex flex-col gap-2">
-            <label className="text-sm text-white/70">From</label>
+            <label className="text-sm font-medium text-foreground">From</label>
             <input
               type="date"
               value={fromDate}
               onChange={(e) => setFromDate(e.target.value)}
-              className="w-full rounded-md border border-white/10 bg-transparent px-4 py-3 text-sm outline-none"
+              className={inputClass}
             />
           </div>
 
           <div className="flex flex-col gap-2">
-            <label className="text-sm text-white/70">To</label>
+            <label className="text-sm font-medium text-foreground">To</label>
             <input
               type="date"
               value={toDate}
               onChange={(e) => setToDate(e.target.value)}
-              className="w-full rounded-md border border-white/10 bg-transparent px-4 py-3 text-sm outline-none"
+              className={inputClass}
             />
           </div>
 
@@ -78,24 +84,18 @@ export default function AppointmentsIndex({
             onClick={() => {
               router.get(
                 '/appointments',
-                {
-                  from: fromDate,
-                  to: toDate,
-                },
-                {
-                  preserveState: true,
-                  preserveScroll: true,
-                }
+                { from: fromDate, to: toDate },
+                { preserveState: true, preserveScroll: true }
               );
             }}
-            className="h-[46px] rounded-md border border-white/10 px-5 py-3 text-sm hover:bg-white/5"
+            className={buttonClass}
           >
             Filter
           </button>
         </div>
 
-        <div className="overflow-hidden rounded-lg border border-white/10">
-          <div className="grid grid-cols-13 bg-white/5 px-5 py-4 text-sm font-medium">
+        <div className="overflow-hidden rounded-lg border border-border bg-background">
+          <div className="grid grid-cols-13 bg-muted px-5 py-4 text-sm font-medium text-foreground">
             <div className="col-span-2">System Patient ID</div>
             <div className="col-span-3">Patient Name</div>
             <div className="col-span-2">Doctor</div>
@@ -105,12 +105,12 @@ export default function AppointmentsIndex({
             <div className="col-span-1 text-right">Action</div>
           </div>
 
-          <div className="divide-y divide-white/10">
+          <div className="divide-y divide-border">
             {rows.length ? (
               rows.map((a) => (
                 <div
                   key={a.appointment_id}
-                  className="grid grid-cols-13 items-center px-5 py-4 text-sm hover:bg-white/5"
+                  className="grid grid-cols-13 items-center px-5 py-4 text-sm text-foreground transition hover:bg-accent"
                 >
                   <div className="col-span-2">{a.patient_id}</div>
                   <div className="col-span-3">{a.patient_name}</div>
@@ -120,14 +120,14 @@ export default function AppointmentsIndex({
                     <span
                       className={`inline-flex rounded-md border px-2 py-1 text-xs font-medium ${
                         a.status === 'Completed'
-                          ? 'border-green-500/20 bg-green-500/15 text-green-400'
+                          ? 'border-green-500/30 bg-green-500/10 text-green-600 dark:text-green-400'
                           : a.status === 'Cancelled'
-                            ? 'border-red-500/20 bg-red-500/15 text-red-400'
+                            ? 'border-red-500/30 bg-red-500/10 text-red-600 dark:text-red-400'
                             : a.status === 'No-show'
-                              ? 'border-yellow-500/20 bg-yellow-500/15 text-yellow-400'
+                              ? 'border-yellow-500/30 bg-yellow-500/10 text-yellow-600 dark:text-yellow-400'
                               : a.status === 'Rescheduled'
-                                ? 'border-purple-500/20 bg-purple-500/15 text-purple-400'
-                                : 'border-blue-500/20 bg-blue-500/15 text-blue-400'
+                                ? 'border-purple-500/30 bg-purple-500/10 text-purple-600 dark:text-purple-400'
+                                : 'border-blue-500/30 bg-blue-500/10 text-blue-600 dark:text-blue-400'
                       }`}
                     >
                       {a.status}
@@ -140,7 +140,7 @@ export default function AppointmentsIndex({
                   <div className="col-span-1 flex justify-end">
                     <Link
                       href={`/appointments/${a.appointment_id}/edit`}
-                      className="rounded-md border border-white/10 px-3 py-1.5 text-xs hover:bg-white/10"
+                      className="rounded-md border border-border bg-background px-3 py-1.5 text-xs text-foreground transition hover:bg-accent"
                     >
                       Edit
                     </Link>
@@ -148,7 +148,7 @@ export default function AppointmentsIndex({
                 </div>
               ))
             ) : (
-              <div className="px-5 py-10 text-sm text-white/60">
+              <div className="px-5 py-10 text-sm text-muted-foreground">
                 No appointments found for the selected date range.
               </div>
             )}

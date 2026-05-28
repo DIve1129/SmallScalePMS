@@ -17,7 +17,7 @@ return new class extends Migration {
     {
         Schema::table('doctors', function (Blueprint $table) {
             // optional: revert back (not recommended)
-            $table->unsignedInteger('slmc_number')->change();
+            $table->string('slmc_number', 50)->nullable()->change();
         });
     }
 };
