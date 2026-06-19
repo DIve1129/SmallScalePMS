@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Appointment;
 use App\Models\Patient;
+use App\Models\Doctor;
 use App\Models\Billing;
 
 class AppointmentsController extends Controller
@@ -17,6 +18,7 @@ class AppointmentsController extends Controller
 
         $appointments = Appointment::query()
             ->leftJoin('patients', 'appointments.patient_id', '=', 'patients.patient_id')
+            ->leftJoin('doctors', 'appointments.doctor_id', '=', 'doctors.doctor_id')
             ->when($from && $to, function ($q) use ($from, $to) {
                 $q->whereBetween('appointments.scheduled_at', [
                     $from . ' 00:00:00',
@@ -32,15 +34,19 @@ class AppointmentsController extends Controller
                 'appointments.status',
                 'patients.first_name',
                 'patients.last_name',
+                'doctors.first_name AS doc_first_name',
+                'doctors.last_name AS doc_last_name',
             ])
             ->map(function ($row) {
                 $fullName = trim(($row->first_name ?? '') . ' ' . ($row->last_name ?? ''));
+                $docFullName = trim(($row->doc_first_name ?? '') . ' ' . ($row->doc_last_name ?? ''));
 
                 return [
                     'appointment_id' => $row->appointment_id,
                     'patient_id' => $row->patient_id,
                     'patient_name' => $fullName !== '' ? $fullName : '-',
                     'age' => null,
+                    'doctor_name' => $docFullName !== '' ? 'Dr. ' . $docFullName : '-',
                     'appointment_type' => $row->app_reason,
                     'appointment_datetime' => $row->scheduled_at,
                     'status' => $row->status,
@@ -62,6 +68,10 @@ class AppointmentsController extends Controller
             ->limit(300)
             ->get(['patient_id', 'first_name', 'last_name']);
 
+        $doctors = Doctor::query()
+            ->orderBy('first_name')
+            ->get(['doctor_id', 'first_name', 'last_name']);
+
         $chargeMasters = Billing::query()
             ->where('status', 'Active')
             ->orderBy('service_name')
@@ -69,6 +79,7 @@ class AppointmentsController extends Controller
 
         return Inertia::render('appointments/create', [
             'patients' => $patients,
+            'doctors' => $doctors,
             'chargeMasters' => $chargeMasters,
         ]);
     }
@@ -132,6 +143,10 @@ class AppointmentsController extends Controller
             ->orderByDesc('patient_id')
             ->limit(300)
             ->get(['patient_id', 'first_name', 'last_name']);
+        
+        $doctors = Doctor::query()
+            ->orderBy('first_name')
+            ->get(['doctor_id', 'first_name', 'last_name']);
 
         $chargeMasters = Billing::query()
             ->where('status', 'Active')
@@ -149,8 +164,43 @@ class AppointmentsController extends Controller
                 'amount_1' => $appointment->amount_1 ?? 0,
             ],
             'patients' => $patients,
+            'doctors' => $doctors,
             'chargeMasters' => $chargeMasters,
         ]);
+    }
+
+    public function storeClinicalData(Request $request, $appointment_id)
+    {
+        $appointment = Appointment::findOrFail($appointment_id);
+
+        // Validate incoming electronic health record parameters
+        $validated = $request->validate([
+            'blood_pressure'        => ['nullable', 'string', 'max:20'],
+            'pulse_rate'            => ['nullable', 'numeric', 'min:0'],
+            'temperature_c'         => ['nullable', 'numeric', 'min:0'],
+            'weight_kg'             => ['nullable', 'numeric', 'min:0'],
+            'chief_complaint'       => ['required', 'string', 'max:1000'],
+            'clinical_examination'  => ['nullable', 'string'],
+            'diagnosis'             => ['nullable', 'string'],
+            'prescribed_medication' => ['nullable', 'string'],
+            'plan_of_management'    => ['nullable', 'string'],
+        ]);
+
+        // Strategy A direct update payload injection
+        $appointment->update([
+            'blood_pressure'        => $validated['blood_pressure'],
+            'pulse_rate'            => $validated['pulse_rate'],
+            'temperature_c'         => $validated['temperature_c'],
+            'weight_kg'             => $validated['weight_kg'],
+            'app_reason'            => $validated['chief_complaint'], // sync edited presentation complaint
+            'clinical_examination'  => $validated['clinical_examination'],
+            'diagnosis'             => $validated['diagnosis'],
+            'prescribed_medication' => $validated['prescribed_medication'],
+            'plan_of_management'    => $validated['plan_of_management'],
+        ]);
+
+        return redirect()->route('billing.index')
+            ->with('success', 'Patient clinical charting updated successfully.');
     }
 
     public function update(Request $request, Appointment $appointment)
@@ -177,4 +227,6 @@ class AppointmentsController extends Controller
         return redirect()->route('appointments.index')
             ->with('success', 'Appointment updated successfully.');
     }
+
+    
 }

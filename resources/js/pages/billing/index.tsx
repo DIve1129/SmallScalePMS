@@ -6,7 +6,7 @@ type Appointment = {
   appointment_id: number;
   patient_id?: number | string | null;
   patient_name?: string | null;
-  doctor_id?: number | string | null;
+  doctor_name?:  string | null;
   appointment_date?: string | null;
   appointment_reason?: string | null;
   total_amount?: number | string | null;
@@ -115,7 +115,7 @@ export default function BillingIndex({
             <div className="col-span-1">Appointment ID</div>
             <div className="col-span-1">Patient ID</div>
             <div className="col-span-2">Patient Name</div>
-            <div className="col-span-1">Doctor ID</div>
+            <div className="col-span-1">Doctor</div>
             <div className="col-span-2">Date of Service</div>
             <div className="col-span-1">Service</div>
             <div className="col-span-1">Bill Amount</div>
@@ -134,7 +134,7 @@ export default function BillingIndex({
                   <div className="col-span-1">{a.appointment_id}</div>
                   <div className="col-span-1">{a.patient_id ?? '-'}</div>
                   <div className="col-span-2">{a.patient_name ?? '-'}</div>
-                  <div className="col-span-1">{a.doctor_id ?? '-'}</div>
+                  <div className="col-span-1">{a.doctor_name ?? '-'}</div>
                   <div className="col-span-2">{a.appointment_date ?? '-'}</div>
                   <div className="col-span-1">{a.appointment_reason ?? '-'}</div>
                   <div className="col-span-1">
@@ -173,7 +173,7 @@ export default function BillingIndex({
                     </Link>
 
                     <Link
-                      href={`/billing/${a.appointment_id}/claim/edit`}
+                      href={`/billing/${a.appointment_id}/claim/clinicaldata`}
                       className="rounded-md border border-border bg-background px-3 py-1.5 text-xs text-foreground transition hover:bg-accent"
                     >
                       Add Clinical Data

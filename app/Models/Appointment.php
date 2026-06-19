@@ -34,7 +34,22 @@ class Appointment extends Model
         'responsibility',
         'claim_status',
         'balance',
+        
+        'blood_pressure',
+        'pulse_rate',
+        'temperature_c',
+        'weight_kg',
+        'clinical_examination',
+        'diagnosis',
+        'prescribed_medication',
+        'plan_of_management',
     ];
+
+    public function doctor()
+{
+    // The second argument is the foreign key on appointments; the third is the primary key on doctors
+    return $this->belongsTo(Doctor::class, 'doctor_id', 'doctor_id');
+}
 
     public function patient()
     {

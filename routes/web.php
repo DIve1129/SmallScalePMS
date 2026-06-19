@@ -8,15 +8,14 @@ use App\Http\Controllers\AppointmentsController;
 use App\Http\Controllers\DoctorsController;
 use App\Http\Controllers\InsuranceController;
 use App\Http\Controllers\BillingController;
+use App\Http\Controllers\DashboardController;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
 })->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
-    })->name('dashboard');
+   Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 Route::middleware(['role:admin,receptionist,billing'])->group(function () {
     Route::get('/patients', [PatientsController::class, 'index'])->name('patients.index');
@@ -29,7 +28,7 @@ Route::middleware(['role:admin,receptionist,billing'])->group(function () {
     Route::get('/patients/{id}/billing', [PatientsController::class, 'billing'])->name('patients.billing');
     Route::get('/patients/{id}/edit', [PatientsController::class, 'edit'])->name('patients.edit');
     Route::put('/patients/{id}', [PatientsController::class, 'update'])->name('patients.update');
-});
+    Route::get('/billing/{appointment}/viewclinicaldata', [PatientsController::class, 'showClinicalData'])->name('billing.view_clinical_data');});
 
 Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
     Route::get('/doctors', [DoctorsController::class, 'index'])->name('doctors.index');
@@ -40,6 +39,8 @@ Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
     Route::put('/doctors/{doctor}', [DoctorsController::class, 'update'])->name('doctors.update');
     Route::get('/doctors/{doctor}/edit', [DoctorsController::class, 'edit'])->name('doctors.edit');
     Route::put('/doctors/{doctor}', [DoctorsController::class, 'update'])->name('doctors.update');
+    Route::get('/billing/{appointment}/downloadclinicaldata', [PatientsController::class, 'downloadClinicalData'])
+        ->name('billing.download_clinical_data');
 
 });
 
@@ -71,6 +72,8 @@ Route::middleware(['auth','verified','role:admin'])->group(function () {
 Route::middleware(['auth', 'verified', 'role:admin,billing,doctor'])->group(function () {
     Route::get('/billing', [BillingController::class, 'index'])->name('billing.index');
     Route::get('/billing/{appointment}/edit', [BillingController::class, 'edit'])->name('billing.edit');
+    Route::get('/billing/{appointment}/claim/clinicaldata', [BillingController::class, 'createClinicalData'])->name('billing.claim.clinicaldata');
+    Route::post('/billing/{appointment}/claim/clinicaldata', [BillingController::class, 'storeClinicalData'])->name('billing.claim.store_clinicaldata');
     Route::put('/billing/{appointment}', [BillingController::class, 'update'])->name('billing.update');
     Route::put('/billing/{appointment}/update-status', [BillingController::class, 'updateStatus'])->name('billing.updateStatus');
     Route::get('/billing/{appointment}/payment', [BillingController::class, 'payment'])->name('billing.payment');
@@ -78,6 +81,8 @@ Route::middleware(['auth', 'verified', 'role:admin,billing,doctor'])->group(func
     Route::get('/billing/{appointment}/bill', [BillingController::class, 'bill'])->name('billing.bill');
     Route::get('/billing/{appointment_id}/download', [BillingController::class, 'downloadBill'])
     ->name('billing.download');
+    Route::get('/billing/{appointment}/claim/clinicaldata', [BillingController::class, 'createClinicalData'])->name('billing.claim.clinicaldata');
+    Route::post('/billing/{appointment}/claim/clinicaldata', [BillingController::class, 'storeClinicalData'])->name('billing.claim.store_clinicaldata');
 });
 
 });

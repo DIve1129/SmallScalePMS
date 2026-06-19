@@ -15,7 +15,8 @@ class BillingController extends Controller
         $from = $request->input('from');
         $to = $request->input('to');
 
-        $appointments = Appointment::with('patient')
+        // Eager-load both 'patient' and 'doctor' relationships to avoid N+1 performance bottlenecks
+        $appointments = Appointment::with(['patient', 'doctor'])
             ->whereIn('status', ['Completed', 'No-show', 'Ongoing'])
             ->when($from && $to, function ($q) use ($from, $to) {
                 $q->whereBetween('scheduled_at', [
@@ -38,13 +39,22 @@ class BillingController extends Controller
 
                 $balance = $total_amount - $total_payment;
 
+                // Safely concatenate Doctor First & Last name if relationship exists
+                $docFullName = $a->doctor
+                    ? trim(($a->doctor->first_name ?? '') . ' ' . ($a->doctor->last_name ?? ''))
+                    : '';
+
                 return [
                     'appointment_id' => $a->appointment_id,
                     'patient_id' => $a->patient_id,
                     'patient_name' => $a->patient
                         ? $a->patient->first_name . ' ' . $a->patient->last_name
                         : '-',
+                    
+                    // Passing both properties ensures no breakage across code versions
                     'doctor_id' => $a->doctor_id,
+                    'doctor_name' => $docFullName !== '' ? 'Dr. ' . $docFullName : '-',
+                    
                     'appointment_date' => $a->appointment_Date,
                     'appointment_reason' => $a->app_reason ?? '-',
 
@@ -76,11 +86,73 @@ class BillingController extends Controller
         ]);
     }
 
+    public function createClinicalData($appointment_id)
+    {
+        // Eager-load relationships to supply data to your form header banner
+        $appointment = Appointment::with(['patient', 'doctor'])->findOrFail($appointment_id);
+
+        $patientName = $appointment->patient 
+            ? trim($appointment->patient->first_name . ' ' . $appointment->patient->last_name) 
+            : '-';
+
+        $doctorName = $appointment->doctor 
+            ? trim($appointment->doctor->first_name . ' ' . $appointment->doctor->last_name) 
+            : '-';
+
+        return Inertia::render('billing/clinicaldata', [
+            'appointment' => [
+                'appointment_id' => $appointment->appointment_id,
+                'patient_id' => $appointment->patient_id,
+                'patient_name' => $patientName,
+                'doctor_name' => $doctorName !== '-' ? 'Dr. ' . $doctorName : '-',
+                'appointment_date' => $appointment->appointment_Date,
+                'appointment_reason' => $appointment->app_reason ?? '-',
+            ]
+        ]);
+    }
+    public function storeClinicalData(Request $request, $appointment_id)
+    {
+        $appointment = Appointment::findOrFail($appointment_id);
+
+        // 1. Validate the incoming React useForm input strings safely
+        $validated = $request->validate([
+            'blood_pressure'        => ['nullable', 'string', 'max:20'],
+            'pulse_rate'            => ['nullable', 'string', 'max:20'], 
+            'temperature_c'         => ['nullable', 'string', 'max:20'], 
+            'weight_kg'             => ['nullable', 'string', 'max:20'], 
+            'chief_complaint'       => ['required', 'string'],
+            'clinical_examination'  => ['nullable', 'string'],
+            'diagnosis'             => ['nullable', 'string'],
+            'prescribed_medication' => ['nullable', 'string'],
+            'plan_of_management'    => ['nullable', 'string'],
+        ]);
+
+        // 2. STRATEGY A FIX: Inject every validated health metric right into your update payload
+        $appointment->update([
+            'app_reason'            => $validated['chief_complaint'], // Syncs back presentation text edits
+            'blood_pressure'        => $validated['blood_pressure'],
+            'pulse_rate'            => $validated['pulse_rate'],
+            'temperature_c'         => $validated['temperature_c'],
+            'weight_kg'             => $validated['weight_kg'],
+            'clinical_examination'  => $validated['clinical_examination'],
+            'diagnosis'             => $validated['diagnosis'],
+            'prescribed_medication' => $validated['prescribed_medication'],
+            'plan_of_management'    => $validated['plan_of_management'],
+        ]);
+
+        return redirect()->route('billing.index')->with('success', 'Clinical entry charting added successfully.');
+    }
+
     public function edit($appointment_id)
     {
-        $appointment = Appointment::with('patient')->findOrFail($appointment_id);
+        // Eager-load both structures to handle edits gracefully
+        $appointment = Appointment::with(['patient', 'doctor'])->findOrFail($appointment_id);
 
         $chargeMasters = Billing::orderBy('service_name')->get();
+
+        $docFullName = $appointment->doctor
+            ? trim(($appointment->doctor->first_name ?? '') . ' ' . ($appointment->doctor->last_name ?? ''))
+            : '';
 
         return Inertia::render('billing/edit', [
             'appointment' => [
@@ -90,6 +162,7 @@ class BillingController extends Controller
                     ? $appointment->patient->first_name . ' ' . $appointment->patient->last_name
                     : '-',
                 'doctor_id' => $appointment->doctor_id,
+                'doctor_name' => $docFullName !== '' ? 'Dr. ' . $docFullName : '-',
 
                 'appointment_reason' => $appointment->app_reason ?? '',
                 'service_2' => $appointment->service_2 ?? '',
@@ -177,7 +250,7 @@ class BillingController extends Controller
 
     public function bill($appointment_id)
     {
-        $appointment = Appointment::with('patient')->findOrFail($appointment_id);
+        $appointment = Appointment::with(['patient', 'doctor'])->findOrFail($appointment_id);
 
         $total_amount =
             ($appointment->amount_1 ?? 0) +
@@ -191,13 +264,20 @@ class BillingController extends Controller
 
         $balance = $total_amount - $total_payment;
 
+        $docFullName = $appointment->doctor
+            ? trim(($appointment->doctor->first_name ?? '') . ' ' . ($appointment->doctor->last_name ?? ''))
+            : '';
+
         return Inertia::render('billing/bill', [
             'bill' => [
                 'patient_name' => $appointment->patient
                     ? $appointment->patient->first_name . ' ' . $appointment->patient->last_name
                     : '-',
                 'age' => $appointment->patient->age ?? '-',
-                'doctor_name' => $appointment->doctor_id ?? '-',
+                
+                // Displays actual text string name on your Invoice panel
+                'doctor_name' => $docFullName !== '' ? 'Dr. ' . $docFullName : '-',
+                
                 'date_of_service' => $appointment->appointment_Date,
                 'appointment_id' => $appointment->appointment_id,
                 'appointment_reason' => $appointment->app_reason ?? '',
@@ -296,7 +376,8 @@ class BillingController extends Controller
 
     public function downloadBill($appointment_id)
 {
-    $appointment = Appointment::with('patient')->findOrFail($appointment_id);
+    // Eager-load relations to pull patient details and linked doctor names smoothly
+    $appointment = Appointment::with(['patient', 'doctor'])->findOrFail($appointment_id);
 
     $total_amount =
         ($appointment->amount_1 ?? 0) +
@@ -308,15 +389,16 @@ class BillingController extends Controller
         ($appointment->payment_2 ?? 0) +
         ($appointment->payment_3 ?? 0);
 
-    $balance = $total_amount - $total_payment;
+    $balance = max($total_amount - $total_payment, 0);
 
     $data = [
-        'appointment' => $appointment,
-        'total_amount' => $total_amount,
+        'appointment'   => $appointment,
+        'total_amount'  => $total_amount,
         'total_payment' => $total_payment,
-        'balance' => $balance,
+        'balance'       => $balance,
     ];
 
+    // Compiles the resources/views/pdf/bill.blade.php layout file code string
     $pdf = Pdf::loadView('pdf.bill', $data);
 
     return $pdf->download('bill-' . $appointment->appointment_id . '.pdf');

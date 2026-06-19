@@ -60,12 +60,12 @@ export default function BillShow({ bill }: { bill: Bill }) {
 
       <div className="p-6">
         <div className="mx-auto mb-4 flex max-w-4xl justify-end">
-          <Link
+          <a
             href={`/billing/${bill.appointment_id}/download`}
             className="rounded-md border border-border bg-background px-4 py-2 text-sm text-foreground transition hover:bg-accent"
           >
             Download PDF
-          </Link>
+          </a>
         </div>
 
         <div className="mx-auto max-w-4xl rounded-lg border border-border bg-background p-8 text-foreground">

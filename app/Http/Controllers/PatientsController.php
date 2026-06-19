@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Patient;
+use App\Models\Appointment;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -30,6 +32,7 @@ public function index(Request $request)
             'patient_id',
             'first_name',
             'last_name',
+            'dob',
             'address',
             'created_at',
         ]);
@@ -201,5 +204,55 @@ public function billing($id)
         return Inertia::render('patients/edit', [
             'patient' => $patient,
         ]);
+    }
+
+    public function showClinicalData($appointment_id)
+    {
+        // Eager load the patient details and doctor links for the layout header strip
+        $appointment = Appointment::with(['patient', 'doctor'])->findOrFail($appointment_id);
+
+        $patientName = $appointment->patient 
+            ? trim($appointment->patient->first_name . ' ' . $appointment->patient->last_name) 
+            : '-';
+
+        $doctorName = $appointment->doctor 
+            ? trim($appointment->doctor->first_name . ' ' . $appointment->doctor->last_name) 
+            : '-';
+
+        return Inertia::render('patients/viewclinicaldata', [
+            'record' => [
+                'appointment_id'        => $appointment->appointment_id,
+                'patient_id'            => $appointment->patient_id,
+                'patient_name'          => $patientName,
+                'doctor_name'           => $doctorName !== '-' ? 'Dr. ' . $doctorName : '-',
+                'appointment_date'      => $appointment->appointment_Date,
+                'appointment_reason'    => $appointment->app_reason ?? '-',
+                
+                // Strategy A: Pulling the data straight from your appointments table
+                'blood_pressure'        => $appointment->blood_pressure,
+                'pulse_rate'            => $appointment->pulse_rate,
+                'temperature_c'         => $appointment->temperature_c,
+                'weight_kg'             => $appointment->weight_kg,
+                'clinical_examination'  => $appointment->clinical_examination,
+                'diagnosis'             => $appointment->diagnosis,
+                'prescribed_medication' => $appointment->prescribed_medication,
+                'plan_of_management'    => $appointment->plan_of_management,
+            ]
+        ]);
+    }
+
+    public function downloadClinicalData($appointment_id)
+    {
+        // Eager-load relationships to cleanly compile full patient profiles
+        $appointment = Appointment::with(['patient', 'doctor'])->findOrFail($appointment_id);
+
+        $data = [
+            'appointment' => $appointment
+        ];
+
+        // Compiles the template string into raw PDF metrics stream
+        $pdf = Pdf::loadView('pdf.clinicaldata', $data);
+
+        return $pdf->download('clinical-record-' . $appointment->appointment_id . '.pdf');
     }
 }

@@ -7,6 +7,13 @@ type PatientLite = {
   last_name: string | null;
 };
 
+// Added a Doctor type definition
+type DoctorLite = {
+  doctor_id: number;
+  first_name: string | null;
+  last_name: string | null;
+};
+
 type ChargeMaster = {
   billing_id: number;
   service_name: string;
@@ -15,9 +22,11 @@ type ChargeMaster = {
 
 export default function AppointmentCreate({
   patients,
+  doctors = [], // 1. Added doctors array to received props
   chargeMasters = [],
 }: {
   patients: PatientLite[];
+  doctors?: DoctorLite[]; // Included in type definition
   chargeMasters?: ChargeMaster[];
 }) {
   const { data, setData, post, processing, errors } = useForm({
@@ -80,24 +89,36 @@ export default function AppointmentCreate({
           {/* Patient */}
           <div>
             <label className={labelClass}>Patient</label>
-            <select
-              className={selectClass}
-              value={data.patient_id}
-              onChange={(e) => setData('patient_id', e.target.value)}
-            >
-              <option value="">Select a patient...</option>
-              {patients.map((p) => {
-                const fullName =
-                  `${p.first_name ?? ''} ${p.last_name ?? ''}`.trim() ||
-                  `Patient #${p.patient_id}`;
 
-                return (
-                  <option key={p.patient_id} value={p.patient_id}>
-                    {p.patient_id} - {fullName}
-                  </option>
-                );
-              })}
-            </select>
+            <div className="flex gap-2">
+              <select
+                className={selectClass}
+                value={data.patient_id}
+                onChange={(e) => setData('patient_id', e.target.value)}
+              >
+                <option value="">Select a patient...</option>
+
+                {patients.map((p) => {
+                  const fullName =
+                    `${p.first_name ?? ''} ${p.last_name ?? ''}`.trim() ||
+                    `Patient #${p.patient_id}`;
+
+                  return (
+                    <option key={p.patient_id} value={p.patient_id}>
+                      {p.patient_id} - {fullName}
+                    </option>
+                  );
+                })}
+              </select>
+
+              <Link
+                href="/patients/create"
+                className="whitespace-nowrap rounded-md border border-border bg-muted px-4 py-2 text-sm text-foreground transition hover:bg-accent"
+              >
+                New Patient
+              </Link>
+            </div>
+
             {errors.patient_id && (
               <div className="mt-2 text-xs text-red-500">
                 {errors.patient_id}
@@ -105,14 +126,33 @@ export default function AppointmentCreate({
             )}
           </div>
 
-          {/* Doctor */}
-          <Field
-            label="Doctor ID"
-            placeholder="Example D_ID"
-            value={data.doctor_id}
-            onChange={(v) => setData('doctor_id', v)}
-            error={errors.doctor_id}
-          />
+          {/* Doctor Dropdown (Swapped from Field to select element) */}
+          <div>
+            <label className={labelClass}>Doctor</label>
+            <select
+              className={selectClass}
+              value={data.doctor_id}
+              onChange={(e) => setData('doctor_id', e.target.value)}
+            >
+              <option value="">Select a doctor...</option>
+              {doctors.map((d) => {
+                const docFullName =
+                  `${d.first_name ?? ''} ${d.last_name ?? ''}`.trim() ||
+                  `Doctor #${d.doctor_id}`;
+
+                return (
+                  <option key={d.doctor_id} value={d.doctor_id}>
+                    {d.doctor_id} - {docFullName}
+                  </option>
+                );
+              })}
+            </select>
+            {errors.doctor_id && (
+              <div className="mt-2 text-xs text-red-500">
+                {errors.doctor_id}
+              </div>
+            )}
+          </div>
 
           {/* Reason */}
           <div>
@@ -221,34 +261,5 @@ export default function AppointmentCreate({
         </form>
       </div>
     </AppSidebarLayout>
-  );
-}
-
-function Field({
-  label,
-  placeholder,
-  value,
-  onChange,
-  error,
-}: {
-  label: string;
-  placeholder?: string;
-  value: string;
-  onChange: (v: string) => void;
-  error?: string;
-}) {
-  return (
-    <div>
-      <label className="mb-2 block text-sm font-medium text-foreground">
-        {label}
-      </label>
-      <input
-        className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring"
-        placeholder={placeholder}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-      />
-      {error && <div className="mt-2 text-xs text-red-500">{error}</div>}
-    </div>
   );
 }

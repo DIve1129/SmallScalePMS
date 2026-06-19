@@ -7,6 +7,7 @@ type Appointment = {
   patient_id: number;
   patient_name: string;
   age?: number | null;
+  doctor_name: string; // 1. Added type property to match your controller payload modification
   appointment_type: string;
   appointment_datetime: string;
   status: string;
@@ -114,7 +115,9 @@ export default function AppointmentsIndex({
                 >
                   <div className="col-span-2">{a.patient_id}</div>
                   <div className="col-span-3">{a.patient_name}</div>
-                  <div className="col-span-2">-</div>
+                  
+                  {/* 2. Swapped the dash for the mapped doctor name variable */}
+                  <div className="col-span-2">{a.doctor_name}</div>
 
                   <div className="col-span-2">
                     <span
