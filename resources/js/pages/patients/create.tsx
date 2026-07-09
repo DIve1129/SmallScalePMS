@@ -58,8 +58,7 @@ export default function PatientCreate() {
           <h2 className="text-lg font-medium text-foreground">Demographic</h2>
 
           <Field
-            label="Chart Number (optional)"
-            placeholder="Leave blank to auto-generate"
+            label="Chart Number"
             value={data.patient_id}
             onChange={(v) => setData('patient_id', v)}
             error={errors.patient_id}

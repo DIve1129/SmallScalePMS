@@ -114,7 +114,7 @@ class BillingController extends Controller
     {
         $appointment = Appointment::findOrFail($appointment_id);
 
-        // 1. Validate the incoming React useForm input strings safely
+       
         $validated = $request->validate([
             'blood_pressure'        => ['nullable', 'string', 'max:20'],
             'pulse_rate'            => ['nullable', 'string', 'max:20'], 
@@ -127,7 +127,7 @@ class BillingController extends Controller
             'plan_of_management'    => ['nullable', 'string'],
         ]);
 
-        // 2. STRATEGY A FIX: Inject every validated health metric right into your update payload
+        
         $appointment->update([
             'app_reason'            => $validated['chief_complaint'], // Syncs back presentation text edits
             'blood_pressure'        => $validated['blood_pressure'],

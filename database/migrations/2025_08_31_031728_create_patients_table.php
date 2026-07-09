@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('patients', function (Blueprint $table) {
-                $table->id('patient_id');                  // the ONLY auto-increment PK
+                $table->string('patient_id', 30)->primary();  // CH-prefixed string primary key
                 $table->string('first_name', 100);
                 $table->string('last_name', 100);
                 $table->string('address', 255)->nullable();

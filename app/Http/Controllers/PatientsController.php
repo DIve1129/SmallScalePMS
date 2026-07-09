@@ -57,7 +57,7 @@ public function index(Request $request)
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'patient_id' => 'nullable|string|max:30|unique:patients,patient_id',
+            'patient_id' => 'required|string|max:30|unique:patients,patient_id',
             'first_name' => 'required|string|max:100',
             'last_name'  => 'required|string|max:100',
             'dob'        => 'nullable|date',
@@ -70,10 +70,6 @@ public function index(Request $request)
             'insurance_id'   => 'nullable|string|max:100',
             'notes'      => 'nullable|string',
         ]);
-
-        if (empty($validated['patient_id'])) {
-            $validated['patient_id'] = 'CH-' . now()->format('YmdHis');
-        }
 
         Patient::create($validated);
 
