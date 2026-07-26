@@ -2,264 +2,345 @@ import AppSidebarLayout from '@/layouts/app/app-sidebar-layout';
 import { Head, Link, useForm } from '@inertiajs/react';
 
 type PatientLite = {
-  patient_id: number;
-  first_name: string | null;
-  last_name: string | null;
+    patient_id: number;
+    first_name: string | null;
+    last_name: string | null;
 };
 
-// Added a Doctor type definition
 type DoctorLite = {
-  doctor_id: number;
-  first_name: string | null;
-  last_name: string | null;
+    doctor_id: number;
+    first_name: string | null;
+    last_name: string | null;
 };
 
 type ChargeMaster = {
-  billing_id: number;
-  service_name: string;
-  amount: number | string;
+    billing_id: number;
+    service_name: string;
+    amount: number | string;
 };
 
+/* Displays the appointment creation form and submits a new appointment. */
 export default function AppointmentCreate({
-  patients,
-  doctors = [], // 1. Added doctors array to received props
-  chargeMasters = [],
+    patients,
+    doctors = [],
+    chargeMasters = [],
 }: {
-  patients: PatientLite[];
-  doctors?: DoctorLite[]; // Included in type definition
-  chargeMasters?: ChargeMaster[];
+    patients: PatientLite[];
+    doctors?: DoctorLite[];
+    chargeMasters?: ChargeMaster[];
 }) {
-  const { data, setData, post, processing, errors } = useForm({
-    patient_id: '',
-    doctor_id: '',
-    app_reason: '',
-    scheduled_at: '',
-    status: 'Scheduled',
-    amount_1: '',
-  });
+    const { data, setData, post, processing, errors } = useForm({
+        patient_id: '',
+        doctor_id: '',
+        app_reason: '',
+        scheduled_at: '',
+        status: 'Scheduled',
+        amount_1: '',
+    });
 
-  function submit(e: React.FormEvent) {
-    e.preventDefault();
-    post('/appointments');
-  }
+    /* Submits the appointment information to the server. */
+    function submit(event: React.FormEvent) {
+        event.preventDefault();
+        post('/appointments');
+    }
 
-  const inputClass =
-    'w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring';
+    const inputClass =
+        'w-full rounded-lg border border-blue-100 bg-white px-3 py-2 text-sm text-slate-800 outline-none transition focus:border-[#2563EB] focus:ring-2 focus:ring-blue-100 dark:border-border dark:bg-background dark:text-foreground dark:focus:border-ring dark:focus:ring-ring/30';
 
-  const selectClass = inputClass;
+    const selectClass = inputClass;
 
-  const labelClass = 'mb-2 block text-sm font-medium text-foreground';
+    const labelClass =
+        'mb-2 block text-sm font-medium text-slate-700 dark:text-foreground';
 
-  return (
-    <AppSidebarLayout
-      breadcrumbs={[
-        { title: 'Appointments', href: '/appointments' },
-        { title: 'New Appointment', href: '/appointments/create' },
-      ]}
-    >
-      <Head title="New Appointment" />
+    const buttonPrimary =
+        'rounded-lg bg-[#2563EB] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#1D4ED8] disabled:cursor-not-allowed disabled:opacity-50 dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/90';
 
-      <div className="p-6 text-foreground">
-        <div className="mb-6 flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-semibold text-foreground">
-              New Appointment
-            </h1>
-            <p className="text-sm text-muted-foreground">
-              Fill appointment details and save
-            </p>
-          </div>
+    const buttonSecondary =
+        'rounded-lg border border-blue-100 bg-white px-4 py-2 text-sm font-medium text-[#2563EB] transition hover:bg-[#EAF5FF] hover:text-[#1D4ED8] dark:border-border dark:bg-background dark:text-foreground dark:hover:bg-accent dark:hover:text-accent-foreground';
 
-          <Link
-            href="/appointments"
-            className="rounded-md border border-border bg-background px-4 py-2 text-sm text-foreground transition hover:bg-accent"
-          >
-            Back
-          </Link>
-        </div>
-
-        <form
-          onSubmit={submit}
-          className="max-w-xl space-y-5 rounded-lg border border-border bg-background p-6"
+    return (
+        <AppSidebarLayout
+            breadcrumbs={[
+                { title: 'Appointments', href: '/appointments' },
+                {
+                    title: 'New Appointment',
+                    href: '/appointments/create',
+                },
+            ]}
         >
-          <h2 className="text-lg font-medium text-foreground">
-            Appointment Details
-          </h2>
+            <Head title="New Appointment" />
 
-          {/* Patient */}
-          <div>
-            <label className={labelClass}>Patient</label>
+            <div className="min-h-full bg-[#F8FAFC] p-6 text-slate-800 dark:bg-background dark:text-foreground">
+                <div className="mx-auto w-full max-w-3xl">
+                    {/* Displays the page heading and back action. */}
+                    <div className="mb-6 flex items-center justify-between gap-4">
+                        <div>
+                            <h1 className="text-2xl font-semibold text-slate-900 dark:text-foreground">
+                                New Appointment
+                            </h1>
 
-            <div className="flex gap-2">
-              <select
-                className={selectClass}
-                value={data.patient_id}
-                onChange={(e) => setData('patient_id', e.target.value)}
-              >
-                <option value="">Select a patient...</option>
+                            <p className="mt-1 text-sm text-slate-500 dark:text-muted-foreground">
+                                Fill appointment details and save
+                            </p>
+                        </div>
 
-                {patients.map((p) => {
-                  const fullName =
-                    `${p.first_name ?? ''} ${p.last_name ?? ''}`.trim() ||
-                    `Patient #${p.patient_id}`;
+                        <Link
+                            href="/appointments"
+                            className={buttonSecondary}
+                        >
+                            Back
+                        </Link>
+                    </div>
 
-                  return (
-                    <option key={p.patient_id} value={p.patient_id}>
-                      {p.patient_id} - {fullName}
-                    </option>
-                  );
-                })}
-              </select>
+                    {/* Displays the new appointment form. */}
+                    <form
+                        onSubmit={submit}
+                        className="space-y-5 rounded-xl border border-blue-100 bg-white p-6 shadow-sm dark:border-border dark:bg-card"
+                    >
+                        <h2 className="text-lg font-semibold text-slate-900 dark:text-foreground">
+                            Appointment Details
+                        </h2>
 
-              <Link
-                href="/patients/create"
-                className="whitespace-nowrap rounded-md border border-border bg-muted px-4 py-2 text-sm text-foreground transition hover:bg-accent"
-              >
-                New Patient
-              </Link>
+                        {/* Selects the patient for the appointment. */}
+                        <div>
+                            <label className={labelClass}>Patient</label>
+
+                            <div className="flex gap-2">
+                                <select
+                                    className={selectClass}
+                                    value={data.patient_id}
+                                    onChange={(event) =>
+                                        setData(
+                                            'patient_id',
+                                            event.target.value,
+                                        )
+                                    }
+                                >
+                                    <option value="">
+                                        Select a patient...
+                                    </option>
+
+                                    {patients.map((patient) => {
+                                        const fullName =
+                                            `${patient.first_name ?? ''} ${
+                                                patient.last_name ?? ''
+                                            }`.trim() ||
+                                            `Patient #${patient.patient_id}`;
+
+                                        return (
+                                            <option
+                                                key={patient.patient_id}
+                                                value={patient.patient_id}
+                                            >
+                                                {patient.patient_id} -{' '}
+                                                {fullName}
+                                            </option>
+                                        );
+                                    })}
+                                </select>
+
+                                <Link
+                                    href="/patients/create"
+                                    className="whitespace-nowrap rounded-lg border border-blue-100 bg-white px-4 py-2 text-sm font-medium text-[#2563EB] transition hover:bg-[#EAF5FF] hover:text-[#1D4ED8] dark:border-border dark:bg-background dark:text-foreground dark:hover:bg-accent"
+                                >
+                                    New Patient
+                                </Link>
+                            </div>
+
+                            {errors.patient_id && (
+                                <div className="mt-2 text-xs text-red-500">
+                                    {errors.patient_id}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Selects the attending doctor. */}
+                        <div>
+                            <label className={labelClass}>Doctor</label>
+
+                            <select
+                                className={selectClass}
+                                value={data.doctor_id}
+                                onChange={(event) =>
+                                    setData(
+                                        'doctor_id',
+                                        event.target.value,
+                                    )
+                                }
+                            >
+                                <option value="">Select a doctor...</option>
+
+                                {doctors.map((doctor) => {
+                                    const doctorFullName =
+                                        `${doctor.first_name ?? ''} ${
+                                            doctor.last_name ?? ''
+                                        }`.trim() ||
+                                        `Doctor #${doctor.doctor_id}`;
+
+                                    return (
+                                        <option
+                                            key={doctor.doctor_id}
+                                            value={doctor.doctor_id}
+                                        >
+                                            {doctor.doctor_id} -{' '}
+                                            {doctorFullName}
+                                        </option>
+                                    );
+                                })}
+                            </select>
+
+                            {errors.doctor_id && (
+                                <div className="mt-2 text-xs text-red-500">
+                                    {errors.doctor_id}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Selects the appointment service and amount. */}
+                        <div>
+                            <label className={labelClass}>Reason</label>
+
+                            <select
+                                className={selectClass}
+                                value={data.app_reason}
+                                onChange={(event) => {
+                                    const selected =
+                                        chargeMasters.find(
+                                            (charge) =>
+                                                charge.service_name ===
+                                                event.target.value,
+                                        );
+
+                                    setData((current) => ({
+                                        ...current,
+                                        app_reason: event.target.value,
+                                        amount_1: selected
+                                            ? String(selected.amount)
+                                            : '',
+                                    }));
+                                }}
+                            >
+                                <option value="">Select service...</option>
+
+                                {chargeMasters.map((charge) => (
+                                    <option
+                                        key={charge.billing_id}
+                                        value={charge.service_name}
+                                    >
+                                        {charge.service_name} - Rs{' '}
+                                        {Number(
+                                            charge.amount ?? 0,
+                                        ).toFixed(2)}
+                                    </option>
+                                ))}
+                            </select>
+
+                            {errors.app_reason && (
+                                <div className="mt-2 text-xs text-red-500">
+                                    {errors.app_reason}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Displays the selected service amount. */}
+                        <div>
+                            <label className={labelClass}>
+                                Base Amount
+                            </label>
+
+                            <input
+                                type="number"
+                                step="0.01"
+                                readOnly
+                                className="w-full rounded-lg border border-blue-100 bg-[#F8FBFF] px-3 py-2 text-sm text-slate-800 outline-none dark:border-border dark:bg-muted dark:text-foreground"
+                                value={data.amount_1}
+                                placeholder="Auto-filled from selected service"
+                            />
+
+                            {errors.amount_1 && (
+                                <div className="mt-2 text-xs text-red-500">
+                                    {errors.amount_1}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Selects the appointment date and time. */}
+                        <div>
+                            <label className={labelClass}>
+                                Scheduled Date & Time
+                            </label>
+
+                            <input
+                                type="datetime-local"
+                                className={inputClass}
+                                value={data.scheduled_at}
+                                onChange={(event) =>
+                                    setData(
+                                        'scheduled_at',
+                                        event.target.value,
+                                    )
+                                }
+                            />
+
+                            {errors.scheduled_at && (
+                                <div className="mt-2 text-xs text-red-500">
+                                    {errors.scheduled_at}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Selects the initial appointment status. */}
+                        <div>
+                            <label className={labelClass}>Status</label>
+
+                            <select
+                                className={selectClass}
+                                value={data.status}
+                                onChange={(event) =>
+                                    setData('status', event.target.value)
+                                }
+                            >
+                                <option value="Scheduled">
+                                    Scheduled
+                                </option>
+                                <option value="Ongoing">Ongoing</option>
+                                <option value="Completed">
+                                    Completed
+                                </option>
+                                <option value="Cancelled">
+                                    Cancelled
+                                </option>
+                            </select>
+
+                            {errors.status && (
+                                <div className="mt-2 text-xs text-red-500">
+                                    {errors.status}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Displays the form actions. */}
+                        <div className="flex gap-3 pt-2">
+                            <button
+                                type="submit"
+                                disabled={processing}
+                                className={buttonPrimary}
+                            >
+                                {processing
+                                    ? 'Saving...'
+                                    : 'Save Appointment'}
+                            </button>
+
+                            <Link
+                                href="/appointments"
+                                className={buttonSecondary}
+                            >
+                                Cancel
+                            </Link>
+                        </div>
+                    </form>
+                </div>
             </div>
-
-            {errors.patient_id && (
-              <div className="mt-2 text-xs text-red-500">
-                {errors.patient_id}
-              </div>
-            )}
-          </div>
-
-          {/* Doctor Dropdown (Swapped from Field to select element) */}
-          <div>
-            <label className={labelClass}>Doctor</label>
-            <select
-              className={selectClass}
-              value={data.doctor_id}
-              onChange={(e) => setData('doctor_id', e.target.value)}
-            >
-              <option value="">Select a doctor...</option>
-              {doctors.map((d) => {
-                const docFullName =
-                  `${d.first_name ?? ''} ${d.last_name ?? ''}`.trim() ||
-                  `Doctor #${d.doctor_id}`;
-
-                return (
-                  <option key={d.doctor_id} value={d.doctor_id}>
-                    {d.doctor_id} - {docFullName}
-                  </option>
-                );
-              })}
-            </select>
-            {errors.doctor_id && (
-              <div className="mt-2 text-xs text-red-500">
-                {errors.doctor_id}
-              </div>
-            )}
-          </div>
-
-          {/* Reason */}
-          <div>
-            <label className={labelClass}>Reason</label>
-            <select
-              className={selectClass}
-              value={data.app_reason}
-              onChange={(e) => {
-                const selected = chargeMasters.find(
-                  (c) => c.service_name === e.target.value
-                );
-
-                setData((current) => ({
-                  ...current,
-                  app_reason: e.target.value,
-                  amount_1: selected ? String(selected.amount) : '',
-                }));
-              }}
-            >
-              <option value="">Select service...</option>
-              {chargeMasters.map((c) => (
-                <option key={c.billing_id} value={c.service_name}>
-                  {c.service_name} - Rs{' '}
-                  {Number(c.amount ?? 0).toFixed(2)}
-                </option>
-              ))}
-            </select>
-            {errors.app_reason && (
-              <div className="mt-2 text-xs text-red-500">
-                {errors.app_reason}
-              </div>
-            )}
-          </div>
-
-          {/* Amount */}
-          <div>
-            <label className={labelClass}>Base Amount</label>
-            <input
-              type="number"
-              step="0.01"
-              readOnly
-              className="w-full rounded-md border border-border bg-muted px-3 py-2 text-sm text-foreground"
-              value={data.amount_1}
-              placeholder="Auto-filled from selected service"
-            />
-            {errors.amount_1 && (
-              <div className="mt-2 text-xs text-red-500">
-                {errors.amount_1}
-              </div>
-            )}
-          </div>
-
-          {/* Date */}
-          <div>
-            <label className={labelClass}>Scheduled Date & Time</label>
-            <input
-              type="datetime-local"
-              className={inputClass}
-              value={data.scheduled_at}
-              onChange={(e) => setData('scheduled_at', e.target.value)}
-            />
-            {errors.scheduled_at && (
-              <div className="mt-2 text-xs text-red-500">
-                {errors.scheduled_at}
-              </div>
-            )}
-          </div>
-
-          {/* Status */}
-          <div>
-            <label className={labelClass}>Status</label>
-            <select
-              className={selectClass}
-              value={data.status}
-              onChange={(e) => setData('status', e.target.value)}
-            >
-              <option value="Scheduled">Scheduled</option>
-              <option value="Ongoing">Ongoing</option>
-              <option value="Completed">Completed</option>
-              <option value="Cancelled">Cancelled</option>
-            </select>
-            {errors.status && (
-              <div className="mt-2 text-xs text-red-500">
-                {errors.status}
-              </div>
-            )}
-          </div>
-
-          {/* Buttons */}
-          <div className="flex gap-3 pt-2">
-            <button
-              type="submit"
-              disabled={processing}
-              className="rounded-md border border-border bg-muted px-4 py-2 text-sm text-foreground transition hover:bg-accent disabled:opacity-50"
-            >
-              {processing ? 'Saving...' : 'Save Appointment'}
-            </button>
-
-            <Link
-              href="/appointments"
-              className="rounded-md border border-border bg-background px-4 py-2 text-sm text-foreground transition hover:bg-accent"
-            >
-              Cancel
-            </Link>
-          </div>
-        </form>
-      </div>
-    </AppSidebarLayout>
-  );
+        </AppSidebarLayout>
+    );
 }

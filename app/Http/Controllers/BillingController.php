@@ -10,6 +10,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class BillingController extends Controller
 {
+    /* Displays all completed and billable appointments with optional date filtering. */
     public function index(Request $request)
     {
         $from = $request->input('from');
@@ -85,7 +86,7 @@ class BillingController extends Controller
             'to' => $to,
         ]);
     }
-
+    /* Displays the clinical data form for the selected appointment. */
     public function createClinicalData($appointment_id)
     {
         // Eager-load relationships to supply data to your form header banner
@@ -110,6 +111,7 @@ class BillingController extends Controller
             ]
         ]);
     }
+    /* Validates and saves the patient's clinical data for the selected appointment. */
     public function storeClinicalData(Request $request, $appointment_id)
     {
         $appointment = Appointment::findOrFail($appointment_id);
@@ -142,7 +144,7 @@ class BillingController extends Controller
 
         return redirect()->route('billing.index')->with('success', 'Clinical entry charting added successfully.');
     }
-
+    /* Displays the billing edit form for the selected appointment. */
     public function edit($appointment_id)
     {
         // Eager-load both structures to handle edits gracefully
@@ -202,7 +204,7 @@ class BillingController extends Controller
             'chargeMasters' => $chargeMasters,
         ]);
     }
-
+    /* Validates and updates the billing details for the selected appointment. */
     public function update(Request $request, $appointment_id)
     {
         $appointment = Appointment::findOrFail($appointment_id);
@@ -247,7 +249,7 @@ class BillingController extends Controller
         return redirect()->route('billing.index')
             ->with('success', 'Visit updated successfully.');
     }
-
+    /* Displays the billing summary and invoice details for the selected appointment. */
     public function bill($appointment_id)
     {
         $appointment = Appointment::with(['patient', 'doctor'])->findOrFail($appointment_id);
@@ -298,7 +300,7 @@ class BillingController extends Controller
             ],
         ]);
     }
-
+    /* Displays the payment posting page for the selected appointment. */
     public function payment($appointment_id)
     {
         $appointment = Appointment::findOrFail($appointment_id);
@@ -336,7 +338,7 @@ class BillingController extends Controller
             ],
         ]);
     }
-
+    /* Validates and saves the payment details for the selected appointment. */
     public function storePayment(Request $request, $appointment_id)
     {
         $appointment = Appointment::findOrFail($appointment_id);
@@ -356,7 +358,7 @@ class BillingController extends Controller
         return redirect()->route('billing.index')
             ->with('success', 'Payment posted successfully.');
     }
-
+    /* Updates the billing responsibility and claim status for the selected appointment. */
     public function updateStatus(Request $request, $appointment_id)
     {
         $appointment = Appointment::findOrFail($appointment_id);
@@ -373,7 +375,7 @@ class BillingController extends Controller
 
         return back();
     }
-
+    /* Generates and downloads the PDF bill for the selected appointment. */
     public function downloadBill($appointment_id)
 {
     // Eager-load relations to pull patient details and linked doctor names smoothly

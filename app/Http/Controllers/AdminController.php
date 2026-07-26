@@ -12,6 +12,7 @@ use Inertia\Response;
 
 class AdminController extends Controller
 {
+    /* Displays the administration page with all users and charge master records. */
     public function index(): Response
     {
         $users = User::select(
@@ -39,11 +40,13 @@ class AdminController extends Controller
         ]);
     }
 
+    /* Displays the form used to create a new system user. */
     public function create(): Response
     {
         return Inertia::render('admin/create');
     }
 
+    /* Validates the submitted user details and creates a new system user. */
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
@@ -80,6 +83,7 @@ class AdminController extends Controller
             ->with('success', 'User created successfully.');
     }
 
+    /* Displays the edit form for the selected system user. */
     public function edit(User $user): Response
     {
         return Inertia::render('admin/edit', [
@@ -92,6 +96,7 @@ class AdminController extends Controller
         ]);
     }
 
+    /* Validates and updates the selected system user's details. */
     public function update(
         Request $request,
         User $user
@@ -137,6 +142,7 @@ class AdminController extends Controller
             ->with('success', 'User updated successfully.');
     }
 
+    /* Deletes the selected system user while preventing an administrator from deleting their own account. */
     public function destroy(User $user): RedirectResponse
     {
         if (auth()->id() === $user->id) {
@@ -155,45 +161,50 @@ class AdminController extends Controller
             ->with('success', 'User deleted successfully.');
     }
 
-    public function createChargeMaster():Response{
-       return Inertia::render('admin/chargemastercreate');
+    /* Displays the form used to create a new charge master record. */
+    public function createChargeMaster(): Response
+    {
+        return Inertia::render('admin/chargemastercreate');
     }
 
+    /* Validates the submitted charge master details and creates a new record. */
     public function storeChargeMaster(
         Request $request
-    ): RedirectResponse{
+    ): RedirectResponse {
         $validated = $request->validate([
-                'service_code' => [
+            'service_code' => [
                 'required',
                 'string',
                 'max:50',
                 Rule::unique('billings', 'service_code'),
-                ],
-                'service_name' => [
-                    'required',
-                    'string',
-                    'max:255',
-                ],
-                'amount' => [
-                    'required',
-                    'numeric',
-                    'min:0',
-                ],
-                'status' => [
-                    'required',
-                    'in:Active,Inactive',
-                ],
-            ]);
+            ],
+            'service_name' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+            'amount' => [
+                'required',
+                'numeric',
+                'min:0',
+            ],
+            'status' => [
+                'required',
+                'in:Active,Inactive',
+            ],
+        ]);
+
         Billing::create($validated);
 
-            return redirect()
-                ->route('admin.index')
-                ->with(
-                    'success',
-                    'Charge master record created successfully.'
-                );
+        return redirect()
+            ->route('admin.index')
+            ->with(
+                'success',
+                'Charge master record created successfully.'
+            );
     }
 
+    /* Displays the edit form for the selected charge master record. */
     public function editChargeMaster(
         Billing $billing
     ): Response {
@@ -208,6 +219,7 @@ class AdminController extends Controller
         ]);
     }
 
+    /* Validates and updates the selected charge master record. */
     public function updateChargeMaster(
         Request $request,
         Billing $billing

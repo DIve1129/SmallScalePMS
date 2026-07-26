@@ -3,274 +3,306 @@ import { Head, Link, router } from '@inertiajs/react';
 import { useState } from 'react';
 
 type User = {
-  id: number;
-  name: string;
-  email: string;
-  role: string;
+    id: number;
+    name: string;
+    email: string;
+    role: string;
 };
 
 type ChargeMaster = {
-  id: number;
-  service_code: string;
-  service_name: string;
-  amount: number | string | null;
-  status: string;
+    id: number;
+    service_code: string;
+    service_name: string;
+    amount: number | string | null;
+    status: string;
 };
 
+/* Displays user management and charge master administration tables. */
 export default function AdminIndex({
-  users = [],
-  chargeMasters = [],
+    users = [],
+    chargeMasters = [],
 }: {
-  users: User[];
-  chargeMasters: ChargeMaster[];
+    users: User[];
+    chargeMasters: ChargeMaster[];
 }) {
-  const [activeTab, setActiveTab] = useState<'users' | 'chargeMaster'>(
-    'users',
-  );
+    const [activeTab, setActiveTab] = useState<'users' | 'chargeMaster'>(
+        'users',
+    );
 
-  const buttonPrimary =
-    'inline-flex items-center rounded-md bg-muted px-4 py-2 text-sm text-foreground transition hover:bg-accent';
+    const buttonPrimary =
+        'inline-flex items-center rounded-lg bg-[#2563EB] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#1D4ED8] dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/90';
 
-  const buttonSecondary =
-    'rounded-md border border-border bg-background px-3 py-1.5 text-sm text-foreground transition hover:bg-accent';
+    const buttonSecondary =
+        'rounded-lg border border-blue-100 bg-white px-3 py-1.5 text-sm font-medium text-[#2563EB] transition hover:bg-[#EAF5FF] hover:text-[#1D4ED8] dark:border-border dark:bg-background dark:text-foreground dark:hover:bg-accent dark:hover:text-accent-foreground';
 
-  const formatCurrency = (
-    amount: number | string | null | undefined,
-  ) => {
-    return `Rs ${Number(amount ?? 0).toFixed(2)}`;
-  };
+    /* Formats charge master amounts for display. */
+    const formatCurrency = (
+        amount: number | string | null | undefined,
+    ) => {
+        return `Rs ${Number(amount ?? 0).toFixed(2)}`;
+    };
 
-  return (
-    <AppLayout>
-      <Head title="Admin" />
+    return (
+        <AppLayout>
+            <Head title="Admin" />
 
-      <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-6 text-foreground">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-semibold text-foreground">
-              Admin Module
-            </h1>
+            <div className="min-h-full flex-1 bg-[#F8FAFC] p-6 text-slate-800 dark:bg-background dark:text-foreground">
+                <div className="space-y-6">
+                    {/* Displays the page heading and current tab action. */}
+                    <div className="flex items-center justify-between gap-4">
+                        <div>
+                            <h1 className="text-2xl font-semibold text-slate-900 dark:text-foreground">
+                                Admin Module
+                            </h1>
 
-            <p className="mt-1 text-sm text-muted-foreground">
-              Manage users and charge master records.
-            </p>
-          </div>
+                            <p className="mt-1 text-sm text-slate-500 dark:text-muted-foreground">
+                                Manage users and charge master records.
+                            </p>
+                        </div>
 
-          {activeTab === 'users' && (
-            <Link href="/admin/create" className={buttonPrimary}>
-              Add User
-            </Link>
-          )}
+                        {activeTab === 'users' && (
+                            <Link
+                                href="/admin/create"
+                                className={buttonPrimary}
+                            >
+                                Add User
+                            </Link>
+                        )}
 
-          {activeTab === 'chargeMaster' && (
-            <Link
-              href="/admin/charge-master/create" className={buttonPrimary}>
-              Add Charge
-            </Link>)}
-        </div>
+                        {activeTab === 'chargeMaster' && (
+                            <Link
+                                href="/admin/charge-master/create"
+                                className={buttonPrimary}
+                            >
+                                Add Charge
+                            </Link>
+                        )}
+                    </div>
 
-        <div className="flex gap-3">
-          <button
-            type="button"
-            onClick={() => setActiveTab('users')}
-            className={`rounded-md px-4 py-2 text-sm transition ${
-              activeTab === 'users'
-                ? 'bg-muted text-foreground'
-                : 'border border-border text-muted-foreground hover:bg-accent'
-            }`}
-          >
-            User Management
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveTab('chargeMaster')}
-            className={`rounded-md px-4 py-2 text-sm transition ${
-              activeTab === 'chargeMaster'
-                ? 'bg-muted text-foreground'
-                : 'border border-border text-muted-foreground hover:bg-accent'
-            }`}
-          >
-            Charge Master
-          </button>
-        </div>
-
-        {activeTab === 'users' && (
-          <div className="overflow-hidden rounded-xl border border-border bg-background">
-            <table className="w-full text-sm">
-              <thead className="bg-muted">
-                <tr className="border-b border-border">
-                  <th className="px-6 py-4 text-left font-semibold text-foreground">
-                    Name
-                  </th>
-
-                  <th className="px-6 py-4 text-left font-semibold text-foreground">
-                    Email
-                  </th>
-
-                  <th className="px-6 py-4 text-left font-semibold text-foreground">
-                    Role
-                  </th>
-
-                  <th className="px-6 py-4 text-right font-semibold text-foreground">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {users.length > 0 ? (
-                  users.map((user) => (
-                    <tr
-                      key={user.id}
-                      className="border-b border-border transition last:border-b-0 hover:bg-accent"
-                    >
-                      <td className="px-6 py-4 text-foreground">
-                        {user.name}
-                      </td>
-
-                      <td className="px-6 py-4 text-muted-foreground">
-                        {user.email}
-                      </td>
-
-                      <td className="px-6 py-4">
-                        <span
-                          className={`inline-flex rounded-full border px-3 py-1 text-xs font-medium ${
-                            user.role === 'admin'
-                              ? 'border-red-500/30 bg-red-500/10 text-red-600 dark:text-red-400'
-                              : user.role === 'receptionist'
-                                ? 'border-blue-500/30 bg-blue-500/10 text-blue-600 dark:text-blue-400'
-                                : 'border-green-500/30 bg-green-500/10 text-green-600 dark:text-green-400'
-                          }`}
-                        >
-                          {user.role}
-                        </span>
-                      </td>
-
-                      <td className="px-6 py-4">
-                        <div className="flex justify-end gap-2">
-                          <Link
-                            href={`/admin/${user.id}/edit`}
-                            className={buttonSecondary}
-                          >
-                            Edit
-                          </Link>
-
-                          <button
+                    {/* Displays the administration section tabs. */}
+                    <div className="flex gap-3">
+                        <button
                             type="button"
-                            onClick={() => {
-                              if (confirm(`Delete ${user.name}?`)) {
-                                router.delete(`/admin/${user.id}`);
-                              }
-                            }}
-                            className="rounded-md border border-red-500/30 px-3 py-1.5 text-sm text-red-600 transition hover:bg-red-500/10 dark:text-red-400"
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td
-                      colSpan={4}
-                      className="px-6 py-10 text-center text-sm text-muted-foreground"
-                    >
-                      No users found.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        )}
-
-        {activeTab === 'chargeMaster' && (
-          <div className="overflow-hidden rounded-xl border border-border bg-background">
-            <table className="w-full text-sm">
-              <thead className="bg-muted">
-                <tr className="border-b border-border">
-                  <th className="px-6 py-4 text-left font-semibold text-foreground">
-                    Service Code
-                  </th>
-
-                  <th className="px-6 py-4 text-left font-semibold text-foreground">
-                    Service Name
-                  </th>
-
-                  <th className="px-6 py-4 text-left font-semibold text-foreground">
-                    Amount
-                  </th>
-
-                  <th className="px-6 py-4 text-left font-semibold text-foreground">
-                    Status
-                  </th>
-
-                  <th className="px-6 py-4 text-right font-semibold text-foreground">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {chargeMasters.length > 0 ? (
-                  chargeMasters.map((item) => (
-                    <tr
-                      key={item.id}
-                      className="border-b border-border transition last:border-b-0 hover:bg-accent"
-                    >
-                      <td className="px-6 py-4 text-foreground">
-                        {item.service_code}
-                      </td>
-
-                      <td className="px-6 py-4 text-foreground">
-                        {item.service_name}
-                      </td>
-
-                      <td className="px-6 py-4 text-muted-foreground">
-                        {formatCurrency(item.amount)}
-                      </td>
-
-                      <td className="px-6 py-4">
-                        <span
-                          className={`inline-flex rounded-full border px-3 py-1 text-xs font-medium ${
-                            item.status === 'Active'
-                              ? 'border-green-500/30 bg-green-500/10 text-green-600 dark:text-green-400'
-                              : 'border-gray-500/30 bg-gray-500/10 text-gray-600 dark:text-gray-400'
-                          }`}
+                            onClick={() => setActiveTab('users')}
+                            className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
+                                activeTab === 'users'
+                                    ? 'bg-[#CFE8FF] text-[#1D4ED8] dark:bg-primary dark:text-primary-foreground'
+                                    : 'border border-blue-100 bg-white text-slate-600 hover:bg-[#EAF5FF] hover:text-[#2563EB] dark:border-border dark:bg-background dark:text-muted-foreground dark:hover:bg-accent dark:hover:text-accent-foreground'
+                            }`}
                         >
-                          {item.status}
-                        </span>
-                      </td>
+                            User Management
+                        </button>
 
-                      <td className="px-6 py-4">
-                        <div className="flex justify-end">
-                          <Link
-                            href={`/admin/charge-master/${item.id}/edit`}
-                            className={buttonSecondary}
-                          >
-                            Edit
-                          </Link>
+                        <button
+                            type="button"
+                            onClick={() =>
+                                setActiveTab('chargeMaster')
+                            }
+                            className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
+                                activeTab === 'chargeMaster'
+                                    ? 'bg-[#CFE8FF] text-[#1D4ED8] dark:bg-primary dark:text-primary-foreground'
+                                    : 'border border-blue-100 bg-white text-slate-600 hover:bg-[#EAF5FF] hover:text-[#2563EB] dark:border-border dark:bg-background dark:text-muted-foreground dark:hover:bg-accent dark:hover:text-accent-foreground'
+                            }`}
+                        >
+                            Charge Master
+                        </button>
+                    </div>
+
+                    {/* Displays the user management table. */}
+                    {activeTab === 'users' && (
+                        <div className="overflow-hidden rounded-xl border border-blue-100 bg-white shadow-sm dark:border-border dark:bg-card">
+                            <table className="w-full text-sm">
+                                <thead className="bg-blue-50/70 dark:bg-muted">
+                                    <tr className="border-b border-blue-100 dark:border-border">
+                                        <th className="px-6 py-4 text-left font-semibold text-slate-700 dark:text-foreground">
+                                            Name
+                                        </th>
+
+                                        <th className="px-6 py-4 text-left font-semibold text-slate-700 dark:text-foreground">
+                                            Email
+                                        </th>
+
+                                        <th className="px-6 py-4 text-left font-semibold text-slate-700 dark:text-foreground">
+                                            Role
+                                        </th>
+
+                                        <th className="px-6 py-4 text-right font-semibold text-slate-700 dark:text-foreground">
+                                            Actions
+                                        </th>
+                                    </tr>
+                                </thead>
+
+                                <tbody className="divide-y divide-blue-50 dark:divide-border">
+                                    {users.length > 0 ? (
+                                        users.map((user) => (
+                                            <tr
+                                                key={user.id}
+                                                className="transition hover:bg-blue-50/40 dark:hover:bg-accent/50"
+                                            >
+                                                <td className="px-6 py-4 font-medium text-slate-800 dark:text-foreground">
+                                                    {user.name}
+                                                </td>
+
+                                                <td className="px-6 py-4 text-slate-500 dark:text-muted-foreground">
+                                                    {user.email}
+                                                </td>
+
+                                                <td className="px-6 py-4">
+                                                    <span
+                                                        className={`inline-flex rounded-full border px-3 py-1 text-xs font-medium ${
+                                                            user.role ===
+                                                            'admin'
+                                                                ? 'border-red-500/30 bg-red-500/10 text-red-600 dark:text-red-400'
+                                                                : user.role ===
+                                                                    'receptionist'
+                                                                  ? 'border-blue-500/30 bg-blue-500/10 text-blue-600 dark:text-blue-400'
+                                                                  : 'border-green-500/30 bg-green-500/10 text-green-600 dark:text-green-400'
+                                                        }`}
+                                                    >
+                                                        {user.role}
+                                                    </span>
+                                                </td>
+
+                                                <td className="px-6 py-4">
+                                                    <div className="flex justify-end gap-2">
+                                                        <Link
+                                                            href={`/admin/${user.id}/edit`}
+                                                            className={
+                                                                buttonSecondary
+                                                            }
+                                                        >
+                                                            Edit
+                                                        </Link>
+
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => {
+                                                                if (
+                                                                    confirm(
+                                                                        `Delete ${user.name}?`,
+                                                                    )
+                                                                ) {
+                                                                    router.delete(
+                                                                        `/admin/${user.id}`,
+                                                                    );
+                                                                }
+                                                            }}
+                                                            className="rounded-lg border border-red-500/30 bg-white px-3 py-1.5 text-sm font-medium text-red-600 transition hover:bg-red-500/10 dark:bg-background dark:text-red-400"
+                                                        >
+                                                            Delete
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td
+                                                colSpan={4}
+                                                className="px-6 py-10 text-center text-sm text-slate-500 dark:text-muted-foreground"
+                                            >
+                                                No users found.
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
                         </div>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td
-                      colSpan={5}
-                      className="px-6 py-10 text-center text-sm text-muted-foreground"
-                    >
-                      No charge master records found.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-    </AppLayout>
-  );
+                    )}
+
+                    {/* Displays the charge master table. */}
+                    {activeTab === 'chargeMaster' && (
+                        <div className="overflow-hidden rounded-xl border border-blue-100 bg-white shadow-sm dark:border-border dark:bg-card">
+                            <table className="w-full text-sm">
+                                <thead className="bg-blue-50/70 dark:bg-muted">
+                                    <tr className="border-b border-blue-100 dark:border-border">
+                                        <th className="px-6 py-4 text-left font-semibold text-slate-700 dark:text-foreground">
+                                            Service Code
+                                        </th>
+
+                                        <th className="px-6 py-4 text-left font-semibold text-slate-700 dark:text-foreground">
+                                            Service Name
+                                        </th>
+
+                                        <th className="px-6 py-4 text-left font-semibold text-slate-700 dark:text-foreground">
+                                            Amount
+                                        </th>
+
+                                        <th className="px-6 py-4 text-left font-semibold text-slate-700 dark:text-foreground">
+                                            Status
+                                        </th>
+
+                                        <th className="px-6 py-4 text-right font-semibold text-slate-700 dark:text-foreground">
+                                            Actions
+                                        </th>
+                                    </tr>
+                                </thead>
+
+                                <tbody className="divide-y divide-blue-50 dark:divide-border">
+                                    {chargeMasters.length > 0 ? (
+                                        chargeMasters.map((item) => (
+                                            <tr
+                                                key={item.id}
+                                                className="transition hover:bg-blue-50/40 dark:hover:bg-accent/50"
+                                            >
+                                                <td className="px-6 py-4 font-medium text-slate-800 dark:text-foreground">
+                                                    {item.service_code}
+                                                </td>
+
+                                                <td className="px-6 py-4 text-slate-800 dark:text-foreground">
+                                                    {item.service_name}
+                                                </td>
+
+                                                <td className="px-6 py-4 text-slate-500 dark:text-muted-foreground">
+                                                    {formatCurrency(
+                                                        item.amount,
+                                                    )}
+                                                </td>
+
+                                                <td className="px-6 py-4">
+                                                    <span
+                                                        className={`inline-flex rounded-full border px-3 py-1 text-xs font-medium ${
+                                                            item.status ===
+                                                            'Active'
+                                                                ? 'border-green-500/30 bg-green-500/10 text-green-600 dark:text-green-400'
+                                                                : 'border-slate-400/30 bg-slate-400/10 text-slate-600 dark:text-slate-400'
+                                                        }`}
+                                                    >
+                                                        {item.status}
+                                                    </span>
+                                                </td>
+
+                                                <td className="px-6 py-4">
+                                                    <div className="flex justify-end">
+                                                        <Link
+                                                            href={`/admin/charge-master/${item.id}/edit`}
+                                                            className={
+                                                                buttonSecondary
+                                                            }
+                                                        >
+                                                            Edit
+                                                        </Link>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td
+                                                colSpan={5}
+                                                className="px-6 py-10 text-center text-sm text-slate-500 dark:text-muted-foreground"
+                                            >
+                                                No charge master records
+                                                found.
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
+                </div>
+            </div>
+        </AppLayout>
+    );
 }

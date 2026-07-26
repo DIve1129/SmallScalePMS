@@ -18,7 +18,11 @@ function money(value: number | string | null | undefined) {
   return Number(value ?? 0).toFixed(2);
 }
 
-export default function BillingPayment({ appointment }: { appointment: Appointment }) {
+export default function BillingPayment({
+  appointment,
+}: {
+  appointment: Appointment;
+}) {
   const { data, setData, put, processing, errors } = useForm({
     payment_1: appointment.payment_1 ?? 0,
     payment_2: appointment.payment_2 ?? 0,
@@ -47,72 +51,115 @@ export default function BillingPayment({ appointment }: { appointment: Appointme
   }
 
   return (
-    <AppSidebarLayout breadcrumbs={[{ title: 'Billing', href: '/billing' }, { title: 'Payment', href: '#' }]}>
+    <AppSidebarLayout
+      breadcrumbs={[
+        { title: 'Billing', href: '/billing' },
+        { title: 'Payment', href: '#' },
+      ]}
+    >
       <Head title="Post Payment" />
 
-      <div className="space-y-6 p-6">
+      <div className="space-y-6 bg-[#F8FAFC] p-6 dark:bg-background">
+        {/* Page heading */}
         <div>
-          <h1 className="text-2xl font-semibold text-foreground">Post Payment</h1>
-          <p className="text-sm text-muted-foreground">Post payments per service.</p>
+          <h1 className="text-2xl font-semibold text-slate-900 dark:text-foreground">
+            Post Payment
+          </h1>
+
+          <p className="text-sm text-slate-500 dark:text-muted-foreground">
+            Post payments per service.
+          </p>
         </div>
 
-        <form onSubmit={submit} className="space-y-6 rounded-lg border border-border bg-background p-6">
-          <div className="overflow-hidden rounded-lg border border-border">
-            <div className="grid grid-cols-12 bg-muted px-5 py-4 text-sm font-medium text-foreground">
+        {/* Payment form */}
+        <form
+          onSubmit={submit}
+          className="space-y-6 rounded-xl border border-blue-100 bg-white p-6 shadow-sm dark:border-border dark:bg-card"
+        >
+          {/* Payment table */}
+          <div className="overflow-hidden rounded-xl border border-blue-100 dark:border-border">
+            <div className="grid grid-cols-12 bg-[#EAF5FF] px-5 py-4 text-sm font-medium text-slate-900 dark:bg-muted dark:text-foreground">
               <div className="col-span-4">Service</div>
               <div className="col-span-2">Amount</div>
               <div className="col-span-3">Payment</div>
               <div className="col-span-3">Balance</div>
             </div>
 
-            <div className="divide-y divide-border">
-              <div className="grid grid-cols-12 items-center gap-3 px-5 py-4 text-sm">
-                <div className="col-span-4">{appointment.appointment_reason || '-'}</div>
+            <div className="divide-y divide-blue-100 dark:divide-border">
+              <div className="grid grid-cols-12 items-center gap-3 px-5 py-4 text-sm text-slate-800 transition hover:bg-[#EAF5FF] dark:text-foreground dark:hover:bg-accent">
+                <div className="col-span-4">
+                  {appointment.appointment_reason || '-'}
+                </div>
+
                 <div className="col-span-2">Rs {money(amount1)}</div>
+
                 <div className="col-span-3">
                   <input
                     type="number"
                     step="0.01"
                     value={data.payment_1}
-                    onChange={(e) => setData('payment_1', e.target.value)}
-                    className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground outline-none"
+                    onChange={(e) =>
+                      setData('payment_1', e.target.value)
+                    }
+                    className="w-full rounded-lg border border-blue-100 bg-white px-3 py-2 text-sm text-slate-800 outline-none transition focus:border-[#2563EB] focus:ring-2 focus:ring-blue-100 dark:border-border dark:bg-background dark:text-foreground dark:focus:ring-ring"
                   />
-                  {errors.payment_1 && <p className="mt-1 text-sm text-red-500">{errors.payment_1}</p>}
+
+                  {errors.payment_1 && (
+                    <p className="mt-1 text-sm text-red-500">
+                      {errors.payment_1}
+                    </p>
+                  )}
                 </div>
+
                 <div className="col-span-3">Rs {money(balance1)}</div>
               </div>
 
-              <div className="grid grid-cols-12 items-center gap-3 px-5 py-4 text-sm">
-                <div className="col-span-4">{appointment.service_2 || '-'}</div>
+              <div className="grid grid-cols-12 items-center gap-3 px-5 py-4 text-sm text-slate-800 transition hover:bg-[#EAF5FF] dark:text-foreground dark:hover:bg-accent">
+                <div className="col-span-4">
+                  {appointment.service_2 || '-'}
+                </div>
+
                 <div className="col-span-2">Rs {money(amount2)}</div>
+
                 <div className="col-span-3">
                   <input
                     type="number"
                     step="0.01"
                     value={data.payment_2}
-                    onChange={(e) => setData('payment_2', e.target.value)}
-                    className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground outline-none"
+                    onChange={(e) =>
+                      setData('payment_2', e.target.value)
+                    }
+                    className="w-full rounded-lg border border-blue-100 bg-white px-3 py-2 text-sm text-slate-800 outline-none transition focus:border-[#2563EB] focus:ring-2 focus:ring-blue-100 dark:border-border dark:bg-background dark:text-foreground dark:focus:ring-ring"
                   />
                 </div>
+
                 <div className="col-span-3">Rs {money(balance2)}</div>
               </div>
 
-              <div className="grid grid-cols-12 items-center gap-3 px-5 py-4 text-sm">
-                <div className="col-span-4">{appointment.service_3 || '-'}</div>
+              <div className="grid grid-cols-12 items-center gap-3 px-5 py-4 text-sm text-slate-800 transition hover:bg-[#EAF5FF] dark:text-foreground dark:hover:bg-accent">
+                <div className="col-span-4">
+                  {appointment.service_3 || '-'}
+                </div>
+
                 <div className="col-span-2">Rs {money(amount3)}</div>
+
                 <div className="col-span-3">
                   <input
                     type="number"
                     step="0.01"
                     value={data.payment_3}
-                    onChange={(e) => setData('payment_3', e.target.value)}
-                    className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground outline-none"
+                    onChange={(e) =>
+                      setData('payment_3', e.target.value)
+                    }
+                    className="w-full rounded-lg border border-blue-100 bg-white px-3 py-2 text-sm text-slate-800 outline-none transition focus:border-[#2563EB] focus:ring-2 focus:ring-blue-100 dark:border-border dark:bg-background dark:text-foreground dark:focus:ring-ring"
                   />
                 </div>
+
                 <div className="col-span-3">Rs {money(balance3)}</div>
               </div>
 
-              <div className="grid grid-cols-12 items-center gap-3 bg-muted px-5 py-4 text-sm font-semibold">
+              {/* Payment totals */}
+              <div className="grid grid-cols-12 items-center gap-3 bg-[#EAF5FF] px-5 py-4 text-sm font-semibold text-slate-900 dark:bg-muted dark:text-foreground">
                 <div className="col-span-4">Total</div>
                 <div className="col-span-2">Rs {money(totalAmount)}</div>
                 <div className="col-span-3">Rs {money(totalPayment)}</div>
@@ -121,10 +168,11 @@ export default function BillingPayment({ appointment }: { appointment: Appointme
             </div>
           </div>
 
+          {/* Submit action */}
           <button
             type="submit"
             disabled={processing}
-            className="rounded-md border border-border bg-muted px-5 py-3 text-sm text-foreground hover:bg-accent disabled:opacity-50"
+            className="rounded-lg bg-[#2563EB] px-5 py-3 text-sm font-medium text-white transition hover:bg-[#1D4ED8] disabled:cursor-not-allowed disabled:opacity-50 dark:bg-primary dark:text-primary-foreground"
           >
             {processing ? 'Posting...' : 'Post Payment'}
           </button>

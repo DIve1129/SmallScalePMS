@@ -32,23 +32,27 @@ export default function Edit({ doctor }: { doctor: Doctor }) {
   };
 
   const inputClass =
-    'w-full rounded-md border border-border bg-background px-4 py-3 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring';
+    'w-full rounded-lg border border-blue-100 bg-white px-4 py-3 text-sm text-slate-800 outline-none transition focus:border-[#2563EB] focus:ring-2 focus:ring-blue-100 dark:border-border dark:bg-background dark:text-foreground dark:focus:ring-ring';
 
-  const labelClass = 'mb-2 block text-sm font-medium text-foreground';
+  const labelClass =
+    'mb-2 block text-sm font-medium text-slate-700 dark:text-foreground';
 
   const buttonPrimary =
-    'rounded-md bg-muted px-5 py-3 text-sm text-foreground transition hover:bg-accent disabled:opacity-50';
+    'rounded-lg bg-[#2563EB] px-5 py-3 text-sm font-medium text-white transition hover:bg-[#1D4ED8] disabled:cursor-not-allowed disabled:opacity-50 dark:bg-primary dark:text-primary-foreground';
 
   const buttonSecondary =
-    'rounded-md border border-border bg-background px-5 py-3 text-sm text-foreground transition hover:bg-accent';
+    'rounded-lg border border-blue-100 bg-white px-5 py-3 text-sm font-medium text-[#2563EB] transition hover:bg-[#EAF5FF] dark:border-border dark:bg-background dark:text-foreground dark:hover:bg-accent';
 
   return (
     <AppSidebarLayout breadcrumbs={[{ title: 'Doctors', href: '/doctors' }]}>
       <Head title="Edit Doctor" />
 
-      <div className="p-6 text-foreground">
+      <div className="min-h-full bg-[#F8FAFC] p-6 text-slate-800 dark:bg-background dark:text-foreground">
+        {/*/Justify the Form */}
+        <div className="mx-auto max-w-3xl">
+        {/* Page heading */}
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-2xl font-semibold text-foreground">
+          <h1 className="text-2xl font-semibold text-slate-900 dark:text-foreground">
             Edit Doctor
           </h1>
 
@@ -60,7 +64,11 @@ export default function Edit({ doctor }: { doctor: Doctor }) {
           </Link>
         </div>
 
-        <form onSubmit={submit} className="space-y-6 max-w-3xl">
+        {/* Doctor form */}
+        <form
+          onSubmit={submit}
+          className="max-w-3xl space-y-6 rounded-xl border border-blue-100 bg-white p-6 shadow-sm dark:border-border dark:bg-card"
+        >
           <Field
             label="Doctor Code"
             value={data.doctor_code}
@@ -112,6 +120,7 @@ export default function Edit({ doctor }: { doctor: Doctor }) {
 
           <div>
             <label className={labelClass}>Status</label>
+
             <select
               value={data.status}
               onChange={(e) => setData('status', e.target.value)}
@@ -120,13 +129,19 @@ export default function Edit({ doctor }: { doctor: Doctor }) {
               <option value="Active">Active</option>
               <option value="Inactive">Inactive</option>
             </select>
+
             {errors.status && (
               <p className="mt-1 text-sm text-red-500">{errors.status}</p>
             )}
           </div>
 
+          {/* Form actions */}
           <div className="flex gap-3 pt-4">
-            <button type="submit" disabled={processing} className={buttonPrimary}>
+            <button
+              type="submit"
+              disabled={processing}
+              className={buttonPrimary}
+            >
               {processing ? 'Updating...' : 'Update Doctor'}
             </button>
 
@@ -138,6 +153,7 @@ export default function Edit({ doctor }: { doctor: Doctor }) {
             </Link>
           </div>
         </form>
+       </div> 
       </div>
     </AppSidebarLayout>
   );
@@ -156,14 +172,16 @@ function Field({
 }) {
   return (
     <div>
-      <label className="mb-2 block text-sm font-medium text-foreground">
+      <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-foreground">
         {label}
       </label>
+
       <input
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-md border border-border bg-background px-4 py-3 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring"
+        className="w-full rounded-lg border border-blue-100 bg-white px-4 py-3 text-sm text-slate-800 outline-none transition focus:border-[#2563EB] focus:ring-2 focus:ring-blue-100 dark:border-border dark:bg-background dark:text-foreground dark:focus:ring-ring"
       />
+
       {error && <p className="mt-1 text-sm text-red-500">{error}</p>}
     </div>
   );

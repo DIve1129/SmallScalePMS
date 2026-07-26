@@ -10,7 +10,6 @@ class ReportController extends Controller
 {
     /**
      * Revenue Collection Report
-     *
      * Displays each paid service as a separate row and filters
      * appointments using the selected date-of-service range.
      */
@@ -112,7 +111,6 @@ class ReportController extends Controller
     }
     /**
  * Appointment Summary Report
- *
  * Compares appointment totals for the previous month,
  * selected month, and next month.
  */
@@ -132,9 +130,7 @@ public function appointments(Request $request)
         ]
     )->validate();
 
-    /*
-     * Use standard PHP date objects so no Carbon import is required.
-     */
+    /*Use standard PHP date objects so no Carbon import is required.*/
     $selectedStart = new \DateTimeImmutable(
         $validated['month'] . '-01 00:00:00'
     );
@@ -190,8 +186,7 @@ public function appointments(Request $request)
         : null;
 
     /*
-     * Calculate the percentage change from the selected month
-     * to the next month.
+     * Calculate the percentage change from the selected month to the next month.
      */
     $changeToNext = $selectedCount > 0
         ? round(
@@ -261,7 +256,6 @@ public function appointments(Request $request)
 
     /**
      * Outstanding Balance Report
-     *
      * Displays each unpaid or partially paid service as a separate row.
      * Outstanding balance is calculated as charge minus payment.
      */

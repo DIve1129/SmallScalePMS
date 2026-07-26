@@ -29,7 +29,10 @@ export default function BillingEdit({
   chargeMasters: ChargeMaster[];
 }) {
   const getAmountForService = (serviceName?: string | null) => {
-    const selected = chargeMasters.find((c) => c.service_name === serviceName);
+    const selected = chargeMasters.find(
+      (c) => c.service_name === serviceName,
+    );
+
     return selected ? String(selected.amount) : '';
   };
 
@@ -66,9 +69,11 @@ export default function BillingEdit({
   function handleServiceChange(
     serviceField: 'appointment_reason' | 'service_2' | 'service_3',
     amountField: 'amount_1' | 'amount_2' | 'amount_3',
-    value: string
+    value: string,
   ) {
-    const selected = chargeMasters.find((c) => c.service_name === value);
+    const selected = chargeMasters.find(
+      (c) => c.service_name === value,
+    );
 
     setData((current) => ({
       ...current,
@@ -83,12 +88,13 @@ export default function BillingEdit({
     Number(data.amount_3 || 0);
 
   const inputClass =
-    'w-full rounded-md border border-border bg-background px-4 py-3 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring';
+    'w-full rounded-lg border border-blue-100 bg-white px-4 py-3 text-sm text-slate-800 outline-none transition focus:border-[#2563EB] focus:ring-2 focus:ring-blue-100 dark:border-border dark:bg-background dark:text-foreground dark:focus:ring-ring';
 
-  const labelClass = 'mb-2 block text-sm font-medium text-foreground';
+  const labelClass =
+    'mb-2 block text-sm font-medium text-slate-800 dark:text-foreground';
 
   const selectClass =
-    'w-full rounded-md border border-border bg-background px-4 py-3 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring';
+    'w-full rounded-lg border border-blue-100 bg-white px-4 py-3 text-sm text-slate-800 outline-none transition focus:border-[#2563EB] focus:ring-2 focus:ring-blue-100 dark:border-border dark:bg-background dark:text-foreground dark:focus:ring-ring';
 
   const errorClass = 'mt-1 text-sm text-red-500';
 
@@ -101,128 +107,188 @@ export default function BillingEdit({
     >
       <Head title="Edit Billing Visit" />
 
-      <div className="space-y-6 p-6">
+      <div className="space-y-6 bg-[#F8FAFC] p-6 dark:bg-background">
+        {/* Page heading */}
         <div>
-          <h1 className="text-2xl font-semibold text-foreground">Edit Billing Visit</h1>
-          <p className="text-sm text-muted-foreground">
+          <h1 className="text-2xl font-semibold text-slate-900 dark:text-foreground">
+            Edit Billing Visit
+          </h1>
+
+          <p className="text-sm text-slate-500 dark:text-muted-foreground">
             Update selected services and billing amounts.
           </p>
         </div>
 
+        {/* Billing form */}
         <form
           onSubmit={submit}
-          className="space-y-8 rounded-lg border border-border bg-background p-6"
+          className="space-y-8 rounded-xl border border-blue-100 bg-white p-6 shadow-sm dark:border-border dark:bg-card"
         >
-          <div className="overflow-x-auto rounded-lg border border-border">
+          {/* Services and amounts */}
+          <div className="overflow-x-auto rounded-xl border border-blue-100 dark:border-border">
             <table className="w-full border-collapse text-sm">
-              <thead className="bg-muted">
+              <thead className="bg-[#EAF5FF] dark:bg-muted">
                 <tr>
-                  <th className="border border-border px-4 py-3 text-left">Service</th>
-                  <th className="border border-border px-4 py-3 text-left">Amount</th>
+                  <th className="border border-blue-100 px-4 py-3 text-left font-semibold text-slate-900 dark:border-border dark:text-foreground">
+                    Service
+                  </th>
+
+                  <th className="border border-blue-100 px-4 py-3 text-left font-semibold text-slate-900 dark:border-border dark:text-foreground">
+                    Amount
+                  </th>
                 </tr>
               </thead>
 
               <tbody>
-                <tr>
-                  <td className="border border-border px-4 py-3">
+                <tr className="transition hover:bg-blue-50/50 dark:hover:bg-accent">
+                  <td className="border border-blue-100 px-4 py-3 dark:border-border">
                     <select
                       value={data.appointment_reason}
                       onChange={(e) =>
-                        handleServiceChange('appointment_reason', 'amount_1', e.target.value)
+                        handleServiceChange(
+                          'appointment_reason',
+                          'amount_1',
+                          e.target.value,
+                        )
                       }
                       className={selectClass}
                     >
                       <option value="">Select service...</option>
+
                       {chargeMasters.map((c) => (
                         <option key={c.billing_id} value={c.service_name}>
-                          {c.service_name} - Rs {Number(c.amount ?? 0).toFixed(2)}
+                          {c.service_name} - Rs{' '}
+                          {Number(c.amount ?? 0).toFixed(2)}
                         </option>
                       ))}
                     </select>
+
                     {errors.appointment_reason && (
-                      <p className={errorClass}>{errors.appointment_reason}</p>
+                      <p className={errorClass}>
+                        {errors.appointment_reason}
+                      </p>
                     )}
                   </td>
 
-                  <td className="border border-border px-4 py-3">
+                  <td className="border border-blue-100 px-4 py-3 dark:border-border">
                     <input
                       type="number"
                       step="0.01"
                       value={data.amount_1}
-                      onChange={(e) => setData('amount_1', e.target.value)}
+                      onChange={(e) =>
+                        setData('amount_1', e.target.value)
+                      }
                       className={inputClass}
                     />
-                    {errors.amount_1 && <p className={errorClass}>{errors.amount_1}</p>}
+
+                    {errors.amount_1 && (
+                      <p className={errorClass}>{errors.amount_1}</p>
+                    )}
                   </td>
                 </tr>
 
-                <tr>
-                  <td className="border border-border px-4 py-3">
+                <tr className="transition hover:bg-blue-50/50 dark:hover:bg-accent">
+                  <td className="border border-blue-100 px-4 py-3 dark:border-border">
                     <select
                       value={data.service_2}
                       onChange={(e) =>
-                        handleServiceChange('service_2', 'amount_2', e.target.value)
+                        handleServiceChange(
+                          'service_2',
+                          'amount_2',
+                          e.target.value,
+                        )
                       }
                       className={selectClass}
                     >
-                      <option value="">Select additional service...</option>
+                      <option value="">
+                        Select additional service...
+                      </option>
+
                       {chargeMasters.map((c) => (
                         <option key={c.billing_id} value={c.service_name}>
-                          {c.service_name} - Rs {Number(c.amount ?? 0).toFixed(2)}
+                          {c.service_name} - Rs{' '}
+                          {Number(c.amount ?? 0).toFixed(2)}
                         </option>
                       ))}
                     </select>
-                    {errors.service_2 && <p className={errorClass}>{errors.service_2}</p>}
+
+                    {errors.service_2 && (
+                      <p className={errorClass}>{errors.service_2}</p>
+                    )}
                   </td>
 
-                  <td className="border border-border px-4 py-3">
+                  <td className="border border-blue-100 px-4 py-3 dark:border-border">
                     <input
                       type="number"
                       step="0.01"
                       value={data.amount_2}
-                      onChange={(e) => setData('amount_2', e.target.value)}
+                      onChange={(e) =>
+                        setData('amount_2', e.target.value)
+                      }
                       className={inputClass}
                     />
-                    {errors.amount_2 && <p className={errorClass}>{errors.amount_2}</p>}
+
+                    {errors.amount_2 && (
+                      <p className={errorClass}>{errors.amount_2}</p>
+                    )}
                   </td>
                 </tr>
 
-                <tr>
-                  <td className="border border-border px-4 py-3">
+                <tr className="transition hover:bg-blue-50/50 dark:hover:bg-accent">
+                  <td className="border border-blue-100 px-4 py-3 dark:border-border">
                     <select
                       value={data.service_3}
                       onChange={(e) =>
-                        handleServiceChange('service_3', 'amount_3', e.target.value)
+                        handleServiceChange(
+                          'service_3',
+                          'amount_3',
+                          e.target.value,
+                        )
                       }
                       className={selectClass}
                     >
-                      <option value="">Select additional service...</option>
+                      <option value="">
+                        Select additional service...
+                      </option>
+
                       {chargeMasters.map((c) => (
                         <option key={c.billing_id} value={c.service_name}>
-                          {c.service_name} - Rs {Number(c.amount ?? 0).toFixed(2)}
+                          {c.service_name} - Rs{' '}
+                          {Number(c.amount ?? 0).toFixed(2)}
                         </option>
                       ))}
                     </select>
-                    {errors.service_3 && <p className={errorClass}>{errors.service_3}</p>}
+
+                    {errors.service_3 && (
+                      <p className={errorClass}>{errors.service_3}</p>
+                    )}
                   </td>
 
-                  <td className="border border-border px-4 py-3">
+                  <td className="border border-blue-100 px-4 py-3 dark:border-border">
                     <input
                       type="number"
                       step="0.01"
                       value={data.amount_3}
-                      onChange={(e) => setData('amount_3', e.target.value)}
+                      onChange={(e) =>
+                        setData('amount_3', e.target.value)
+                      }
                       className={inputClass}
                     />
-                    {errors.amount_3 && <p className={errorClass}>{errors.amount_3}</p>}
+
+                    {errors.amount_3 && (
+                      <p className={errorClass}>{errors.amount_3}</p>
+                    )}
                   </td>
                 </tr>
               </tbody>
 
-              <tfoot className="bg-muted font-semibold">
+              <tfoot className="bg-[#EAF5FF] font-semibold text-slate-900 dark:bg-muted dark:text-foreground">
                 <tr>
-                  <td className="border border-border px-4 py-3">Total</td>
-                  <td className="border border-border px-4 py-3">
+                  <td className="border border-blue-100 px-4 py-3 dark:border-border">
+                    Total
+                  </td>
+
+                  <td className="border border-blue-100 px-4 py-3 dark:border-border">
                     Rs {totalAmount.toFixed(2)}
                   </td>
                 </tr>
@@ -230,36 +296,50 @@ export default function BillingEdit({
             </table>
           </div>
 
+          {/* Billing details */}
           <div className="grid gap-6 md:max-w-xl">
             <div>
               <label className={labelClass}>Responsibility</label>
+
               <select
                 value={data.responsibility}
-                onChange={(e) => setData('responsibility', e.target.value)}
+                onChange={(e) =>
+                  setData('responsibility', e.target.value)
+                }
                 className={selectClass}
               >
                 <option value="Patient">Patient</option>
                 <option value="Insurance">Insurance</option>
               </select>
-              {errors.responsibility && <p className={errorClass}>{errors.responsibility}</p>}
+
+              {errors.responsibility && (
+                <p className={errorClass}>{errors.responsibility}</p>
+              )}
             </div>
 
             <div>
               <label className={labelClass}>Claim Status</label>
+
               <select
                 value={data.claim_status}
-                onChange={(e) => setData('claim_status', e.target.value)}
+                onChange={(e) =>
+                  setData('claim_status', e.target.value)
+                }
                 className={selectClass}
               >
                 <option value="Pending">Pending</option>
                 <option value="Ready to Bill">Ready to Bill</option>
                 <option value="Billed">Billed</option>
               </select>
-              {errors.claim_status && <p className={errorClass}>{errors.claim_status}</p>}
+
+              {errors.claim_status && (
+                <p className={errorClass}>{errors.claim_status}</p>
+              )}
             </div>
 
             <div>
               <label className={labelClass}>Appointment Status</label>
+
               <select
                 value={data.status}
                 onChange={(e) => setData('status', e.target.value)}
@@ -271,15 +351,19 @@ export default function BillingEdit({
                 <option value="No-show">No-show</option>
                 <option value="Cancelled">Cancelled</option>
               </select>
-              {errors.status && <p className={errorClass}>{errors.status}</p>}
+
+              {errors.status && (
+                <p className={errorClass}>{errors.status}</p>
+              )}
             </div>
           </div>
 
+          {/* Form action */}
           <div>
             <button
               type="submit"
               disabled={processing}
-              className="rounded-md border border-border bg-muted px-5 py-3 text-sm text-foreground transition hover:bg-accent disabled:opacity-50"
+              className="rounded-lg bg-[#2563EB] px-5 py-3 text-sm font-medium text-white transition hover:bg-[#1D4ED8] disabled:cursor-not-allowed disabled:opacity-50 dark:bg-primary dark:text-primary-foreground"
             >
               {processing ? 'Saving...' : 'Save Changes'}
             </button>

@@ -60,11 +60,9 @@ export default function AppointmentReport({
             1,
         );
 
-        const usableWidth =
-            chartWidth - leftPadding - rightPadding;
+        const usableWidth = chartWidth - leftPadding - rightPadding;
 
-        const usableHeight =
-            chartHeight - topPadding - bottomPadding;
+        const usableHeight = chartHeight - topPadding - bottomPadding;
 
         return monthlyComparison.map((item, index) => {
             const x =
@@ -190,7 +188,7 @@ export default function AppointmentReport({
         >
             <Head title="Appointment Summary Report" />
 
-            <div className="space-y-6 p-6 text-foreground">
+            <div className="space-y-6 bg-[#F8FAFC] p-6 text-foreground dark:bg-background">
                 {/* Page header */}
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div>
@@ -206,14 +204,14 @@ export default function AppointmentReport({
 
                     <Link
                         href="/dashboard"
-                        className="inline-flex w-fit rounded-md border border-border bg-background px-4 py-2 text-sm font-medium transition hover:bg-accent"
+                        className="inline-flex w-fit rounded-lg border border-blue-200 bg-white px-4 py-2 text-sm font-medium text-[#2563EB] transition hover:bg-[#EAF5FF] dark:border-border dark:bg-background dark:text-foreground dark:hover:bg-accent"
                     >
                         Back to Dashboard
                     </Link>
                 </div>
 
                 {/* Filter */}
-                <div className="rounded-lg border border-border bg-background p-5 shadow-sm">
+                <div className="rounded-xl border border-blue-100 bg-white p-5 shadow-sm dark:border-border dark:bg-card">
                     <h2 className="mb-4 text-sm font-medium uppercase tracking-wider text-muted-foreground">
                         Report Filter
                     </h2>
@@ -237,13 +235,13 @@ export default function AppointmentReport({
                                 onChange={(event) =>
                                     setMonth(event.target.value)
                                 }
-                                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+                                className="w-full rounded-lg border border-blue-100 bg-white px-3 py-2 text-sm outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-blue-100 dark:border-border dark:bg-background dark:text-foreground"
                             />
                         </div>
 
                         <button
                             type="submit"
-                            className="rounded-md border border-border bg-background px-4 py-2 text-sm font-medium transition hover:bg-accent"
+                            className="rounded-lg border border-blue-200 bg-white px-4 py-2 text-sm font-medium text-[#2563EB] transition hover:bg-[#EAF5FF] dark:border-border dark:bg-background dark:text-foreground dark:hover:bg-accent"
                         >
                             Generate Report
                         </button>
@@ -251,7 +249,7 @@ export default function AppointmentReport({
                         <button
                             type="button"
                             onClick={handleReset}
-                            className="rounded-md border border-border bg-background px-4 py-2 text-sm font-medium transition hover:bg-accent"
+                            className="rounded-lg border border-blue-200 bg-white px-4 py-2 text-sm font-medium text-[#2563EB] transition hover:bg-[#EAF5FF] dark:border-border dark:bg-background dark:text-foreground dark:hover:bg-accent"
                         >
                             Reset
                         </button>
@@ -266,7 +264,7 @@ export default function AppointmentReport({
 
                 {/* Summary cards */}
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                    <div className="rounded-lg border border-border bg-background p-5 shadow-sm">
+                    <div className="rounded-xl border border-blue-100 bg-white p-5 shadow-sm dark:border-border dark:bg-card">
                         <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
                             Previous Month
                         </p>
@@ -280,8 +278,8 @@ export default function AppointmentReport({
                         </p>
                     </div>
 
-                    <div className="rounded-lg border border-primary/50 bg-background p-5 shadow-sm">
-                        <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                    <div className="rounded-xl border border-[#2563EB] bg-white p-5 shadow-sm dark:border-primary/50 dark:bg-card">
+                        <p className="text-xs font-medium uppercase tracking-wider text-[#2563EB] dark:text-primary">
                             Selected Month
                         </p>
 
@@ -294,7 +292,7 @@ export default function AppointmentReport({
                         </p>
                     </div>
 
-                    <div className="rounded-lg border border-border bg-background p-5 shadow-sm">
+                    <div className="rounded-xl border border-blue-100 bg-white p-5 shadow-sm dark:border-border dark:bg-card">
                         <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
                             Next Month Scheduled
                         </p>
@@ -308,10 +306,9 @@ export default function AppointmentReport({
                         </p>
                     </div>
                 </div>
-
-                {/* Percentage changes */}
+                                {/* Percentage changes */}
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <div className="rounded-lg border border-border bg-background p-5 shadow-sm">
+                    <div className="rounded-xl border border-blue-100 bg-white p-5 shadow-sm dark:border-border dark:bg-card">
                         <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
                             Change From Previous Month
                         </p>
@@ -321,9 +318,7 @@ export default function AppointmentReport({
                                 summary.change_from_previous,
                             )}`}
                         >
-                            {formatChange(
-                                summary.change_from_previous,
-                            )}
+                            {formatChange(summary.change_from_previous)}
                         </p>
 
                         <p className="mt-2 text-sm text-muted-foreground">
@@ -333,7 +328,7 @@ export default function AppointmentReport({
                         </p>
                     </div>
 
-                    <div className="rounded-lg border border-border bg-background p-5 shadow-sm">
+                    <div className="rounded-xl border border-blue-100 bg-white p-5 shadow-sm dark:border-border dark:bg-card">
                         <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
                             Change To Next Month
                         </p>
@@ -347,15 +342,13 @@ export default function AppointmentReport({
                         </p>
 
                         <p className="mt-2 text-sm text-muted-foreground">
-                            {getChangeDescription(
-                                summary.change_to_next,
-                            )}
+                            {getChangeDescription(summary.change_to_next)}
                         </p>
                     </div>
                 </div>
 
                 {/* Appointment trend graph */}
-                <div className="rounded-lg border border-border bg-background p-5 shadow-sm">
+                <div className="rounded-xl border border-blue-100 bg-white p-5 shadow-sm dark:border-border dark:bg-card">
                     <div className="mb-5">
                         <h2 className="font-semibold">
                             Appointment Volume Comparison
@@ -370,7 +363,7 @@ export default function AppointmentReport({
                     <div className="overflow-x-auto">
                         <svg
                             viewBox={`0 0 ${chartWidth} ${chartHeight}`}
-                            className="min-w-[600px] w-full"
+                            className="w-full min-w-[600px]"
                             role="img"
                             aria-label="Appointment volume comparison chart"
                         >
@@ -435,7 +428,7 @@ export default function AppointmentReport({
                                     strokeWidth="4"
                                     strokeLinecap="round"
                                     strokeLinejoin="round"
-                                    className="text-primary"
+                                    className="text-[#2563EB] dark:text-primary"
                                 />
                             )}
 
@@ -453,7 +446,7 @@ export default function AppointmentReport({
                                         fill="currentColor"
                                         className={
                                             point.key === 'selected'
-                                                ? 'text-primary'
+                                                ? 'text-[#2563EB] dark:text-primary'
                                                 : 'text-foreground'
                                         }
                                     />
@@ -470,7 +463,7 @@ export default function AppointmentReport({
                                                 : '0'
                                         }
                                         strokeWidth="2"
-                                        className="text-primary"
+                                        className="text-[#2563EB] dark:text-primary"
                                     />
 
                                     <text
@@ -497,21 +490,20 @@ export default function AppointmentReport({
                 </div>
 
                 {/* Selected-month status summary */}
-                <div className="overflow-hidden rounded-lg border border-border bg-background shadow-sm">
-                    <div className="border-b border-border p-5">
+                <div className="overflow-hidden rounded-xl border border-blue-100 bg-white shadow-sm dark:border-border dark:bg-card">
+                    <div className="border-b border-blue-100 p-5 dark:border-border">
                         <h2 className="font-semibold">
                             Selected-Month Status Summary
                         </h2>
 
                         <p className="mt-1 text-sm text-muted-foreground">
-                            Appointment totals grouped by their current
-                            status.
+                            Appointment totals grouped by their current status.
                         </p>
                     </div>
 
                     <div className="overflow-x-auto">
                         <table className="w-full min-w-[500px] text-left text-sm">
-                            <thead className="border-b border-border bg-muted/40">
+                                                        <thead className="border-b border-blue-100 bg-[#EAF5FF] dark:border-border dark:bg-accent">
                                 <tr>
                                     <th className="px-5 py-3 font-medium">
                                         Appointment Status
@@ -527,7 +519,7 @@ export default function AppointmentReport({
                                 </tr>
                             </thead>
 
-                            <tbody className="divide-y divide-border">
+                            <tbody className="divide-y divide-blue-100 dark:divide-border">
                                 {statusSummary.length > 0 ? (
                                     statusSummary.map((item) => {
                                         const percentage =
@@ -540,7 +532,7 @@ export default function AppointmentReport({
                                         return (
                                             <tr
                                                 key={item.status}
-                                                className="transition hover:bg-muted/30"
+                                                className="transition hover:bg-[#EAF5FF] dark:hover:bg-accent"
                                             >
                                                 <td className="px-5 py-4 font-medium">
                                                     {item.status}
@@ -551,10 +543,7 @@ export default function AppointmentReport({
                                                 </td>
 
                                                 <td className="px-5 py-4 text-right">
-                                                    {percentage.toFixed(
-                                                        2,
-                                                    )}
-                                                    %
+                                                    {percentage.toFixed(2)}%
                                                 </td>
                                             </tr>
                                         );
@@ -565,15 +554,15 @@ export default function AppointmentReport({
                                             colSpan={3}
                                             className="px-5 py-12 text-center text-muted-foreground"
                                         >
-                                            No appointments were found for
-                                            the selected month.
+                                            No appointments were found for the
+                                            selected month.
                                         </td>
                                     </tr>
                                 )}
                             </tbody>
 
                             {statusSummary.length > 0 && (
-                                <tfoot className="border-t border-border bg-muted/40">
+                                <tfoot className="border-t border-blue-100 bg-[#EAF5FF] dark:border-border dark:bg-accent">
                                     <tr>
                                         <td className="px-5 py-4 font-semibold">
                                             Total

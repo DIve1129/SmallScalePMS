@@ -11,6 +11,7 @@ use App\Models\Billing;
 
 class AppointmentsController extends Controller
 {
+    /* Displays the appointment list and applies an optional date range filter. */
     public function index(Request $request)
     {
         $from = $request->input('from');
@@ -61,6 +62,7 @@ class AppointmentsController extends Controller
         ]);
     }
 
+    /* Displays the appointment creation form with patients, doctors, and active charge master records. */
     public function create()
     {
         $patients = Patient::query()
@@ -84,6 +86,7 @@ class AppointmentsController extends Controller
         ]);
     }
 
+    /* Displays all appointments belonging to a selected patient. */
     public function appointments($id)
     {
         $appointments = Appointment::query()
@@ -113,6 +116,7 @@ class AppointmentsController extends Controller
         ]);
     }
 
+    /* Validates the appointment details, checks for doctor scheduling conflicts, and creates a new appointment. */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -157,7 +161,7 @@ class AppointmentsController extends Controller
 
         return redirect()->route('appointments.index');
     }
-
+        /* Displays the appointment edit form with the selected appointment, patients, doctors, and active charge master records. */
     public function edit(Appointment $appointment)
     {
         $patients = Patient::query()
@@ -190,6 +194,7 @@ class AppointmentsController extends Controller
         ]);
     }
 
+    /* Validates and saves the patient's clinical information for the selected appointment. */
     public function storeClinicalData(Request $request, $appointment_id)
     {
         $appointment = Appointment::findOrFail($appointment_id);
@@ -223,7 +228,7 @@ class AppointmentsController extends Controller
         return redirect()->route('billing.index')
             ->with('success', 'Patient clinical charting updated successfully.');
     }
-
+        /* Validates the updated appointment details, checks for doctor scheduling conflicts, and updates the selected appointment. */
     public function update(Request $request, Appointment $appointment)
     {
         $validated = $request->validate([

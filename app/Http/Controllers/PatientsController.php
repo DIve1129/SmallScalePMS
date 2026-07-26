@@ -10,10 +10,8 @@ use Inertia\Inertia;
 
 class PatientsController extends Controller
 {
-    /**
-     * LIST + SEARCH PATIENTS
-     * Search by: first name, last name, DOB, chart number
-     */
+    
+    /* LIST + SEARCH PATIENTS - Search by: first name, last name, DOB, chart number*/
 public function index(Request $request)
 {
     $search = trim((string) $request->input('search', ''));
@@ -43,17 +41,13 @@ public function index(Request $request)
     ]);
 }
 
-    /**
-     * SHOW CREATE FORM
-     */
+    /*SHOW CREATE FORM*/
     public function create()
     {
         return Inertia::render('patients/create');
     }
 
-    /**
-     * STORE NEW PATIENT
-     */
+    /*STORE NEW PATIENT*/
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -78,9 +72,7 @@ public function index(Request $request)
             ->with('success', 'Patient created successfully.');
     }
 
-    /**
-     * UPDATE EXISTING PATIENT
-     */
+    /*UPDATE EXISTING PATIENT*/
     public function update(Request $request, $id)
     {
         $patient = Patient::where('patient_id', $id)->firstOrFail();
@@ -107,9 +99,7 @@ public function index(Request $request)
             ->with('success', 'Patient updated successfully.');
     }
 
-    /**
-     * DELETE PATIENT
-     */
+    /*DELETE PATIENT*/
     public function destroy($id)
     {
         $patient = Patient::findOrFail($id);

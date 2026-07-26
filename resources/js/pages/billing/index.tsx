@@ -6,7 +6,7 @@ type Appointment = {
   appointment_id: number;
   patient_id?: number | string | null;
   patient_name?: string | null;
-  doctor_name?:  string | null;
+  doctor_name?: string | null;
   appointment_date?: string | null;
   appointment_reason?: string | null;
   total_amount?: number | string | null;
@@ -23,12 +23,12 @@ function formatCurrency(amount: number | string | null | undefined) {
 function getClaimStatusClasses(status: string | null | undefined) {
   switch (status) {
     case 'Billed':
-      return 'border-blue-500/30 bg-blue-500/10 text-blue-600 dark:text-blue-400';
+      return 'border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-500/30 dark:bg-blue-500/10 dark:text-blue-400';
     case 'Closed':
-      return 'border-green-500/30 bg-green-500/10 text-green-600 dark:text-green-400';
+      return 'border-green-200 bg-green-50 text-green-700 dark:border-green-500/30 dark:bg-green-500/10 dark:text-green-400';
     case 'Pending':
     default:
-      return 'border-yellow-500/30 bg-yellow-500/10 text-yellow-600 dark:text-yellow-400';
+      return 'border-yellow-200 bg-yellow-50 text-yellow-700 dark:border-yellow-500/30 dark:bg-yellow-500/10 dark:text-yellow-400';
   }
 }
 
@@ -58,34 +58,40 @@ export default function BillingIndex({
     <AppSidebarLayout breadcrumbs={[{ title: 'Billing', href: '/billing' }]}>
       <Head title="Billing" />
 
-      <div className="space-y-6 p-6 text-foreground">
+      <div className="space-y-6 bg-[#F8FAFC] p-6 text-slate-800 dark:bg-background dark:text-foreground">
+        {/* Page heading */}
         <div>
-          <h1 className="text-2xl font-semibold text-foreground">
+          <h1 className="text-2xl font-semibold text-slate-900 dark:text-foreground">
             Billing Module
           </h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-slate-500 dark:text-muted-foreground">
             Billing queue for completed and no-show appointments
           </p>
         </div>
 
+        {/* Date filters */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:gap-4">
           <div className="flex flex-col gap-2">
-            <label className="text-sm text-muted-foreground">From</label>
+            <label className="text-sm text-slate-500 dark:text-muted-foreground">
+              From
+            </label>
             <input
               type="date"
               value={fromDate}
               onChange={(e) => setFromDate(e.target.value)}
-              className="w-full rounded-md border border-border bg-background px-4 py-3 text-sm text-foreground outline-none"
+              className="w-full rounded-lg border border-blue-100 bg-white px-4 py-3 text-sm text-slate-800 outline-none transition focus:border-[#2563EB] focus:ring-2 focus:ring-blue-100 dark:border-border dark:bg-background dark:text-foreground"
             />
           </div>
 
           <div className="flex flex-col gap-2">
-            <label className="text-sm text-muted-foreground">To</label>
+            <label className="text-sm text-slate-500 dark:text-muted-foreground">
+              To
+            </label>
             <input
               type="date"
               value={toDate}
               onChange={(e) => setToDate(e.target.value)}
-              className="w-full rounded-md border border-border bg-background px-4 py-3 text-sm text-foreground outline-none"
+              className="w-full rounded-lg border border-blue-100 bg-white px-4 py-3 text-sm text-slate-800 outline-none transition focus:border-[#2563EB] focus:ring-2 focus:ring-blue-100 dark:border-border dark:bg-background dark:text-foreground"
             />
           </div>
 
@@ -104,14 +110,15 @@ export default function BillingIndex({
                 },
               );
             }}
-            className="h-[46px] rounded-md border border-border bg-background px-5 py-3 text-sm text-foreground transition hover:bg-accent"
+            className="h-[46px] rounded-lg bg-[#2563EB] px-5 py-3 text-sm font-medium text-white transition hover:bg-[#1D4ED8] dark:bg-primary dark:text-primary-foreground"
           >
             Filter
           </button>
         </div>
 
-        <div className="overflow-hidden rounded-lg border border-border bg-background">
-          <div className="grid grid-cols-12 bg-muted px-5 py-4 text-sm font-medium text-foreground">
+        {/* Billing table */}
+        <div className="overflow-hidden rounded-xl border border-blue-100 bg-white shadow-sm dark:border-border dark:bg-card">
+          <div className="grid grid-cols-12 bg-[#EAF5FF] px-5 py-4 text-sm font-medium text-slate-900 dark:bg-muted dark:text-foreground">
             <div className="col-span-1">Appointment ID</div>
             <div className="col-span-1">Patient ID</div>
             <div className="col-span-2">Patient Name</div>
@@ -124,19 +131,21 @@ export default function BillingIndex({
             <div className="col-span-1">Claim Status</div>
           </div>
 
-          <div className="divide-y divide-border">
+          <div className="divide-y divide-blue-100 dark:divide-border">
             {appointments.length ? (
               appointments.map((a) => (
                 <div
                   key={a.appointment_id}
-                  className="grid grid-cols-12 px-5 py-4 text-sm transition hover:bg-accent"
+                  className="grid grid-cols-12 px-5 py-4 text-sm transition hover:bg-[#EAF5FF] dark:hover:bg-accent"
                 >
                   <div className="col-span-1">{a.appointment_id}</div>
                   <div className="col-span-1">{a.patient_id ?? '-'}</div>
                   <div className="col-span-2">{a.patient_name ?? '-'}</div>
                   <div className="col-span-1">{a.doctor_name ?? '-'}</div>
                   <div className="col-span-2">{a.appointment_date ?? '-'}</div>
-                  <div className="col-span-1">{a.appointment_reason ?? '-'}</div>
+                  <div className="col-span-1">
+                    {a.appointment_reason ?? '-'}
+                  </div>
                   <div className="col-span-1">
                     {formatCurrency(a.total_amount)}
                   </div>
@@ -157,31 +166,32 @@ export default function BillingIndex({
                     </span>
                   </div>
 
+                  {/* Row actions */}
                   <div className="col-span-12 mt-4 flex flex-wrap gap-2">
                     <Link
                       href={`/billing/${a.appointment_id}/payment`}
-                      className="rounded-md border border-border bg-background px-3 py-1.5 text-xs text-foreground transition hover:bg-accent"
+                      className="rounded-lg border border-blue-100 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:bg-[#EAF5FF] hover:text-[#2563EB] dark:border-border dark:bg-background dark:text-foreground dark:hover:bg-accent"
                     >
                       Payment
                     </Link>
 
                     <Link
                       href={`/billing/${a.appointment_id}/bill`}
-                      className="rounded-md border border-border bg-background px-3 py-1.5 text-xs text-foreground transition hover:bg-accent"
+                      className="rounded-lg border border-blue-100 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:bg-[#EAF5FF] hover:text-[#2563EB] dark:border-border dark:bg-background dark:text-foreground dark:hover:bg-accent"
                     >
                       Bill
                     </Link>
 
                     <Link
                       href={`/billing/${a.appointment_id}/claim/clinicaldata`}
-                      className="rounded-md border border-border bg-background px-3 py-1.5 text-xs text-foreground transition hover:bg-accent"
+                      className="rounded-lg border border-blue-100 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:bg-[#EAF5FF] hover:text-[#2563EB] dark:border-border dark:bg-background dark:text-foreground dark:hover:bg-accent"
                     >
                       Add Clinical Data
                     </Link>
 
                     <Link
                       href={`/billing/${a.appointment_id}/edit`}
-                      className="rounded-md border border-border bg-background px-3 py-1.5 text-xs text-foreground transition hover:bg-accent"
+                      className="rounded-lg border border-blue-100 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:bg-[#EAF5FF] hover:text-[#2563EB] dark:border-border dark:bg-background dark:text-foreground dark:hover:bg-accent"
                     >
                       Edit
                     </Link>
@@ -189,7 +199,7 @@ export default function BillingIndex({
                 </div>
               ))
             ) : (
-              <div className="px-5 py-10 text-sm text-muted-foreground">
+              <div className="px-5 py-10 text-sm text-slate-500 dark:text-muted-foreground">
                 No billable appointments found.
               </div>
             )}

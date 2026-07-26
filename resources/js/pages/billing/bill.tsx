@@ -58,71 +58,98 @@ export default function BillShow({ bill }: { bill: Bill }) {
     >
       <Head title="Patient Bill" />
 
-      <div className="p-6">
+      <div className="bg-[#F8FAFC] p-6 dark:bg-background">
+        {/* Download action */}
         <div className="mx-auto mb-4 flex max-w-4xl justify-end">
           <a
             href={`/billing/${bill.appointment_id}/download`}
-            className="rounded-md border border-border bg-background px-4 py-2 text-sm text-foreground transition hover:bg-accent"
+            className="rounded-lg border border-blue-100 bg-white px-4 py-2 text-sm font-medium text-[#2563EB] transition hover:bg-[#EAF5FF] dark:border-border dark:bg-background dark:text-foreground dark:hover:bg-accent"
           >
             Download PDF
           </a>
         </div>
 
-        <div className="mx-auto max-w-4xl rounded-lg border border-border bg-background p-8 text-foreground">
+        {/* Patient bill */}
+        <div className="mx-auto max-w-4xl rounded-xl border border-blue-100 bg-white p-8 text-slate-800 shadow-sm dark:border-border dark:bg-card dark:text-foreground">
+          {/* Patient information */}
           <div className="mb-10 space-y-2 text-base">
             <p>
-              <span className="font-semibold">Patient Name:</span>{' '}
+              <span className="font-semibold text-slate-900 dark:text-foreground">
+                Patient Name:
+              </span>{' '}
               {bill.patient_name ?? '-'}
             </p>
+
             <p>
-              <span className="font-semibold">Age:</span> {bill.age ?? '-'}
+              <span className="font-semibold text-slate-900 dark:text-foreground">
+                Age:
+              </span>{' '}
+              {bill.age ?? '-'}
             </p>
+
             <p>
-              <span className="font-semibold">Doctor:</span>{' '}
+              <span className="font-semibold text-slate-900 dark:text-foreground">
+                Doctor:
+              </span>{' '}
               {bill.doctor_name ?? '-'}
             </p>
+
             <p>
-              <span className="font-semibold">Date:</span>{' '}
+              <span className="font-semibold text-slate-900 dark:text-foreground">
+                Date:
+              </span>{' '}
               {bill.date_of_service ?? '-'}
             </p>
           </div>
 
-          <div className="overflow-hidden rounded-md border border-border">
-            <div className="grid grid-cols-12 border-b border-border bg-muted px-5 py-3 font-semibold">
+          {/* Service charges */}
+          <div className="overflow-hidden rounded-xl border border-blue-100 dark:border-border">
+            <div className="grid grid-cols-12 border-b border-blue-100 bg-[#EAF5FF] px-5 py-3 font-semibold text-slate-900 dark:border-border dark:bg-muted dark:text-foreground">
               <div className="col-span-8">Service</div>
               <div className="col-span-4 text-right">Charge</div>
             </div>
 
-            <div className="divide-y divide-border">
+            <div className="divide-y divide-blue-100 dark:divide-border">
               {rows.length ? (
                 rows.map((row, index) => (
-                  <div key={index} className="grid grid-cols-12 px-5 py-3">
+                  <div
+                    key={index}
+                    className="grid grid-cols-12 px-5 py-3 transition hover:bg-[#EAF5FF] dark:hover:bg-accent"
+                  >
                     <div className="col-span-8">{row.service}</div>
+
                     <div className="col-span-4 text-right">
                       Rs {money(row.charge)}
                     </div>
                   </div>
                 ))
               ) : (
-                <div className="px-5 py-8 text-sm text-muted-foreground">
+                <div className="px-5 py-8 text-sm text-slate-500 dark:text-muted-foreground">
                   No services found.
                 </div>
               )}
             </div>
           </div>
 
+          {/* Bill summary */}
           <div className="mt-8 ml-auto max-w-sm space-y-3 text-base">
             <div className="flex justify-between">
-              <span className="font-semibold">Total Charge:</span>
+              <span className="font-semibold text-slate-900 dark:text-foreground">
+                Total Charge:
+              </span>
+
               <span>Rs {money(totalCharge)}</span>
             </div>
 
             <div className="flex justify-between">
-              <span className="font-semibold">Payment:</span>
+              <span className="font-semibold text-slate-900 dark:text-foreground">
+                Payment:
+              </span>
+
               <span>Rs {money(totalPayment)}</span>
             </div>
 
-            <div className="flex justify-between border-t border-border pt-3 text-lg font-semibold">
+            <div className="flex justify-between border-t border-blue-100 pt-3 text-lg font-semibold text-slate-900 dark:border-border dark:text-foreground">
               <span>Balance:</span>
               <span>Rs {money(balance)}</span>
             </div>

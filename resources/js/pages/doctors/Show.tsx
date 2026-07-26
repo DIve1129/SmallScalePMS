@@ -14,24 +14,21 @@ type Doctor = {
 };
 
 export default function Show({ doctor }: { doctor: Doctor }) {
-  const boxClass =
-    'w-full rounded-md border border-border bg-background px-4 py-3 text-foreground';
-
-  const labelClass = 'mb-2 block text-sm font-medium text-foreground';
-
   const buttonSecondary =
-    'rounded-md border border-border bg-background px-4 py-2 text-sm text-foreground transition hover:bg-accent';
+    'rounded-lg border border-blue-100 bg-white px-4 py-2 text-sm font-medium text-[#2563EB] transition hover:bg-[#EAF5FF] dark:border-border dark:bg-background dark:text-foreground dark:hover:bg-accent';
 
   const buttonPrimary =
-    'rounded-md bg-muted px-4 py-2 text-sm text-foreground transition hover:bg-accent';
+    'rounded-lg bg-[#2563EB] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#1D4ED8] dark:bg-primary dark:text-primary-foreground';
 
   return (
     <AppSidebarLayout breadcrumbs={[{ title: 'Doctors', href: '/doctors' }]}>
       <Head title="Doctor Details" />
 
-      <div className="p-6 text-foreground">
+      <div className="min-h-full bg-[#F8FAFC] p-6 text-slate-800 dark:bg-background dark:text-foreground">
+        <div className="mx-auto max-w-3xl">
+        {/* Page heading */}
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-2xl font-semibold text-foreground">
+          <h1 className="text-2xl font-semibold text-slate-900 dark:text-foreground">
             Doctor Details
           </h1>
 
@@ -49,7 +46,8 @@ export default function Show({ doctor }: { doctor: Doctor }) {
           </div>
         </div>
 
-        <div className="space-y-6 max-w-3xl">
+        {/* Doctor information */}
+        <div className="max-w-3xl space-y-6 rounded-xl border border-blue-100 bg-white p-6 shadow-sm dark:border-border dark:bg-card">
           <Field label="Doctor Code" value={doctor.doctor_code} />
           <Field label="First Name" value={doctor.first_name} />
           <Field label="Last Name" value={doctor.last_name} />
@@ -58,6 +56,7 @@ export default function Show({ doctor }: { doctor: Doctor }) {
           <Field label="Phone" value={doctor.phone} />
           <Field label="Email" value={doctor.email} />
           <Field label="Status" value={doctor.status ?? 'Active'} />
+        </div>
         </div>
       </div>
     </AppSidebarLayout>
@@ -73,10 +72,11 @@ function Field({
 }) {
   return (
     <div>
-      <label className="mb-2 block text-sm font-medium text-foreground">
+      <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-foreground">
         {label}
       </label>
-      <div className="w-full rounded-md border border-border bg-background px-4 py-3 text-foreground">
+
+      <div className="w-full rounded-lg border border-blue-100 bg-[#F8FAFC] px-4 py-3 text-slate-800 dark:border-border dark:bg-background dark:text-foreground">
         {value || '-'}
       </div>
     </div>
