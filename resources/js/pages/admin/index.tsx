@@ -61,6 +61,12 @@ export default function AdminIndex({
               Add User
             </Link>
           )}
+
+          {activeTab === 'chargeMaster' && (
+            <Link
+              href="/admin/charge-master/create" className={buttonPrimary}>
+              Add Charge
+            </Link>)}
         </div>
 
         <div className="flex gap-3">

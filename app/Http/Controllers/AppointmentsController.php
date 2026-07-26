@@ -122,7 +122,28 @@ class AppointmentsController extends Controller
             'scheduled_at' => ['required', 'date'],
             'status' => ['nullable', 'string', 'max:50'],
             'amount_1' => ['nullable', 'numeric', 'min:0'],
+            
         ]);
+
+        $doctorAlreadyBooked = Appointment::where(
+                'doctor_id',
+                $validated['doctor_id']
+            )
+                ->where(
+                    'scheduled_at',
+                    $validated['scheduled_at']
+                )
+                ->whereNotIn('status', ['Cancelled', 'No-show'])
+                ->exists();
+
+            if ($doctorAlreadyBooked) {
+                return back()
+                    ->withErrors([
+                        'scheduled_at' =>
+                            'This doctor already has an appointment scheduled at this date and time.',
+                    ])
+                    ->withInput();
+            }
 
         Appointment::create([
             'patient_id' => $validated['patient_id'],
@@ -213,6 +234,31 @@ class AppointmentsController extends Controller
             'status' => ['required', 'string', 'max:50'],
             'amount_1' => ['nullable', 'numeric', 'min:0'],
         ]);
+
+        $doctorAlreadyBooked = Appointment::where(
+                    'doctor_id',
+                    $validated['doctor_id']
+                )
+                    ->where(
+                        'scheduled_at',
+                        $validated['scheduled_at']
+                    )
+                    ->where(
+                        'appointment_id',
+                        '!=',
+                        $appointment->appointment_id
+                    )
+                    ->whereNotIn('status', ['Cancelled', 'No-show'])
+                    ->exists();
+
+                if ($doctorAlreadyBooked) {
+                    return back()
+                        ->withErrors([
+                            'scheduled_at' =>
+                                'This doctor already has an appointment scheduled at this date and time.',
+                        ])
+                        ->withInput();
+                }
 
         $appointment->update([
             'patient_id' => $validated['patient_id'],

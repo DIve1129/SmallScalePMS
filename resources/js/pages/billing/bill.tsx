@@ -1,5 +1,5 @@
 import AppSidebarLayout from '@/layouts/app/app-sidebar-layout';
-import { Head, Link } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
 
 type Bill = {
   appointment_id?: number | string | null;

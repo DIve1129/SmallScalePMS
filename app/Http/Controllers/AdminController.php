@@ -155,6 +155,45 @@ class AdminController extends Controller
             ->with('success', 'User deleted successfully.');
     }
 
+    public function createChargeMaster():Response{
+       return Inertia::render('admin/chargemastercreate');
+    }
+
+    public function storeChargeMaster(
+        Request $request
+    ): RedirectResponse{
+        $validated = $request->validate([
+                'service_code' => [
+                'required',
+                'string',
+                'max:50',
+                Rule::unique('billings', 'service_code'),
+                ],
+                'service_name' => [
+                    'required',
+                    'string',
+                    'max:255',
+                ],
+                'amount' => [
+                    'required',
+                    'numeric',
+                    'min:0',
+                ],
+                'status' => [
+                    'required',
+                    'in:Active,Inactive',
+                ],
+            ]);
+        Billing::create($validated);
+
+            return redirect()
+                ->route('admin.index')
+                ->with(
+                    'success',
+                    'Charge master record created successfully.'
+                );
+    }
+
     public function editChargeMaster(
         Billing $billing
     ): Response {

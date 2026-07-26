@@ -3,7 +3,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, CircleDollarSign, CircleUser, ClipboardPen, Folder, Handshake, HeartPulse, LayoutGrid, User, User2, Warehouse } from 'lucide-react';
+import { BookOpen, CircleDollarSign, CircleUser, ClipboardPen, Folder, HeartPulse, LayoutGrid, User2, Warehouse } from 'lucide-react';
 import AppLogo from './app-logo';
 import { route } from 'ziggy-js';
 import { usePage } from '@inertiajs/react';
@@ -105,18 +105,13 @@ export function AppSidebar() {
               ]
             : []),
 
-        ...((role === 'admin' || role === 'receptionist')
+        ...((role === 'admin' || role === 'receptionist' || role === 'billing')
             ? [
 
                   {
                       title: 'Patients',
                       href: '/patients',
                       icon: CircleUser,
-                  },
-                  {
-                      title: 'Appointments',
-                      href: '/appointments',
-                      icon: ClipboardPen,
                   },
               ]
             : []),
@@ -130,7 +125,14 @@ export function AppSidebar() {
                   },
               ]
             : []),
-
+        ...(role === 'admin' || role === 'receptionist'
+            ?  [            {
+                      title: 'Appointments',
+                      href: '/appointments',
+                      icon: ClipboardPen,
+                  },
+                ]
+            : []),
         ...((role === 'admin' || role === 'billing'|| role === 'doctor')
             ? [
                   {
