@@ -29,6 +29,27 @@ class InsuranceController extends Controller
         return Inertia::render('insurances/create');
     }
 
+    public function edit(Insurance $insurance)
+    {
+        return Inertia::render('insurances/edit', [
+            'insurance' => $insurance,
+        ]);
+    }
+    public function update(Request $request, Insurance $insurance)
+    {
+        $validated = $request->validate([
+            'insurance_name' => ['required', 'string', 'max:100'],
+            'insurance_address' => ['nullable', 'string', 'max:255'],
+            'phone' => ['required', 'string', 'max:20'],
+        ]);
+
+        $insurance->update($validated);
+
+        return redirect()
+            ->route('insurance.index')
+            ->with('success', 'Insurance updated successfully.');
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([

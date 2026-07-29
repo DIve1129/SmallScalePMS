@@ -42,9 +42,10 @@ export default function InsuranceIndex({
         <div className="overflow-hidden rounded-xl border border-blue-100 bg-white shadow-sm dark:border-border dark:bg-card">
           <div className="grid grid-cols-12 bg-[#EAF5FF] px-5 py-4 text-sm font-medium text-slate-900 dark:bg-muted dark:text-foreground">
             <div className="col-span-2">Code</div>
-            <div className="col-span-4">Insurance Name</div>
+            <div className="col-span-2">Insurance Name</div>
             <div className="col-span-4">Address</div>
             <div className="col-span-2">Phone</div>
+            <div className="col-span-2">Action</div>
           </div>
 
           <div className="divide-y divide-blue-100 dark:divide-border">
@@ -58,7 +59,7 @@ export default function InsuranceIndex({
                     {i.insurance_code}
                   </div>
 
-                  <div className="col-span-4">
+                  <div className="col-span-2">
                     {i.insurance_name}
                   </div>
 
@@ -68,6 +69,14 @@ export default function InsuranceIndex({
 
                   <div className="col-span-2">
                     {i.phone}
+                  </div>
+                  <div className="col-span-2">
+                    <Link
+                      href={route('insurance.edit', i.insurance_code)}
+                      className="inline-flex items-center rounded-lg border border-blue-200 bg-white px-3 py-2 text-sm font-medium text-[#2563EB] transition hover:bg-[#EAF5FF] dark:border-border dark:bg-background dark:text-foreground dark:hover:bg-accent"
+                  >
+                      Edit
+                  </Link>
                   </div>
                 </div>
               ))

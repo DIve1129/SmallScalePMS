@@ -298,6 +298,16 @@ Route::middleware([
         [InsuranceController::class, 'create']
     )->name('insurance.create');
 
+        Route::get(
+            '/insurance/{insurance}/edit',
+            [InsuranceController::class, 'edit']
+        )->name('insurance.edit');
+
+        Route::put(
+            '/insurance/{insurance}',
+            [InsuranceController::class, 'update']
+        )->name('insurance.update');
+
     Route::post(
         '/insurance',
         [InsuranceController::class, 'store']

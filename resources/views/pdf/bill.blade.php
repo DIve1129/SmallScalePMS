@@ -86,7 +86,7 @@
 <body>
 
     <div class="invoice-header">
-        <h1 class="hospital-title">Hospital Management System</h1>
+        <h1 class="hospital-title">Practice Management System</h1>
         <div class="invoice-label">Patient Invoice</div>
     </div>
 
