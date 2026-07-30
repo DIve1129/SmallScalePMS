@@ -152,6 +152,11 @@ Route::middleware([
     )->name('reports.outstanding');
 
     Route::get(
+        '/reports/patientbilling',
+        [ReportController::class, 'patientBilling']
+    )->name('reports.patientbilling');
+
+    Route::get(
         '/reports/appointments',
         [ReportController::class, 'appointments']
     )->name('reports.appointments');
@@ -286,7 +291,7 @@ Route::middleware([
 Route::middleware([
     'auth',
     'verified',
-    'role:admin',
+    'role:admin,receptionist',
 ])->group(function () {
     Route::get(
         '/insurance',

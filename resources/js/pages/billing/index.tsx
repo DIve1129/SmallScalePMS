@@ -17,15 +17,28 @@ type Appointment = {
 
 function formatCurrency(amount: number | string | null | undefined) {
   const value = Number(amount ?? 0);
+
   return `Rs ${value.toFixed(2)}`;
+}
+
+function getLocalDate() {
+  const date = new Date();
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+
+  return `${year}-${month}-${day}`;
 }
 
 function getClaimStatusClasses(status: string | null | undefined) {
   switch (status) {
     case 'Billed':
       return 'border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-500/30 dark:bg-blue-500/10 dark:text-blue-400';
+
     case 'Closed':
       return 'border-green-200 bg-green-50 text-green-700 dark:border-green-500/30 dark:bg-green-500/10 dark:text-green-400';
+
     case 'Pending':
     default:
       return 'border-yellow-200 bg-yellow-50 text-yellow-700 dark:border-yellow-500/30 dark:bg-yellow-500/10 dark:text-yellow-400';
@@ -41,21 +54,28 @@ export default function BillingIndex({
   from?: string;
   to?: string;
 }) {
-  const today = new Date().toISOString().slice(0, 10);
+  const today = getLocalDate();
 
   const [fromDate, setFromDate] = useState(from ?? today);
   const [toDate, setToDate] = useState(to ?? today);
 
   useEffect(() => {
-    setFromDate(from ?? today);
-  }, [from, today]);
+    setFromDate(from ?? getLocalDate());
+  }, [from]);
 
   useEffect(() => {
-    setToDate(to ?? today);
-  }, [to, today]);
+    setToDate(to ?? getLocalDate());
+  }, [to]);
 
   return (
-    <AppSidebarLayout breadcrumbs={[{ title: 'Billing', href: '/billing' }]}>
+    <AppSidebarLayout
+      breadcrumbs={[
+        {
+          title: 'Billing',
+          href: '/billing',
+        },
+      ]}
+    >
       <Head title="Billing" />
 
       <div className="space-y-6 bg-[#F8FAFC] p-6 text-slate-800 dark:bg-background dark:text-foreground">
@@ -64,6 +84,7 @@ export default function BillingIndex({
           <h1 className="text-2xl font-semibold text-slate-900 dark:text-foreground">
             Billing Module
           </h1>
+
           <p className="text-sm text-slate-500 dark:text-muted-foreground">
             Billing queue for completed and no-show appointments
           </p>
@@ -72,25 +93,39 @@ export default function BillingIndex({
         {/* Date filters */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:gap-4">
           <div className="flex flex-col gap-2">
-            <label className="text-sm text-slate-500 dark:text-muted-foreground">
+            <label
+              htmlFor="billing-from-date"
+              className="text-sm text-slate-500 dark:text-muted-foreground"
+            >
               From
             </label>
+
             <input
+              id="billing-from-date"
               type="date"
               value={fromDate}
-              onChange={(e) => setFromDate(e.target.value)}
+              onChange={(event) => {
+                setFromDate(event.target.value);
+              }}
               className="w-full rounded-lg border border-blue-100 bg-white px-4 py-3 text-sm text-slate-800 outline-none transition focus:border-[#2563EB] focus:ring-2 focus:ring-blue-100 dark:border-border dark:bg-background dark:text-foreground"
             />
           </div>
 
           <div className="flex flex-col gap-2">
-            <label className="text-sm text-slate-500 dark:text-muted-foreground">
+            <label
+              htmlFor="billing-to-date"
+              className="text-sm text-slate-500 dark:text-muted-foreground"
+            >
               To
             </label>
+
             <input
+              id="billing-to-date"
               type="date"
               value={toDate}
-              onChange={(e) => setToDate(e.target.value)}
+              onChange={(event) => {
+                setToDate(event.target.value);
+              }}
               className="w-full rounded-lg border border-blue-100 bg-white px-4 py-3 text-sm text-slate-800 outline-none transition focus:border-[#2563EB] focus:ring-2 focus:ring-blue-100 dark:border-border dark:bg-background dark:text-foreground"
             />
           </div>
@@ -132,65 +167,83 @@ export default function BillingIndex({
           </div>
 
           <div className="divide-y divide-blue-100 dark:divide-border">
-            {appointments.length ? (
-              appointments.map((a) => (
+            {appointments.length > 0 ? (
+              appointments.map((appointment) => (
                 <div
-                  key={a.appointment_id}
+                  key={appointment.appointment_id}
                   className="grid grid-cols-12 px-5 py-4 text-sm transition hover:bg-[#EAF5FF] dark:hover:bg-accent"
                 >
-                  <div className="col-span-1">{a.appointment_id}</div>
-                  <div className="col-span-1">{a.patient_id ?? '-'}</div>
-                  <div className="col-span-2">{a.patient_name ?? '-'}</div>
-                  <div className="col-span-1">{a.doctor_name ?? '-'}</div>
-                  <div className="col-span-2">{a.appointment_date ?? '-'}</div>
                   <div className="col-span-1">
-                    {a.appointment_reason ?? '-'}
+                    {appointment.appointment_id}
                   </div>
+
                   <div className="col-span-1">
-                    {formatCurrency(a.total_amount)}
+                    {appointment.patient_id ?? '-'}
                   </div>
+
+                  <div className="col-span-2">
+                    {appointment.patient_name ?? '-'}
+                  </div>
+
+                  <div className="col-span-1">
+                    {appointment.doctor_name ?? '-'}
+                  </div>
+
+                  <div className="col-span-2">
+                    {appointment.appointment_date ?? '-'}
+                  </div>
+
+                  <div className="col-span-1">
+                    {appointment.appointment_reason ?? '-'}
+                  </div>
+
+                  <div className="col-span-1">
+                    {formatCurrency(appointment.total_amount)}
+                  </div>
+
                   <div className="col-span-1 font-medium">
-                    {formatCurrency(a.balance)}
+                    {formatCurrency(appointment.balance)}
                   </div>
+
                   <div className="col-span-1">
-                    {a.responsibility ?? 'Patient'}
+                    {appointment.responsibility ?? 'Patient'}
                   </div>
 
                   <div className="col-span-1">
                     <span
                       className={`inline-flex rounded-md border px-2 py-1 text-xs font-medium ${getClaimStatusClasses(
-                        a.claim_status,
+                        appointment.claim_status,
                       )}`}
                     >
-                      {a.claim_status ?? 'Pending'}
+                      {appointment.claim_status ?? 'Pending'}
                     </span>
                   </div>
 
                   {/* Row actions */}
                   <div className="col-span-12 mt-4 flex flex-wrap gap-2">
                     <Link
-                      href={`/billing/${a.appointment_id}/payment`}
+                      href={`/billing/${appointment.appointment_id}/payment`}
                       className="rounded-lg border border-blue-100 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:bg-[#EAF5FF] hover:text-[#2563EB] dark:border-border dark:bg-background dark:text-foreground dark:hover:bg-accent"
                     >
                       Payment
                     </Link>
 
                     <Link
-                      href={`/billing/${a.appointment_id}/bill`}
+                      href={`/billing/${appointment.appointment_id}/bill`}
                       className="rounded-lg border border-blue-100 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:bg-[#EAF5FF] hover:text-[#2563EB] dark:border-border dark:bg-background dark:text-foreground dark:hover:bg-accent"
                     >
                       Bill
                     </Link>
 
                     <Link
-                      href={`/billing/${a.appointment_id}/claim/clinicaldata`}
+                      href={`/billing/${appointment.appointment_id}/claim/clinicaldata`}
                       className="rounded-lg border border-blue-100 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:bg-[#EAF5FF] hover:text-[#2563EB] dark:border-border dark:bg-background dark:text-foreground dark:hover:bg-accent"
                     >
                       Add Clinical Data
                     </Link>
 
                     <Link
-                      href={`/billing/${a.appointment_id}/edit`}
+                      href={`/billing/${appointment.appointment_id}/edit`}
                       className="rounded-lg border border-blue-100 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:bg-[#EAF5FF] hover:text-[#2563EB] dark:border-border dark:bg-background dark:text-foreground dark:hover:bg-accent"
                     >
                       Edit

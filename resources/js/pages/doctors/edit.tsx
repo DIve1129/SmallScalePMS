@@ -4,7 +4,7 @@ import { FormEvent } from 'react';
 
 type Doctor = {
   doctor_id: number;
-  doctor_code?: string | null;
+  //doctor_code?: string | null;
   first_name: string;
   last_name: string;
   speciality?: string | null;
@@ -16,7 +16,7 @@ type Doctor = {
 
 export default function Edit({ doctor }: { doctor: Doctor }) {
   const { data, setData, put, processing, errors } = useForm({
-    doctor_code: doctor.doctor_code ?? '',
+    //doctor_code: doctor.doctor_code ?? '',
     first_name: doctor.first_name ?? '',
     last_name: doctor.last_name ?? '',
     speciality: doctor.speciality ?? '',
@@ -69,13 +69,7 @@ export default function Edit({ doctor }: { doctor: Doctor }) {
           onSubmit={submit}
           className="max-w-3xl space-y-6 rounded-xl border border-blue-100 bg-white p-6 shadow-sm dark:border-border dark:bg-card"
         >
-          <Field
-            label="Doctor Code"
-            value={data.doctor_code}
-            onChange={(v) => setData('doctor_code', v)}
-            error={errors.doctor_code}
-          />
-
+          
           <Field
             label="First Name"
             value={data.first_name}

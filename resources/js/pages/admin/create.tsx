@@ -142,10 +142,9 @@ export default function CreateUser() {
                                 className={inputClass}
                             >
                                 <option value="admin">Admin</option>
-                                <option value="receptionist">
-                                    Receptionist
-                                </option>
+                                <option value="receptionist">Receptionist</option>
                                 <option value="billing">Billing</option>
+                                <option value="doctor">Doctor</option>
                             </select>
 
                             {errors.role && (

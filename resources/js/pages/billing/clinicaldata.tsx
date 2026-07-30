@@ -8,6 +8,15 @@ type AppointmentInfo = {
   doctor_name: string;
   appointment_date: string;
   appointment_reason: string;
+  blood_pressure?: string;
+  pulse_rate?: string;
+  temperature_c?: string;
+  weight_kg?: string;
+
+  clinical_examination?: string;
+  diagnosis?: string;
+  prescribed_medication?: string;
+  plan_of_management?: string;
 };
 
 export default function ClinicalDataCreate({
@@ -17,18 +26,16 @@ export default function ClinicalDataCreate({
 }) {
   // Initialize Inertia form state metrics matching medical record fields
   const { data, setData, post, processing, errors } = useForm({
-    // Patient Vitals Section
-    blood_pressure: '',
-    pulse_rate: '',
-    temperature_c: '',
-    weight_kg: '',
+    blood_pressure: appointment.blood_pressure ?? '',
+    pulse_rate: appointment.pulse_rate ?? '',
+    temperature_c: appointment.temperature_c ?? '',
+    weight_kg: appointment.weight_kg ?? '',
 
-    // Clinical Charting Notes Section
-    chief_complaint: appointment.appointment_reason || '',
-    clinical_examination: '',
-    diagnosis: '',
-    plan_of_management: '',
-    prescribed_medication: '',
+    chief_complaint: appointment.appointment_reason ?? '',
+    clinical_examination: appointment.clinical_examination ?? '',
+    diagnosis: appointment.diagnosis ?? '',
+    prescribed_medication: appointment.prescribed_medication ?? '',
+    plan_of_management: appointment.plan_of_management ?? '',
   });
 
   function submit(e: React.FormEvent) {

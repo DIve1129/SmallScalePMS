@@ -1,5 +1,5 @@
 import AppSidebarLayout from '@/layouts/app/app-sidebar-layout';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 
 /* Defines the structure of an individual recent activity record. */
 type ActivityItem = {
@@ -8,6 +8,21 @@ type ActivityItem = {
     doctor: string;
     status: string;
     time: string;
+};
+
+/* Defines the authenticated user data shared by Laravel and Inertia. */
+type AuthUser = {
+    id: number;
+    name: string;
+    email: string;
+    role: string;
+};
+
+/* Defines the shared Inertia authentication properties. */
+type SharedPageProps = {
+    auth: {
+        user: AuthUser | null;
+    };
 };
 
 /* Defines the data received by the dashboard page from the controller. */
@@ -25,6 +40,16 @@ export default function Dashboard({
     stats,
     recent_activity = [],
 }: DashboardProps) {
+    /* Retrieves the authenticated user information shared by Inertia. */
+    const { auth } = usePage().props as unknown as SharedPageProps;
+
+    /* Determines whether the current user is a receptionist. */
+    const isReceptionist = auth?.user?.role === 'receptionist';
+    /* Determines whether the current user is a billing. */
+    const isBilling = auth?.user?.role === 'billing';
+    /* Determines whether the current user is a doctor. */
+    const isDoctor = auth?.user?.role === 'doctor';
+
     /* Uses zero as the default when dashboard statistics are unavailable. */
     const totalPatients = stats?.total_patients ?? 0;
     const todayRevenue = stats?.today_revenue ?? 0;
@@ -126,7 +151,7 @@ export default function Dashboard({
                     </div>
                 </div>
 
-                {/* Displays the dashboard shortcuts, activity log, and reports. */}
+                {/* Displays dashboard shortcuts, activity log, and reports. */}
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
                     {/* Provides quick access to frequently used system pages. */}
                     <div className="space-y-4 rounded-xl border border-blue-100 bg-white p-6 shadow-sm lg:col-span-5 dark:border-border dark:bg-card">
@@ -142,6 +167,7 @@ export default function Dashboard({
 
                         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                             {/* Opens the appointment creation page. */}
+                            {!isBilling && !isDoctor && (
                             <Link
                                 href="/appointments/create"
                                 className="group flex min-h-[110px] flex-col justify-between rounded-xl border border-blue-100 bg-blue-50/60 p-4 transition duration-200 hover:-translate-y-0.5 hover:border-blue-200 hover:bg-[#EAF5FF] hover:shadow-sm dark:border-border dark:bg-muted dark:hover:border-border dark:hover:bg-accent"
@@ -160,8 +186,9 @@ export default function Dashboard({
                                     New Appointment
                                 </span>
                             </Link>
-
+                            )}
                             {/* Opens the patient registration page. */}
+                            {!isBilling && !isDoctor && (
                             <Link
                                 href="/patients/create"
                                 className="group flex min-h-[110px] flex-col justify-between rounded-xl border border-blue-100 bg-blue-50/60 p-4 transition duration-200 hover:-translate-y-0.5 hover:border-blue-200 hover:bg-[#EAF5FF] hover:shadow-sm dark:border-border dark:bg-muted dark:hover:border-border dark:hover:bg-accent"
@@ -180,49 +207,54 @@ export default function Dashboard({
                                     Registration Form
                                 </span>
                             </Link>
+                            )}
+                            {/* Hides the billing shortcut from receptionist users. */}
+                            {!isReceptionist && (
+                                <Link
+                                    href="/billing"
+                                    className="group flex min-h-[110px] flex-col justify-between rounded-xl border border-blue-100 bg-blue-50/60 p-4 transition duration-200 hover:-translate-y-0.5 hover:border-blue-200 hover:bg-[#EAF5FF] hover:shadow-sm dark:border-border dark:bg-muted dark:hover:border-border dark:hover:bg-accent"
+                                >
+                                    <div className="flex items-center justify-between">
+                                        <span className="font-semibold text-slate-800 dark:text-foreground">
+                                            Open Billing
+                                        </span>
 
-                            {/* Opens the billing management page. */}
-                            <Link
-                                href="/billing"
-                                className="group flex min-h-[110px] flex-col justify-between rounded-xl border border-blue-100 bg-blue-50/60 p-4 transition duration-200 hover:-translate-y-0.5 hover:border-blue-200 hover:bg-[#EAF5FF] hover:shadow-sm dark:border-border dark:bg-muted dark:hover:border-border dark:hover:bg-accent"
-                            >
-                                <div className="flex items-center justify-between">
-                                    <span className="font-semibold text-slate-800 dark:text-foreground">
-                                        Open Billing
+                                        <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white text-lg shadow-sm dark:bg-background">
+                                            💳
+                                        </span>
+                                    </div>
+
+                                    <span className="mt-3 text-xs font-medium text-slate-500 group-hover:text-[#2563EB] dark:text-muted-foreground dark:group-hover:text-accent-foreground">
+                                        Process Vouchers
                                     </span>
+                                </Link>
+                            )}
 
-                                    <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white text-lg shadow-sm dark:bg-background">
-                                        💳
+                            {/* Hides the insurance shortcut from doctor users. */}
+                            {!isDoctor && (
+                                <Link
+                                    href="/insurance"
+                                    className="group flex min-h-[110px] flex-col justify-between rounded-xl border border-blue-100 bg-blue-50/60 p-4 transition duration-200 hover:-translate-y-0.5 hover:border-blue-200 hover:bg-[#EAF5FF] hover:shadow-sm dark:border-border dark:bg-muted dark:hover:border-border dark:hover:bg-accent"
+                                >
+                                    <div className="flex items-center justify-between">
+                                        <span className="font-semibold text-slate-800 dark:text-foreground">
+                                            Carriers
+                                        </span>
+
+                                        <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white text-lg shadow-sm dark:bg-background">
+                                            🛡️
+                                        </span>
+                                    </div>
+
+                                    <span className="mt-3 text-xs font-medium text-slate-500 group-hover:text-[#2563EB] dark:text-muted-foreground dark:group-hover:text-accent-foreground">
+                                        Insurance Panel
                                     </span>
-                                </div>
-
-                                <span className="mt-3 text-xs font-medium text-slate-500 group-hover:text-[#2563EB] dark:text-muted-foreground dark:group-hover:text-accent-foreground">
-                                    Process Vouchers
-                                </span>
-                            </Link>
-
-                            {/* Opens the insurance carrier management page. */}
-                            <Link
-                                href="/insurance"
-                                className="group flex min-h-[110px] flex-col justify-between rounded-xl border border-blue-100 bg-blue-50/60 p-4 transition duration-200 hover:-translate-y-0.5 hover:border-blue-200 hover:bg-[#EAF5FF] hover:shadow-sm dark:border-border dark:bg-muted dark:hover:border-border dark:hover:bg-accent"
-                            >
-                                <div className="flex items-center justify-between">
-                                    <span className="font-semibold text-slate-800 dark:text-foreground">
-                                        Carriers
-                                    </span>
-
-                                    <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white text-lg shadow-sm dark:bg-background">
-                                        🛡️
-                                    </span>
-                                </div>
-
-                                <span className="mt-3 text-xs font-medium text-slate-500 group-hover:text-[#2563EB] dark:text-muted-foreground dark:group-hover:text-accent-foreground">
-                                    Insurance Panel
-                                </span>
-                            </Link>
+                                </Link>
+                            )}
                         </div>
                     </div>
-                                        {/* Displays the most recent patient encounter activity. */}
+
+                    {/* Displays the most recent patient encounter activity. */}
                     <div className="rounded-xl border border-blue-100 bg-white p-6 shadow-sm lg:col-span-7 dark:border-border dark:bg-card">
                         <div className="mb-4 border-b border-blue-100 pb-3 dark:border-border">
                             <h2 className="text-sm font-semibold tracking-wider text-slate-700 uppercase dark:text-foreground">
@@ -270,110 +302,144 @@ export default function Dashboard({
                         </div>
                     </div>
 
-                    {/* Provides access to the clinic's management reports. */}
-                    <div className="rounded-xl border border-blue-100 bg-white p-6 shadow-sm lg:col-span-12 dark:border-border dark:bg-card">
-                        <div className="mb-5 border-b border-blue-100 pb-3 dark:border-border">
-                            <h2 className="text-sm font-semibold tracking-wider text-slate-700 uppercase dark:text-foreground">
-                                Management Reports
-                            </h2>
+                    {/* Hides the complete report section from receptionist users. */}
+                    {!isReceptionist && (
+                        <div className="rounded-xl border border-blue-100 bg-white p-6 shadow-sm lg:col-span-12 dark:border-border dark:bg-card">
+                            <div className="mb-5 border-b border-blue-100 pb-3 dark:border-border">
+                                <h2 className="text-sm font-semibold tracking-wider text-slate-700 uppercase dark:text-foreground">
+                                    Management Reports
+                                </h2>
 
-                            <p className="mt-1 text-sm text-slate-500 dark:text-muted-foreground">
-                                Generate operational and financial reports for
-                                the clinic.
-                            </p>
+                                <p className="mt-1 text-sm text-slate-500 dark:text-muted-foreground">
+                                    Generate operational and financial reports
+                                    for the clinic.
+                                </p>
+                            </div>
+
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+                                {/* Opens the revenue collection report. */}
+                                <Link
+                                    href="/reports/revenue"
+                                    className="group flex min-h-[180px] flex-col justify-between rounded-xl border border-blue-100 border-l-4 border-l-[#2563EB] bg-white p-5 transition duration-200 hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-md dark:border-border dark:border-l-blue-500 dark:bg-background dark:hover:border-border"
+                                >
+                                    <div>
+                                        <div className="flex items-start justify-between gap-4">
+                                            <div>
+                                                <span className="inline-flex rounded-full bg-blue-50 px-2.5 py-1 text-[10px] font-semibold tracking-wider text-[#2563EB] uppercase dark:bg-muted dark:text-blue-400">
+                                                    Financial
+                                                </span>
+
+                                                <h3 className="mt-3 font-semibold text-slate-900 dark:text-foreground">
+                                                    Revenue Collection Report
+                                                </h3>
+                                            </div>
+                                        </div>
+
+                                        <p className="mt-3 text-sm leading-6 text-slate-500 dark:text-muted-foreground">
+                                            View payments collected for
+                                            individual services within a selected
+                                            date-of-service range.
+                                        </p>
+                                    </div>
+
+                                    <div className="mt-5 text-sm font-semibold text-[#2563EB] transition group-hover:translate-x-1 dark:text-blue-400">
+                                        View Report →
+                                    </div>
+                                </Link>
+
+                                {/* Opens the outstanding patient balance report. */}
+                                <Link
+                                    href="/reports/outstanding"
+                                    className="group flex min-h-[180px] flex-col justify-between rounded-xl border border-blue-100 border-l-4 border-l-amber-500 bg-white p-5 transition duration-200 hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-md dark:border-border dark:border-l-amber-500 dark:bg-background dark:hover:border-border"
+                                >
+                                    <div>
+                                        <div className="flex items-start justify-between gap-4">
+                                            <div>
+                                                <span className="inline-flex rounded-full bg-amber-50 px-2.5 py-1 text-[10px] font-semibold tracking-wider text-amber-700 uppercase dark:bg-muted dark:text-amber-400">
+                                                    Receivables
+                                                </span>
+
+                                                <h3 className="mt-3 font-semibold text-slate-900 dark:text-foreground">
+                                                    Outstanding Balance Report
+                                                </h3>
+                                            </div>
+                                        </div>
+
+                                        <p className="mt-3 text-sm leading-6 text-slate-500 dark:text-muted-foreground">
+                                            View unpaid and partially paid
+                                            service balances within a selected
+                                            date-of-service range.
+                                        </p>
+                                    </div>
+
+                                    <div className="mt-5 text-sm font-semibold text-[#2563EB] transition group-hover:translate-x-1 dark:text-blue-400">
+                                        View Report →
+                                    </div>
+                                </Link>
+
+                                {/* Opens the appointment summary report. */}
+                                <Link
+                                    href="/reports/appointments"
+                                    className="group flex min-h-[180px] flex-col justify-between rounded-xl border border-blue-100 border-l-4 border-l-emerald-500 bg-white p-5 transition duration-200 hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-md dark:border-border dark:border-l-emerald-500 dark:bg-background dark:hover:border-border"
+                                >
+                                    <div>
+                                        <div className="flex items-start justify-between gap-4">
+                                            <div>
+                                                <span className="inline-flex rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-semibold tracking-wider text-emerald-700 uppercase dark:bg-muted dark:text-emerald-400">
+                                                    Operations
+                                                </span>
+
+                                                <h3 className="mt-3 font-semibold text-slate-900 dark:text-foreground">
+                                                    Appointment Summary Report
+                                                </h3>
+                                            </div>
+                                        </div>
+
+                                        <p className="mt-3 text-sm leading-6 text-slate-500 dark:text-muted-foreground">
+                                            Review appointment volumes and
+                                            statuses within a selected
+                                            date-of-service range.
+                                        </p>
+                                    </div>
+
+                                    <div className="mt-5 text-sm font-semibold text-[#2563EB] transition group-hover:translate-x-1 dark:text-blue-400">
+                                        View Report →
+                                    </div>
+                                </Link>
+
+                                {/* Opens the patient billing summary report. */}
+                                <Link
+                                    href="/reports/patientbilling"
+                                    className="group flex min-h-[180px] flex-col justify-between rounded-xl border border-blue-100 border-l-4 border-l-violet-500 bg-white p-5 transition duration-200 hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-md dark:border-border dark:border-l-violet-500 dark:bg-background dark:hover:border-border"
+                                >
+                                    <div>
+                                        <div className="flex items-start justify-between gap-4">
+                                            <div>
+                                                <span className="inline-flex rounded-full bg-violet-50 px-2.5 py-1 text-[10px] font-semibold tracking-wider text-violet-700 uppercase dark:bg-muted dark:text-violet-400">
+                                                    Patient Finance
+                                                </span>
+
+                                                <h3 className="mt-3 font-semibold text-slate-900 dark:text-foreground">
+                                                    Patient Billing Summary
+                                                    Report
+                                                </h3>
+                                            </div>
+                                        </div>
+
+                                        <p className="mt-3 text-sm leading-6 text-slate-500 dark:text-muted-foreground">
+                                            Select a patient and review their
+                                            consolidated charges, payments, and
+                                            outstanding balances.
+                                        </p>
+                                    </div>
+
+                                    <div className="mt-5 text-sm font-semibold text-[#2563EB] transition group-hover:translate-x-1 dark:text-blue-400">
+                                        View Report →
+                                    </div>
+                                </Link>
+                            </div>
                         </div>
-
-                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                            {/* Opens the revenue collection report. */}
-                            <Link
-                                href="/reports/revenue"
-                                className="group flex min-h-[180px] flex-col justify-between rounded-xl border border-blue-100 border-l-4 border-l-[#2563EB] bg-white p-5 transition duration-200 hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-md dark:border-border dark:border-l-blue-500 dark:bg-background dark:hover:border-border"
-                            >
-                                <div>
-                                    <div className="flex items-start justify-between gap-4">
-                                        <div>
-                                            <span className="inline-flex rounded-full bg-blue-50 px-2.5 py-1 text-[10px] font-semibold tracking-wider text-[#2563EB] uppercase dark:bg-muted dark:text-blue-400">
-                                                Financial
-                                            </span>
-
-                                            <h3 className="mt-3 font-semibold text-slate-900 dark:text-foreground">
-                                                Revenue Collection Report
-                                            </h3>
-                                        </div>
-                                    </div>
-
-                                    <p className="mt-3 text-sm leading-6 text-slate-500 dark:text-muted-foreground">
-                                        View payments collected for individual
-                                        services within a selected
-                                        date-of-service range.
-                                    </p>
-                                </div>
-
-                                <div className="mt-5 text-sm font-semibold text-[#2563EB] transition group-hover:translate-x-1 dark:text-blue-400">
-                                    View Report →
-                                </div>
-                            </Link>
-
-                            {/* Opens the outstanding patient balance report. */}
-                            <Link
-                                href="/reports/outstanding"
-                                className="group flex min-h-[180px] flex-col justify-between rounded-xl border border-blue-100 border-l-4 border-l-amber-500 bg-white p-5 transition duration-200 hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-md dark:border-border dark:border-l-amber-500 dark:bg-background dark:hover:border-border"
-                            >
-                                <div>
-                                    <div className="flex items-start justify-between gap-4">
-                                        <div>
-                                            <span className="inline-flex rounded-full bg-amber-50 px-2.5 py-1 text-[10px] font-semibold tracking-wider text-amber-700 uppercase dark:bg-muted dark:text-amber-400">
-                                                Receivables
-                                            </span>
-
-                                            <h3 className="mt-3 font-semibold text-slate-900 dark:text-foreground">
-                                                Outstanding Balance Report
-                                            </h3>
-                                        </div>
-                                    </div>
-
-                                    <p className="mt-3 text-sm leading-6 text-slate-500 dark:text-muted-foreground">
-                                        View unpaid and partially paid service
-                                        balances within a selected
-                                        date-of-service range.
-                                    </p>
-                                </div>
-
-                                <div className="mt-5 text-sm font-semibold text-[#2563EB] transition group-hover:translate-x-1 dark:text-blue-400">
-                                    View Report →
-                                </div>
-                            </Link>
-
-                            {/* Opens the appointment summary report. */}
-                            <Link
-                                href="/reports/appointments"
-                                className="group flex min-h-[180px] flex-col justify-between rounded-xl border border-blue-100 border-l-4 border-l-emerald-500 bg-white p-5 transition duration-200 hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-md dark:border-border dark:border-l-emerald-500 dark:bg-background dark:hover:border-border"
-                            >
-                                <div>
-                                    <div className="flex items-start justify-between gap-4">
-                                        <div>
-                                            <span className="inline-flex rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-semibold tracking-wider text-emerald-700 uppercase dark:bg-muted dark:text-emerald-400">
-                                                Operations
-                                            </span>
-
-                                            <h3 className="mt-3 font-semibold text-slate-900 dark:text-foreground">
-                                                Appointment Summary Report
-                                            </h3>
-                                        </div>
-                                    </div>
-
-                                    <p className="mt-3 text-sm leading-6 text-slate-500 dark:text-muted-foreground">
-                                        Review appointment volumes and statuses
-                                        within a selected date-of-service range.
-                                    </p>
-                                </div>
-
-                                <div className="mt-5 text-sm font-semibold text-[#2563EB] transition group-hover:translate-x-1 dark:text-blue-400">
-                                    View Report →
-                                </div>
-                            </Link>
-                        </div>
-                    </div>
+                    )}
                 </div>
             </div>
         </AppSidebarLayout>

@@ -13,6 +13,23 @@ type Appointment = {
     status: string;
 };
 
+/**
+ * Returns the browser's current local date in YYYY-MM-DD format.
+ *
+ * This avoids the UTC conversion performed by toISOString(),
+ * which can return the previous date shortly after midnight
+ * in Sri Lanka.
+ */
+function getLocalDate(): string {
+    const date = new Date();
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+}
+
 /* Displays appointments and filters them by the selected date range. */
 export default function AppointmentsIndex({
     appointments = [],
@@ -23,19 +40,19 @@ export default function AppointmentsIndex({
     from?: string;
     to?: string;
 }) {
-    const today = new Date().toISOString().slice(0, 10);
+    const today = getLocalDate();
 
     const [fromDate, setFromDate] = useState(from ?? today);
     const [toDate, setToDate] = useState(to ?? today);
 
     /* Keeps the local date fields aligned with the returned filters. */
     useEffect(() => {
-        setFromDate(from ?? today);
-    }, [from, today]);
+        setFromDate(from ?? getLocalDate());
+    }, [from]);
 
     useEffect(() => {
-        setToDate(to ?? today);
-    }, [to, today]);
+        setToDate(to ?? getLocalDate());
+    }, [to]);
 
     const rows = appointments ?? [];
 
@@ -48,7 +65,10 @@ export default function AppointmentsIndex({
     return (
         <AppSidebarLayout
             breadcrumbs={[
-                { title: 'Appointments', href: '/appointments' },
+                {
+                    title: 'Appointments',
+                    href: '/appointments',
+                },
             ]}
         >
             <Head title="Appointments" />
@@ -78,11 +98,15 @@ export default function AppointmentsIndex({
                 {/* Displays the appointment date filters. */}
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:gap-4">
                     <div className="flex flex-col gap-2">
-                        <label className="text-sm font-medium text-slate-700 dark:text-foreground">
+                        <label
+                            htmlFor="appointment-from-date"
+                            className="text-sm font-medium text-slate-700 dark:text-foreground"
+                        >
                             From
                         </label>
 
                         <input
+                            id="appointment-from-date"
                             type="date"
                             value={fromDate}
                             onChange={(event) =>
@@ -93,11 +117,15 @@ export default function AppointmentsIndex({
                     </div>
 
                     <div className="flex flex-col gap-2">
-                        <label className="text-sm font-medium text-slate-700 dark:text-foreground">
+                        <label
+                            htmlFor="appointment-to-date"
+                            className="text-sm font-medium text-slate-700 dark:text-foreground"
+                        >
                             To
                         </label>
 
                         <input
+                            id="appointment-to-date"
                             type="date"
                             value={toDate}
                             onChange={(event) =>
@@ -136,11 +164,25 @@ export default function AppointmentsIndex({
                             System Patient ID
                         </div>
 
-                        <div className="col-span-3">Patient Name</div>
-                        <div className="col-span-2">Doctor</div>
-                        <div className="col-span-2">Status</div>
-                        <div className="col-span-2">Appointment Type</div>
-                        <div className="col-span-1">Time</div>
+                        <div className="col-span-3">
+                            Patient Name
+                        </div>
+
+                        <div className="col-span-2">
+                            Doctor
+                        </div>
+
+                        <div className="col-span-2">
+                            Status
+                        </div>
+
+                        <div className="col-span-2">
+                            Appointment Type
+                        </div>
+
+                        <div className="col-span-1">
+                            Time
+                        </div>
 
                         <div className="col-span-1 text-right">
                             Action
@@ -149,7 +191,7 @@ export default function AppointmentsIndex({
 
                     {/* Displays appointment rows or the empty message. */}
                     <div className="divide-y divide-blue-50 dark:divide-border">
-                        {rows.length ? (
+                        {rows.length > 0 ? (
                             rows.map((appointment) => (
                                 <div
                                     key={appointment.appointment_id}

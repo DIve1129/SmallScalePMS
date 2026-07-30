@@ -1,8 +1,21 @@
 import AppSidebarLayout from '@/layouts/app/app-sidebar-layout';
 import { Head, Link, useForm } from '@inertiajs/react';
 
+/* Defines an insurance record received from the Laravel controller. */
+type Insurance = {
+    insurance_code: string;
+    insurance_name: string;
+};
+
+/* Defines the properties received by the patient creation page. */
+type PatientCreateProps = {
+    insurances: Insurance[];
+};
+
 /* Displays the patient creation form and submits new patient information. */
-export default function PatientCreate() {
+export default function PatientCreate({
+    insurances = [],
+}: PatientCreateProps) {
     const { data, setData, post, processing, errors } = useForm({
         patient_id: '',
         first_name: '',
@@ -13,14 +26,14 @@ export default function PatientCreate() {
         address: '',
         phone: '',
         email: '',
-        insurance_name: '',
         insurance_id: '',
         notes: '',
     });
 
     /* Submits the new patient information to the server. */
-    const submit = (event: React.FormEvent) => {
+    const submit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+
         post('/patients');
     };
 
@@ -141,7 +154,7 @@ export default function PatientCreate() {
                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                             <Field
                                 label="DOB"
-                                placeholder="YYYY-MM-DD"
+                                type="date"
                                 value={data.dob}
                                 onChange={(value) => setData('dob', value)}
                                 error={errors.dob}
@@ -149,6 +162,7 @@ export default function PatientCreate() {
 
                             <Field
                                 label="Age"
+                                type="number"
                                 value={data.age}
                                 onChange={(value) => setData('age', value)}
                                 error={errors.age}
@@ -169,44 +183,81 @@ export default function PatientCreate() {
                             error={errors.address}
                         />
 
-                        <Field
-                            label="Phone"
-                            value={data.phone}
-                            onChange={(value) => setData('phone', value)}
-                            error={errors.phone}
-                        />
-
-                        <Field
-                            label="Email"
-                            value={data.email}
-                            onChange={(value) => setData('email', value)}
-                            error={errors.email}
-                        />
-
-                        <div className="space-y-5 border-t border-blue-100 pt-4 dark:border-border">
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                             <Field
-                                label="Insurance Name"
-                                value={data.insurance_name}
-                                onChange={(value) =>
-                                    setData('insurance_name', value)
-                                }
-                                error={errors.insurance_name}
+                                label="Phone"
+                                type="tel"
+                                value={data.phone}
+                                onChange={(value) => setData('phone', value)}
+                                error={errors.phone}
                             />
 
                             <Field
-                                label="Insurance ID"
-                                value={data.insurance_id}
-                                onChange={(value) =>
-                                    setData('insurance_id', value)
-                                }
-                                error={errors.insurance_id}
+                                label="Email"
+                                type="email"
+                                value={data.email}
+                                onChange={(value) => setData('email', value)}
+                                error={errors.email}
                             />
                         </div>
 
+                        {/* Displays insurance options loaded from the database. */}
+                        <div className="space-y-5 border-t border-blue-100 pt-4 dark:border-border">
+                            <div>
+                                <label
+                                    htmlFor="insurance_id"
+                                    className={labelClass}
+                                >
+                                    Insurance
+                                </label>
+
+                                <select
+                                    id="insurance_id"
+                                    value={data.insurance_id}
+                                    onChange={(event) =>
+                                        setData(
+                                            'insurance_id',
+                                            event.target.value,
+                                        )
+                                    }
+                                    className={inputClass}
+                                >
+                                    <option value="">
+                                        Select an insurance
+                                    </option>
+
+                                    {insurances.map((insurance) => (
+                                        <option
+                                            key={insurance.insurance_code}
+                                            value={insurance.insurance_code}
+                                        >
+                                            {insurance.insurance_name}
+                                        </option>
+                                    ))}
+                                </select>
+
+                                {errors.insurance_id && (
+                                    <p className="mt-1 text-xs text-red-500">
+                                        {errors.insurance_id}
+                                    </p>
+                                )}
+
+                                {insurances.length === 0 && (
+                                    <p className="mt-2 text-xs text-amber-600 dark:text-amber-400">
+                                        No insurance records are currently
+                                        available.
+                                    </p>
+                                )}
+                            </div>
+                        </div>
+
                         <div className="border-t border-blue-100 pt-4 dark:border-border">
-                            <label className={labelClass}>Notes</label>
+                            <label htmlFor="notes" className={labelClass}>
+                                Notes
+                            </label>
 
                             <textarea
+                                id="notes"
                                 className={`${inputClass} min-h-[90px] resize-y`}
                                 placeholder="Notes..."
                                 value={data.notes}
@@ -249,12 +300,14 @@ export default function PatientCreate() {
 function Field({
     label,
     placeholder,
+    type = 'text',
     value,
     onChange,
     error,
 }: {
     label: string;
     placeholder?: string;
+    type?: 'text' | 'date' | 'number' | 'email' | 'tel';
     value: string;
     onChange: (value: string) => void;
     error?: string;
@@ -266,6 +319,7 @@ function Field({
             </label>
 
             <input
+                type={type}
                 className="
                     w-full rounded-lg
                     border border-blue-100

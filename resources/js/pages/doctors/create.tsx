@@ -49,12 +49,6 @@ export default function CreateDoctor() {
             onSubmit={submit}
             className="space-y-5 rounded-xl border border-blue-100 bg-white p-6 shadow-sm dark:border-border dark:bg-card"
           >
-            <Field
-              label="Doctor Code"
-              value={data.doctor_code}
-              onChange={(v) => setData('doctor_code', v)}
-              error={errors.doctor_code}
-            />
 
             <Field
               label="First Name"

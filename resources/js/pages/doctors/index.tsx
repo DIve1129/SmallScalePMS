@@ -23,7 +23,7 @@ export default function DoctorsIndex({ doctors }: { doctors: Doctor[] }) {
             </h1>
 
             <p className="text-sm text-slate-500 dark:text-muted-foreground">
-              Manage doctor records (basic)
+              Manage doctor records.
             </p>
           </div>
 

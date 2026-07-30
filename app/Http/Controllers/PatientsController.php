@@ -7,6 +7,7 @@ use App\Models\Patient;
 use App\Models\Appointment;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Models\Insurance;
 
 class PatientsController extends Controller
 {
@@ -41,13 +42,22 @@ public function index(Request $request)
     ]);
 }
 
-    /*SHOW CREATE FORM*/
+  
     public function create()
     {
-        return Inertia::render('patients/create');
+        $insurances = Insurance::query()
+            ->orderBy('insurance_name')
+            ->get([
+                'insurance_code',
+                'insurance_name',
+            ]);
+
+        return Inertia::render('patients/create', [
+            'insurances' => $insurances,
+        ]);
     }
 
-    /*STORE NEW PATIENT*/
+    /* STORE NEW PATIENT */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -60,10 +70,26 @@ public function index(Request $request)
             'address'    => 'nullable|string|max:255',
             'phone'      => 'nullable|string|max:30',
             'email'      => 'nullable|email|max:150',
-            'insurance_name' => 'nullable|string|max:150',
-            'insurance_id'   => 'nullable|string|max:100',
-            'notes'      => 'nullable|string',
+
+            'insurance_id' => [
+                'nullable',
+                'string',
+                'exists:insurances,insurance_code',
+            ],
+
+            'notes' => 'nullable|string',
         ]);
+
+        $validated['insurance_name'] = null;
+
+        if (!empty($validated['insurance_id'])) {
+            $insurance = Insurance::where(
+                'insurance_code',
+                $validated['insurance_id']
+            )->firstOrFail();
+
+            $validated['insurance_name'] = $insurance->insurance_name;
+        }
 
         Patient::create($validated);
 

@@ -10,6 +10,7 @@ use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 
+
 class AdminController extends Controller
 {
     /* Displays the administration page with all users and charge master records. */
@@ -143,15 +144,40 @@ class AdminController extends Controller
     }
 
     /* Deletes the selected system user while preventing an administrator from deleting their own account. */
-    public function destroy(User $user): RedirectResponse
+    public function destroy($id)
     {
-        if (auth()->id() === $user->id) {
+        $user = User::findOrFail($id);
+
+        /*
+        * Prevent an administrator from deleting their own
+        */
+        if ((int) auth()->id() === (int) $user->id) {
             return redirect()
                 ->route('admin.index')
                 ->with(
                     'error',
-                    'You cannot delete your own account.'
+                    'You cannot delete your own administrator account.'
                 );
+        }
+
+        /*
+        * Prevent deletion of the final administrator account.
+        * The system must always retain at least one administrator
+        * so that Administration functions remain accessible.
+        */
+        if ($user->role === 'admin') {
+            $administratorCount = User::query()
+                ->where('role', 'admin')
+                ->count();
+
+            if ($administratorCount <= 1) {
+                return redirect()
+                    ->route('admin.index')
+                    ->with(
+                        'error',
+                        'The final administrator account cannot be deleted.'
+                    );
+            }
         }
 
         $user->delete();

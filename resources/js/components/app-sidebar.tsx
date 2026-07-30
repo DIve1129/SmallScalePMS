@@ -92,7 +92,7 @@ export function AppSidebar() {
               ]
             : []),
 
-        ...(role === 'admin'
+        ...(role === 'admin' || role === 'receptionist'
             ? [
                   {
                       title: 'Insurances',

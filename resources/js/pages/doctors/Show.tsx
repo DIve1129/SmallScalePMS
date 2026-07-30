@@ -3,7 +3,7 @@ import { Head, Link } from '@inertiajs/react';
 
 type Doctor = {
   doctor_id: number;
-  doctor_code?: string | null;
+  //doctor_code?: string | null;
   first_name: string;
   last_name: string;
   speciality?: string | null;
@@ -48,7 +48,6 @@ export default function Show({ doctor }: { doctor: Doctor }) {
 
         {/* Doctor information */}
         <div className="max-w-3xl space-y-6 rounded-xl border border-blue-100 bg-white p-6 shadow-sm dark:border-border dark:bg-card">
-          <Field label="Doctor Code" value={doctor.doctor_code} />
           <Field label="First Name" value={doctor.first_name} />
           <Field label="Last Name" value={doctor.last_name} />
           <Field label="Speciality" value={doctor.speciality} />

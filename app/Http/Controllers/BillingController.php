@@ -102,13 +102,22 @@ class BillingController extends Controller
 
         return Inertia::render('billing/clinicaldata', [
             'appointment' => [
-                'appointment_id' => $appointment->appointment_id,
-                'patient_id' => $appointment->patient_id,
-                'patient_name' => $patientName,
-                'doctor_name' => $doctorName !== '-' ? 'Dr. ' . $doctorName : '-',
-                'appointment_date' => $appointment->appointment_Date,
-                'appointment_reason' => $appointment->app_reason ?? '-',
-            ]
+            'appointment_id' => $appointment->appointment_id,
+            'patient_id' => $appointment->patient_id,
+            'patient_name' => $patientName,
+            'doctor_name' => $doctorName !== '-' ? 'Dr. '.$doctorName : '-',
+            'appointment_date' => $appointment->appointment_Date,
+            'appointment_reason' => $appointment->app_reason,
+
+            'blood_pressure' => $appointment->blood_pressure,
+            'pulse_rate' => $appointment->pulse_rate,
+            'temperature_c' => $appointment->temperature_c,
+            'weight_kg' => $appointment->weight_kg,
+            'clinical_examination' => $appointment->clinical_examination,
+            'diagnosis' => $appointment->diagnosis,
+            'prescribed_medication' => $appointment->prescribed_medication,
+            'plan_of_management' => $appointment->plan_of_management,
+        ]
         ]);
     }
     /* Validates and saves the patient's clinical data for the selected appointment. */
@@ -210,21 +219,56 @@ class BillingController extends Controller
         $appointment = Appointment::findOrFail($appointment_id);
 
         $validated = $request->validate([
-            'appointment_reason' => ['required', 'string', 'max:255'],
-            'service_2' => ['nullable', 'string', 'max:255'],
-            'service_3' => ['nullable', 'string', 'max:255'],
+            'appointment_reason' => [
+                'required',
+                'string',
+                'max:255',
+            ],
 
-            'amount_1' => ['nullable', 'numeric', 'min:0'],
-            'amount_2' => ['nullable', 'numeric', 'min:0'],
-            'amount_3' => ['nullable', 'numeric', 'min:0'],
+            'service_2' => [
+                'nullable',
+                'string',
+                'max:255',
+            ],
 
-            'payment_1' => ['nullable', 'numeric', 'min:0'],
-            'payment_2' => ['nullable', 'numeric', 'min:0'],
-            'payment_3' => ['nullable', 'numeric', 'min:0'],
+            'service_3' => [
+                'nullable',
+                'string',
+                'max:255',
+            ],
 
-            'responsibility' => ['required', 'in:Patient,Insurance'],
-            'claim_status' => ['required', 'in:Pending,Ready to Bill,Billed'],
-            'status' => ['required', 'in:Scheduled,Ongoing,Completed,No-show,Cancelled'],
+            'amount_1' => [
+                'nullable',
+                'numeric',
+                'min:0',
+            ],
+
+            'amount_2' => [
+                'nullable',
+                'numeric',
+                'min:0',
+            ],
+
+            'amount_3' => [
+                'nullable',
+                'numeric',
+                'min:0',
+            ],
+
+            'responsibility' => [
+                'required',
+                'in:Patient,Insurance',
+            ],
+
+            'claim_status' => [
+                'required',
+                'in:Pending,Ready to Bill,Billed',
+            ],
+
+            'status' => [
+                'required',
+                'in:Scheduled,Ongoing,Completed,No-show,Cancelled',
+            ],
         ]);
 
         $appointment->update([
@@ -237,16 +281,19 @@ class BillingController extends Controller
             'amount_2' => $validated['amount_2'] ?? 0,
             'amount_3' => $validated['amount_3'] ?? 0,
 
-            'payment_1' => $validated['payment_1'] ?? 0,
-            'payment_2' => $validated['payment_2'] ?? 0,
-            'payment_3' => $validated['payment_3'] ?? 0,
+            /*
+            * Payment fields are intentionally not updated here.
+            * Existing posted payments must remain unchanged when
+            * editing visit or claim information.
+            */
 
             'responsibility' => $validated['responsibility'],
             'claim_status' => $validated['claim_status'],
             'status' => $validated['status'],
         ]);
 
-        return redirect()->route('billing.index')
+        return redirect()
+            ->route('billing.index')
             ->with('success', 'Visit updated successfully.');
     }
     /* Displays the billing summary and invoice details for the selected appointment. */

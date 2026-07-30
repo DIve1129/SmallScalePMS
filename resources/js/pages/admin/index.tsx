@@ -1,5 +1,5 @@
 import AppLayout from '@/layouts/app-layout';
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 
 type User = {
@@ -17,6 +17,15 @@ type ChargeMaster = {
     status: string;
 };
 
+type FlashMessages = {
+    success?: string;
+    error?: string;
+};
+
+type SharedPageProps = {
+    flash?: FlashMessages;
+};
+
 /* Displays user management and charge master administration tables. */
 export default function AdminIndex({
     users = [],
@@ -25,6 +34,8 @@ export default function AdminIndex({
     users: User[];
     chargeMasters: ChargeMaster[];
 }) {
+    const { flash } = usePage<SharedPageProps>().props;
+
     const [activeTab, setActiveTab] = useState<'users' | 'chargeMaster'>(
         'users',
     );
@@ -79,6 +90,26 @@ export default function AdminIndex({
                         )}
                     </div>
 
+                    {/* Displays successful operation messages. */}
+                    {flash?.success && (
+                        <div
+                            role="status"
+                            className="rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm font-medium text-green-700 shadow-sm dark:border-green-500/30 dark:bg-green-500/10 dark:text-green-400"
+                        >
+                            {flash.success}
+                        </div>
+                    )}
+
+                    {/* Displays unsuccessful operation messages. */}
+                    {flash?.error && (
+                        <div
+                            role="alert"
+                            className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700 shadow-sm dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-400"
+                        >
+                            {flash.error}
+                        </div>
+                    )}
+
                     {/* Displays the administration section tabs. */}
                     <div className="flex gap-3">
                         <button
@@ -95,9 +126,7 @@ export default function AdminIndex({
 
                         <button
                             type="button"
-                            onClick={() =>
-                                setActiveTab('chargeMaster')
-                            }
+                            onClick={() => setActiveTab('chargeMaster')}
                             className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
                                 activeTab === 'chargeMaster'
                                     ? 'bg-[#CFE8FF] text-[#1D4ED8] dark:bg-primary dark:text-primary-foreground'
@@ -156,7 +185,10 @@ export default function AdminIndex({
                                                                 : user.role ===
                                                                     'receptionist'
                                                                   ? 'border-blue-500/30 bg-blue-500/10 text-blue-600 dark:text-blue-400'
-                                                                  : 'border-green-500/30 bg-green-500/10 text-green-600 dark:text-green-400'
+                                                                  : user.role ===
+                                                                      'doctor'
+                                                                    ? 'border-purple-500/30 bg-purple-500/10 text-purple-600 dark:text-purple-400'
+                                                                    : 'border-green-500/30 bg-green-500/10 text-green-600 dark:text-green-400'
                                                         }`}
                                                     >
                                                         {user.role}
@@ -178,12 +210,16 @@ export default function AdminIndex({
                                                             type="button"
                                                             onClick={() => {
                                                                 if (
-                                                                    confirm(
+                                                                    window.confirm(
                                                                         `Delete ${user.name}?`,
                                                                     )
                                                                 ) {
                                                                     router.delete(
                                                                         `/admin/${user.id}`,
+                                                                        {
+                                                                            preserveScroll:
+                                                                                true,
+                                                                        },
                                                                     );
                                                                 }
                                                             }}
@@ -292,8 +328,7 @@ export default function AdminIndex({
                                                 colSpan={5}
                                                 className="px-6 py-10 text-center text-sm text-slate-500 dark:text-muted-foreground"
                                             >
-                                                No charge master records
-                                                found.
+                                                No charge master records found.
                                             </td>
                                         </tr>
                                     )}
