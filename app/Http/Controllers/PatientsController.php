@@ -71,21 +71,18 @@ public function index(Request $request)
             'phone'      => 'nullable|string|max:30',
             'email'      => 'nullable|email|max:150',
 
-            'insurance_id' => [
-                'nullable',
-                'string',
-                'exists:insurances,insurance_code',
-            ],
+            'insurance_code' => 'nullable|exists:insurances,insurance_code',
+            'insurance_id'   => 'nullable|string|max:100',
 
             'notes' => 'nullable|string',
         ]);
 
         $validated['insurance_name'] = null;
 
-        if (!empty($validated['insurance_id'])) {
+        if (!empty($validated['insurance_code'])) {
             $insurance = Insurance::where(
                 'insurance_code',
-                $validated['insurance_id']
+                $validated['insurance_code']
             )->firstOrFail();
 
             $validated['insurance_name'] = $insurance->insurance_name;
@@ -114,6 +111,7 @@ public function index(Request $request)
             'phone'      => 'nullable|string|max:30',
             'email'      => 'nullable|email|max:150',
             'insurance_name' => 'nullable|string|max:150',
+            'insurance_name' => 'nullable|string|max:10',
             'insurance_id'   => 'nullable|string|max:100',
             'notes'      => 'nullable|string',
         ]);
@@ -137,84 +135,90 @@ public function index(Request $request)
     }
 
     public function show($id)
-{
-    $patient = Patient::where('patient_id', $id)->firstOrFail();
-    return Inertia::render('patients/show', ['patient' => $patient]);
-}
+    {
+        $patient = Patient::where('patient_id', $id)->firstOrFail();
+        return Inertia::render('patients/show', ['patient' => $patient]);
+    }
 
-public function appointments($id)
-{
-    $appointments = \App\Models\Appointment::query()
-        ->where('patient_id', $id)
-        ->orderBy('scheduled_at', 'desc')
-        ->get([
-            'appointment_id',
-            'patient_id',
-            'app_reason',
-            'scheduled_at',
-            'status',
-        ])
-        ->map(function ($a) {
-            return [
-                'appointment_id' => $a->appointment_id,
-                'patient_id' => $a->patient_id,
-                'appointment_type' => $a->app_reason,
-                'appointment_datetime' => $a->scheduled_at,
-                'status' => $a->status,
-            ];
-        })
-        ->values();
+    public function appointments($id)
+    {
+        $appointments = \App\Models\Appointment::query()
+            ->where('patient_id', $id)
+            ->orderBy('scheduled_at', 'desc')
+            ->get([
+                'appointment_id',
+                'patient_id',
+                'app_reason',
+                'scheduled_at',
+                'status',
+            ])
+            ->map(function ($a) {
+                return [
+                    'appointment_id' => $a->appointment_id,
+                    'patient_id' => $a->patient_id,
+                    'appointment_type' => $a->app_reason,
+                    'appointment_datetime' => $a->scheduled_at,
+                    'status' => $a->status,
+                ];
+            })
+            ->values();
 
-    return \Inertia\Inertia::render('patients/appointment', [
-        'patientId' => $id,          //  must be patientId
-        'appointments' => $appointments,
-    ]);
-}
+        return \Inertia\Inertia::render('patients/appointment', [
+            'patientId' => $id,          //  must be patientId
+            'appointments' => $appointments,
+        ]);
+    }
 
 
-public function billing($id)
-{
-    $patient = Patient::where('patient_id', $id)->firstOrFail();
+    public function billing($id)
+    {
+        $patient = Patient::where('patient_id', $id)->firstOrFail();
 
-    $billings = \App\Models\Appointment::where('patient_id', $id)
-        ->whereIn('status', ['Completed', 'No-show', 'Ongoing'])
-        ->orderBy('scheduled_at', 'desc')
-        ->get()
-        ->map(function ($a) {
-            $amount1 = (float) ($a->amount_1 ?? 0);
-            $amount2 = (float) ($a->amount_2 ?? 0);
-            $amount3 = (float) ($a->amount_3 ?? 0);
+        $billings = \App\Models\Appointment::where('patient_id', $id)
+            ->whereIn('status', ['Completed', 'No-show', 'Ongoing'])
+            ->orderBy('scheduled_at', 'desc')
+            ->get()
+            ->map(function ($a) {
+                $amount1 = (float) ($a->amount_1 ?? 0);
+                $amount2 = (float) ($a->amount_2 ?? 0);
+                $amount3 = (float) ($a->amount_3 ?? 0);
 
-            $payment1 = (float) ($a->payment_1 ?? 0);
-            $payment2 = (float) ($a->payment_2 ?? 0);
-            $payment3 = (float) ($a->payment_3 ?? 0);
+                $payment1 = (float) ($a->payment_1 ?? 0);
+                $payment2 = (float) ($a->payment_2 ?? 0);
+                $payment3 = (float) ($a->payment_3 ?? 0);
 
-            $totalAmount = $amount1 + $amount2 + $amount3;
-            $totalPayment = $payment1 + $payment2 + $payment3;
+                $totalAmount = $amount1 + $amount2 + $amount3;
+                $totalPayment = $payment1 + $payment2 + $payment3;
 
-            return [
-                'appointment_id' => $a->appointment_id,
-                'patient_id' => $a->patient_id,
-                'dos' => $a->scheduled_at ?? $a->appointment_Date,
-                'service' => $a->app_reason ?? '-',
-                'amount' => $totalAmount,
-                'balance' => $totalAmount - $totalPayment,
-            ];
-        })
-        ->values();
+                return [
+                    'appointment_id' => $a->appointment_id,
+                    'patient_id' => $a->patient_id,
+                    'dos' => $a->scheduled_at ?? $a->appointment_Date,
+                    'service' => $a->app_reason ?? '-',
+                    'amount' => $totalAmount,
+                    'balance' => $totalAmount - $totalPayment,
+                ];
+            })
+            ->values();
 
-    return Inertia::render('patients/billing', [
-        'patientId' => $patient->patient_id,
-        'billings' => $billings,
-    ]);
-}
+        return Inertia::render('patients/billing', [
+            'patientId' => $patient->patient_id,
+            'billings' => $billings,
+        ]);
+    }
 
     public function edit($id)
     {
         $patient = Patient::where('patient_id', $id)->firstOrFail();
 
+        $insurances = Insurance::query()
+        ->select('insurance_code', 'insurance_name')
+        ->orderBy('insurance_name')
+        ->get();
+
         return Inertia::render('patients/edit', [
             'patient' => $patient,
+            'insurances' => $insurances,
         ]);
     }
 

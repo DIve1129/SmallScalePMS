@@ -13,9 +13,9 @@ type PatientCreateProps = {
 };
 
 /* Displays the patient creation form and submits new patient information. */
-export default function PatientCreate({
-    insurances = [],
-}: PatientCreateProps) {
+export default function PatientCreate(
+    {insurances = [],}: 
+    PatientCreateProps) {
     const { data, setData, post, processing, errors } = useForm({
         patient_id: '',
         first_name: '',
@@ -26,6 +26,7 @@ export default function PatientCreate({
         address: '',
         phone: '',
         email: '',
+        insurance_code: '',
         insurance_id: '',
         notes: '',
     });
@@ -203,53 +204,61 @@ export default function PatientCreate({
 
                         {/* Displays insurance options loaded from the database. */}
                         <div className="space-y-5 border-t border-blue-100 pt-4 dark:border-border">
-                            <div>
-                                <label
-                                    htmlFor="insurance_id"
-                                    className={labelClass}
-                                >
-                                    Insurance
-                                </label>
+                        <div>
+                            <label
+                                htmlFor="insurance_code"
+                                className={labelClass}
+                            >
+                                Insurance Company
+                            </label>
 
-                                <select
-                                    id="insurance_id"
-                                    value={data.insurance_id}
-                                    onChange={(event) =>
-                                        setData(
-                                            'insurance_id',
-                                            event.target.value,
-                                        )
-                                    }
-                                    className={inputClass}
-                                >
-                                    <option value="">
-                                        Select an insurance
+                            <select
+                                id="insurance_code"
+                                value={data.insurance_code}
+                                onChange={(event) =>
+                                    setData(
+                                        'insurance_code',
+                                        event.target.value,
+                                    )
+                                }
+                                className={inputClass}
+                            >
+                                <option value="">
+                                    Select an insurance company
+                                </option>
+
+                                {insurances.map((insurance) => (
+                                    <option
+                                        key={insurance.insurance_code}
+                                        value={insurance.insurance_code}
+                                    >
+                                        {insurance.insurance_name}
                                     </option>
+                                ))}
+                            </select>
 
-                                    {insurances.map((insurance) => (
-                                        <option
-                                            key={insurance.insurance_code}
-                                            value={insurance.insurance_code}
-                                        >
-                                            {insurance.insurance_name}
-                                        </option>
-                                    ))}
-                                </select>
+                            {errors.insurance_code && (
+                                <p className="mt-1 text-xs text-red-500">
+                                    {errors.insurance_code}
+                                </p>
+                            )}
 
-                                {errors.insurance_id && (
-                                    <p className="mt-1 text-xs text-red-500">
-                                        {errors.insurance_id}
-                                    </p>
-                                )}
-
-                                {insurances.length === 0 && (
-                                    <p className="mt-2 text-xs text-amber-600 dark:text-amber-400">
-                                        No insurance records are currently
-                                        available.
-                                    </p>
-                                )}
-                            </div>
+                            {insurances.length === 0 && (
+                                <p className="mt-2 text-xs text-amber-600 dark:text-amber-400">
+                                    No insurance records are currently available.
+                                </p>
+                            )}
                         </div>
+
+                        <Field
+                            label="Insurance ID / Member Number"
+                            value={data.insurance_id}
+                            onChange={(value) =>
+                                setData('insurance_id', value)
+                            }
+                            error={errors.insurance_id}
+                        />
+                    </div>
 
                         <div className="border-t border-blue-100 pt-4 dark:border-border">
                             <label htmlFor="notes" className={labelClass}>

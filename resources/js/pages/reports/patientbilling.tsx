@@ -66,16 +66,8 @@ function formatDate(date: string) {
     }).format(new Date(`${date}T00:00:00`));
 }
 
-export default function PatientBillingReport({
-    patients = [],
-    selectedPatient,
-    rows = [],
-    filters,
-    summary,
-}: PatientBillingReportProps) {
-    const [patientId, setPatientId] = useState(
-        filters.patient_id ?? '',
-    );
+export default function PatientBillingReport({ patients = [], selectedPatient, rows = [], filters, summary }: PatientBillingReportProps) {
+    const [patientId, setPatientId] = useState(filters.patient_id ?? '');
 
     const [searchTerm, setSearchTerm] = useState('');
     const [formError, setFormError] = useState('');
@@ -89,23 +81,16 @@ export default function PatientBillingReport({
         }
 
         return patients.filter((patient) => {
-            return (
-                patient.name.toLowerCase().includes(search) ||
-                String(patient.patient_id).toLowerCase().includes(search)
-            );
+            return patient.name.toLowerCase().includes(search) || String(patient.patient_id).toLowerCase().includes(search);
         });
     }, [patients, searchTerm]);
 
-    const handleSubmit = (
-        event: FormEvent<HTMLFormElement>,
-    ) => {
+    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setFormError('');
 
         if (!patientId) {
-            setFormError(
-                'Please select a patient before generating the report.',
-            );
+            setFormError('Please select a patient before generating the report.');
 
             return;
         }
@@ -172,14 +157,10 @@ export default function PatientBillingReport({
                 {/* Page heading */}
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div>
-                        <h1 className="text-2xl font-semibold text-slate-900 dark:text-foreground">
-                            Patient Billing Summary Report
-                        </h1>
+                        <h1 className="text-2xl font-semibold text-slate-900 dark:text-foreground">Patient Billing Summary Report</h1>
 
                         <p className="mt-1 text-sm text-slate-500 dark:text-muted-foreground">
-                            Select a patient to review their
-                            consolidated charges, payments, and
-                            outstanding balances.
+                            Select a patient to review their consolidated charges, payments, and outstanding balances.
                         </p>
                     </div>
 
@@ -194,25 +175,16 @@ export default function PatientBillingReport({
                 {/* Patient report filter */}
                 <div className="rounded-xl border border-blue-100 bg-white p-5 shadow-sm dark:border-border dark:bg-card">
                     <div className="mb-4">
-                        <h2 className="text-sm font-semibold tracking-wide text-slate-700 uppercase dark:text-foreground">
-                            Patient Selection
-                        </h2>
+                        <h2 className="text-sm font-semibold tracking-wide text-slate-700 uppercase dark:text-foreground">Patient Selection</h2>
 
                         <p className="mt-1 text-sm text-slate-500 dark:text-muted-foreground">
-                            Search by patient name or patient ID,
-                            then select the required patient.
+                            Search by patient name or patient ID, then select the required patient.
                         </p>
                     </div>
 
-                    <form
-                        onSubmit={handleSubmit}
-                        className="grid grid-cols-1 gap-4 lg:grid-cols-4 lg:items-end"
-                    >
+                    <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4 lg:grid-cols-4 lg:items-end">
                         <div>
-                            <label
-                                htmlFor="patient-search"
-                                className="mb-2 block text-sm font-medium text-slate-700 dark:text-foreground"
-                            >
+                            <label htmlFor="patient-search" className="mb-2 block text-sm font-medium text-slate-700 dark:text-foreground">
                                 Search Patient
                             </label>
 
@@ -220,62 +192,35 @@ export default function PatientBillingReport({
                                 id="patient-search"
                                 type="text"
                                 value={searchTerm}
-                                onChange={(event) =>
-                                    setSearchTerm(
-                                        event.target.value,
-                                    )
-                                }
+                                onChange={(event) => setSearchTerm(event.target.value)}
                                 placeholder="Enter name or patient ID"
-                                className="w-full rounded-lg border border-blue-100 bg-white px-3 py-2 text-sm text-slate-800 outline-none transition focus:border-[#2563EB] focus:ring-2 focus:ring-blue-100 dark:border-border dark:bg-background dark:text-foreground dark:focus:ring-ring"
+                                className="w-full rounded-lg border border-blue-100 bg-white px-3 py-2 text-sm text-slate-800 transition outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-blue-100 dark:border-border dark:bg-background dark:text-foreground dark:focus:ring-ring"
                             />
                         </div>
 
                         <div className="lg:col-span-2">
-                            <label
-                                htmlFor="patient-id"
-                                className="mb-2 block text-sm font-medium text-slate-700 dark:text-foreground"
-                            >
+                            <label htmlFor="patient-id" className="mb-2 block text-sm font-medium text-slate-700 dark:text-foreground">
                                 Select Patient
                             </label>
 
                             <select
                                 id="patient-id"
                                 value={patientId}
-                                onChange={(event) =>
-                                    setPatientId(
-                                        event.target.value,
-                                    )
-                                }
-                                className="w-full rounded-lg border border-blue-100 bg-white px-3 py-2 text-sm text-slate-800 outline-none transition focus:border-[#2563EB] focus:ring-2 focus:ring-blue-100 dark:border-border dark:bg-background dark:text-foreground dark:focus:ring-ring"
+                                onChange={(event) => setPatientId(event.target.value)}
+                                className="w-full rounded-lg border border-blue-100 bg-white px-3 py-2 text-sm text-slate-800 transition outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-blue-100 dark:border-border dark:bg-background dark:text-foreground dark:focus:ring-ring"
                             >
-                                <option value="">
-                                    Select a patient
-                                </option>
+                                <option value="">Select a patient</option>
 
-                                {filteredPatients.map(
-                                    (patient) => (
-                                        <option
-                                            key={
-                                                patient.patient_id
-                                            }
-                                            value={
-                                                patient.patient_id
-                                            }
-                                        >
-                                            {patient.name} —{' '}
-                                            {patient.patient_id}
-                                        </option>
-                                    ),
-                                )}
+                                {filteredPatients.map((patient) => (
+                                    <option key={patient.patient_id} value={patient.patient_id}>
+                                        {patient.name} — {patient.patient_id}
+                                    </option>
+                                ))}
                             </select>
 
-                            {searchTerm &&
-                                filteredPatients.length === 0 && (
-                                    <p className="mt-2 text-xs text-amber-600 dark:text-amber-400">
-                                        No patients match your
-                                        search.
-                                    </p>
-                                )}
+                            {searchTerm && filteredPatients.length === 0 && (
+                                <p className="mt-2 text-xs text-amber-600 dark:text-amber-400">No patients match your search.</p>
+                            )}
                         </div>
 
                         <div className="flex gap-3">
@@ -284,9 +229,7 @@ export default function PatientBillingReport({
                                 disabled={isLoading}
                                 className="flex-1 rounded-lg bg-[#2563EB] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#1D4ED8] disabled:cursor-not-allowed disabled:opacity-60"
                             >
-                                {isLoading
-                                    ? 'Loading...'
-                                    : 'Generate Report'}
+                                {isLoading ? 'Loading...' : 'Generate Report'}
                             </button>
 
                             <button
@@ -300,11 +243,7 @@ export default function PatientBillingReport({
                         </div>
                     </form>
 
-                    {formError && (
-                        <p className="mt-3 text-sm text-red-500">
-                            {formError}
-                        </p>
-                    )}
+                    {formError && <p className="mt-3 text-sm text-red-500">{formError}</p>}
                 </div>
 
                 {selectedPatient ? (
@@ -317,46 +256,30 @@ export default function PatientBillingReport({
                                         Selected Patient
                                     </p>
 
-                                    <h2 className="mt-2 text-xl font-semibold text-slate-900 dark:text-foreground">
-                                        {selectedPatient.name}
-                                    </h2>
+                                    <h2 className="mt-2 text-xl font-semibold text-slate-900 dark:text-foreground">{selectedPatient.name}</h2>
 
-                                    <p className="mt-1 text-sm text-slate-500 dark:text-muted-foreground">
-                                        Patient ID:{' '}
-                                        {
-                                            selectedPatient.patient_id
-                                        }
-                                    </p>
+                                    <p className="mt-1 text-sm text-slate-500 dark:text-muted-foreground">Patient ID: {selectedPatient.patient_id}</p>
                                 </div>
 
                                 <div className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
                                     <div className="rounded-lg bg-slate-50 px-4 py-3 dark:bg-muted">
-                                        <p className="text-xs text-slate-500 dark:text-muted-foreground">
-                                            Phone
-                                        </p>
+                                        <p className="text-xs text-slate-500 dark:text-muted-foreground">Phone</p>
 
                                         <p className="mt-1 font-medium text-slate-800 dark:text-foreground">
-                                            {selectedPatient.phone ||
-                                                'Not provided'}
+                                            {selectedPatient.phone || 'Not provided'}
                                         </p>
                                     </div>
 
                                     <div className="rounded-lg bg-slate-50 px-4 py-3 dark:bg-muted">
-                                        <p className="text-xs text-slate-500 dark:text-muted-foreground">
-                                            Insurance
-                                        </p>
+                                        <p className="text-xs text-slate-500 dark:text-muted-foreground">Insurance</p>
 
                                         <p className="mt-1 font-medium text-slate-800 dark:text-foreground">
-                                            {selectedPatient.insurance_name ||
-                                                'Self-pay / Not provided'}
+                                            {selectedPatient.insurance_name || 'Self-pay / Not provided'}
                                         </p>
 
                                         {selectedPatient.insurance_id && (
                                             <p className="mt-1 text-xs text-slate-500 dark:text-muted-foreground">
-                                                ID:{' '}
-                                                {
-                                                    selectedPatient.insurance_id
-                                                }
+                                                ID: {selectedPatient.insurance_id}
                                             </p>
                                         )}
                                     </div>
@@ -372,9 +295,7 @@ export default function PatientBillingReport({
                                 </p>
 
                                 <p className="mt-2 text-2xl font-semibold text-slate-900 dark:text-foreground">
-                                    {formatCurrency(
-                                        summary.total_charges,
-                                    )}
+                                    {formatCurrency(summary.total_charges)}
                                 </p>
                             </div>
 
@@ -384,9 +305,7 @@ export default function PatientBillingReport({
                                 </p>
 
                                 <p className="mt-2 text-2xl font-semibold text-emerald-600 dark:text-emerald-400">
-                                    {formatCurrency(
-                                        summary.total_payments,
-                                    )}
+                                    {formatCurrency(summary.total_payments)}
                                 </p>
                             </div>
 
@@ -396,9 +315,7 @@ export default function PatientBillingReport({
                                 </p>
 
                                 <p className="mt-2 text-2xl font-semibold text-amber-600 dark:text-amber-400">
-                                    {formatCurrency(
-                                        summary.outstanding_balance,
-                                    )}
+                                    {formatCurrency(summary.outstanding_balance)}
                                 </p>
                             </div>
 
@@ -407,22 +324,17 @@ export default function PatientBillingReport({
                                     Service Entries
                                 </p>
 
-                                <p className="mt-2 text-2xl font-semibold text-[#2563EB] dark:text-blue-400">
-                                    {summary.service_count}
-                                </p>
+                                <p className="mt-2 text-2xl font-semibold text-[#2563EB] dark:text-blue-400">{summary.service_count}</p>
                             </div>
                         </div>
 
                         {/* Billing records */}
                         <div className="overflow-hidden rounded-xl border border-blue-100 bg-white shadow-sm dark:border-border dark:bg-card">
                             <div className="border-b border-blue-100 p-5 dark:border-border">
-                                <h2 className="font-semibold text-slate-900 dark:text-foreground">
-                                    Patient Billing Details
-                                </h2>
+                                <h2 className="font-semibold text-slate-900 dark:text-foreground">Patient Billing Details</h2>
 
                                 <p className="mt-1 text-sm text-slate-500 dark:text-muted-foreground">
-                                    Each billed service is shown as a
-                                    separate report entry.
+                                    Each billed service is shown as a separate report entry.
                                 </p>
                             </div>
 
@@ -430,25 +342,15 @@ export default function PatientBillingReport({
                                 <table className="w-full min-w-[850px] text-left text-sm">
                                     <thead className="border-b border-blue-100 bg-[#EAF5FF] text-slate-900 dark:border-border dark:bg-muted dark:text-foreground">
                                         <tr>
-                                            <th className="px-5 py-3 font-medium">
-                                                Date of Service
-                                            </th>
+                                            <th className="px-5 py-3 font-medium">Date of Service</th>
 
-                                            <th className="px-5 py-3 font-medium">
-                                                Service
-                                            </th>
+                                            <th className="px-5 py-3 font-medium">Service</th>
 
-                                            <th className="px-5 py-3 text-right font-medium">
-                                                Total Charge
-                                            </th>
+                                            <th className="px-5 py-3 text-right font-medium">Total Charge</th>
 
-                                            <th className="px-5 py-3 text-right font-medium">
-                                                Amount Paid
-                                            </th>
+                                            <th className="px-5 py-3 text-right font-medium">Amount Paid</th>
 
-                                            <th className="px-5 py-3 text-right font-medium">
-                                                Outstanding Balance
-                                            </th>
+                                            <th className="px-5 py-3 text-right font-medium">Outstanding Balance</th>
                                         </tr>
                                     </thead>
 
@@ -456,51 +358,24 @@ export default function PatientBillingReport({
                                         {rows.length > 0 ? (
                                             rows.map((row) => (
                                                 <tr
-                                                    key={
-                                                        row.row_id
-                                                    }
+                                                    key={row.row_id}
                                                     className="text-slate-800 transition hover:bg-[#EAF5FF] dark:text-foreground dark:hover:bg-accent"
                                                 >
-                                                    <td className="px-5 py-4">
-                                                        {formatDate(
-                                                            row.dos,
-                                                        )}
-                                                    </td>
+                                                    <td className="px-5 py-4">{formatDate(row.dos)}</td>
 
-                                                    <td className="px-5 py-4 font-medium">
-                                                        {
-                                                            row.service
-                                                        }
-                                                    </td>
+                                                    <td className="px-5 py-4 font-medium">{row.service}</td>
 
-                                                    <td className="px-5 py-4 text-right">
-                                                        {formatCurrency(
-                                                            row.charge,
-                                                        )}
-                                                    </td>
+                                                    <td className="px-5 py-4 text-right">{formatCurrency(row.charge)}</td>
 
-                                                    <td className="px-5 py-4 text-right">
-                                                        {formatCurrency(
-                                                            row.paid,
-                                                        )}
-                                                    </td>
+                                                    <td className="px-5 py-4 text-right">{formatCurrency(row.paid)}</td>
 
-                                                    <td className="px-5 py-4 text-right font-semibold">
-                                                        {formatCurrency(
-                                                            row.outstanding,
-                                                        )}
-                                                    </td>
+                                                    <td className="px-5 py-4 text-right font-semibold">{formatCurrency(row.outstanding)}</td>
                                                 </tr>
                                             ))
                                         ) : (
                                             <tr>
-                                                <td
-                                                    colSpan={5}
-                                                    className="px-5 py-12 text-center text-slate-500 dark:text-muted-foreground"
-                                                >
-                                                    No billing records
-                                                    were found for this
-                                                    patient.
+                                                <td colSpan={5} className="px-5 py-12 text-center text-slate-500 dark:text-muted-foreground">
+                                                    No billing records were found for this patient.
                                                 </td>
                                             </tr>
                                         )}
@@ -509,29 +384,18 @@ export default function PatientBillingReport({
                                     {rows.length > 0 && (
                                         <tfoot className="border-t border-blue-100 bg-[#EAF5FF] text-slate-900 dark:border-border dark:bg-muted dark:text-foreground">
                                             <tr>
-                                                <td
-                                                    colSpan={2}
-                                                    className="px-5 py-4 text-right font-semibold"
-                                                >
+                                                <td colSpan={2} className="px-5 py-4 text-right font-semibold">
                                                     Report Totals
                                                 </td>
 
-                                                <td className="px-5 py-4 text-right font-semibold">
-                                                    {formatCurrency(
-                                                        summary.total_charges,
-                                                    )}
-                                                </td>
+                                                <td className="px-5 py-4 text-right font-semibold">{formatCurrency(summary.total_charges)}</td>
 
                                                 <td className="px-5 py-4 text-right font-semibold text-emerald-600 dark:text-emerald-400">
-                                                    {formatCurrency(
-                                                        summary.total_payments,
-                                                    )}
+                                                    {formatCurrency(summary.total_payments)}
                                                 </td>
 
                                                 <td className="px-5 py-4 text-right font-semibold text-amber-600 dark:text-amber-400">
-                                                    {formatCurrency(
-                                                        summary.outstanding_balance,
-                                                    )}
+                                                    {formatCurrency(summary.outstanding_balance)}
                                                 </td>
                                             </tr>
                                         </tfoot>
@@ -543,18 +407,12 @@ export default function PatientBillingReport({
                 ) : (
                     /* Initial empty state */
                     <div className="rounded-xl border border-dashed border-blue-200 bg-white px-6 py-16 text-center shadow-sm dark:border-border dark:bg-card">
-                        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#EAF5FF] text-2xl dark:bg-muted">
-                            👤
-                        </div>
+                        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#EAF5FF] text-2xl dark:bg-muted">👤</div>
 
-                        <h2 className="mt-4 text-lg font-semibold text-slate-900 dark:text-foreground">
-                            Select a patient
-                        </h2>
+                        <h2 className="mt-4 text-lg font-semibold text-slate-900 dark:text-foreground">Select a patient</h2>
 
                         <p className="mx-auto mt-2 max-w-lg text-sm leading-6 text-slate-500 dark:text-muted-foreground">
-                            Search for a patient above and generate
-                            the report to view their consolidated
-                            billing history.
+                            Search for a patient above and generate the report to view their consolidated billing history.
                         </p>
                     </div>
                 )}

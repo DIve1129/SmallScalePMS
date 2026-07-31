@@ -12,11 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('insurances', function (Blueprint $table) {
-    $table->id('insurance_code');          // auto_increment primary key
-    $table->string('insurance_name', 100);
-    $table->string('insurance_address', 255)->nullable();
-    $table->string('phone', 20);            // phone should be string
-    $table->timestamps();
+        $table->id('insurance_code');          // auto_increment primary key
+        $table->string('insurance_name', 100);
+        $table->string('insurance_address', 255)->nullable();
+        $table->string('phone', 20);            // phone should be string
+        $table->timestamps();
         });
     }
 

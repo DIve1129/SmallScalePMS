@@ -10,13 +10,7 @@ type AppointmentRow = {
 };
 
 /* Displays all appointments linked to the selected patient. */
-export default function PatientAppointments({
-    patientId,
-    appointments = [],
-}: {
-    patientId: number | string;
-    appointments: AppointmentRow[];
-}) {
+export default function PatientAppointments({ patientId, appointments = [] }: { patientId: number | string; appointments: AppointmentRow[] }) {
     return (
         <AppSidebarLayout
             breadcrumbs={[
@@ -37,13 +31,9 @@ export default function PatientAppointments({
                 {/* Displays the page heading and navigation actions. */}
                 <div className="flex items-start justify-between gap-4">
                     <div>
-                        <h1 className="text-2xl font-semibold text-slate-900 dark:text-foreground">
-                            Patient Appointments
-                        </h1>
+                        <h1 className="text-2xl font-semibold text-slate-900 dark:text-foreground">Patient Appointments</h1>
 
-                        <p className="mt-1 text-sm text-slate-500 dark:text-muted-foreground">
-                            Showing all appointments for Patient ID: {patientId}
-                        </p>
+                        <p className="mt-1 text-sm text-slate-500 dark:text-muted-foreground">Showing all appointments for Patient ID: {patientId}</p>
                     </div>
 
                     <div className="flex gap-3">
@@ -81,21 +71,13 @@ export default function PatientAppointments({
                                     key={appointment.appointment_id}
                                     className="grid grid-cols-12 items-center px-5 py-4 text-sm text-slate-800 transition hover:bg-blue-50/40 dark:text-foreground dark:hover:bg-accent/50"
                                 >
-                                    <div className="col-span-2">
-                                        {appointment.patient_id}
-                                    </div>
+                                    <div className="col-span-2">{appointment.patient_id}</div>
 
-                                    <div className="col-span-4">
-                                        {appointment.appointment_type}
-                                    </div>
+                                    <div className="col-span-4">{appointment.appointment_type}</div>
 
-                                    <div className="col-span-4">
-                                        {appointment.appointment_datetime}
-                                    </div>
+                                    <div className="col-span-4">{appointment.appointment_datetime}</div>
 
-                                    <div className="col-span-2">
-                                        {appointment.status ?? '-'}
-                                    </div>
+                                    <div className="col-span-2">{appointment.status ?? '-'}</div>
                                 </div>
                             ))
                         ) : (

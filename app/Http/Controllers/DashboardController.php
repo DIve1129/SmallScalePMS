@@ -22,7 +22,7 @@ class DashboardController extends Controller
             return ($a->amount_1 ?? 0) + ($a->amount_2 ?? 0) + ($a->amount_3 ?? 0);
         });
 
-        $pendingClaims = Appointment::where('claim_status', 'Pending')
+        $pendingClaims = Appointment::where('claim_status', 'Ready to Bill')
             ->whereIn('status', ['Completed', 'No-show'])
             ->count();
 

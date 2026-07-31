@@ -35,12 +35,7 @@ type ChartPoint = MonthlyComparisonItem & {
     y: number;
 };
 
-export default function AppointmentReport({
-    filters,
-    monthlyComparison = [],
-    summary,
-    statusSummary = [],
-}: AppointmentReportProps) {
+export default function AppointmentReport({ filters, monthlyComparison = [], summary, statusSummary = [] }: AppointmentReportProps) {
     const [month, setMonth] = useState(filters.month);
     const [filterError, setFilterError] = useState('');
 
@@ -55,10 +50,7 @@ export default function AppointmentReport({
     const bottomPadding = 45;
 
     const chartPoints = useMemo<ChartPoint[]>(() => {
-        const maximumCount = Math.max(
-            ...monthlyComparison.map((item) => Number(item.count)),
-            1,
-        );
+        const maximumCount = Math.max(...monthlyComparison.map((item) => Number(item.count)), 1);
 
         const usableWidth = chartWidth - leftPadding - rightPadding;
 
@@ -66,16 +58,9 @@ export default function AppointmentReport({
 
         return monthlyComparison.map((item, index) => {
             const x =
-                monthlyComparison.length === 1
-                    ? leftPadding + usableWidth / 2
-                    : leftPadding +
-                      (index * usableWidth) /
-                          (monthlyComparison.length - 1);
+                monthlyComparison.length === 1 ? leftPadding + usableWidth / 2 : leftPadding + (index * usableWidth) / (monthlyComparison.length - 1);
 
-            const y =
-                topPadding +
-                usableHeight -
-                (Number(item.count) / maximumCount) * usableHeight;
+            const y = topPadding + usableHeight - (Number(item.count) / maximumCount) * usableHeight;
 
             return {
                 ...item,
@@ -85,22 +70,11 @@ export default function AppointmentReport({
         });
     }, [monthlyComparison]);
 
-    const chartLine = chartPoints
-        .map((point) => `${point.x},${point.y}`)
-        .join(' ');
+    const chartLine = chartPoints.map((point) => `${point.x},${point.y}`).join(' ');
 
-    const maximumCount = Math.max(
-        ...monthlyComparison.map((item) => Number(item.count)),
-        1,
-    );
+    const maximumCount = Math.max(...monthlyComparison.map((item) => Number(item.count)), 1);
 
-    const gridValues = [
-        maximumCount,
-        Math.round(maximumCount * 0.75),
-        Math.round(maximumCount * 0.5),
-        Math.round(maximumCount * 0.25),
-        0,
-    ];
+    const gridValues = [maximumCount, Math.round(maximumCount * 0.75), Math.round(maximumCount * 0.5), Math.round(maximumCount * 0.25), 0];
 
     const formatChange = (value: number | null) => {
         if (value === null) {
@@ -192,14 +166,9 @@ export default function AppointmentReport({
                 {/* Page header */}
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div>
-                        <h1 className="text-2xl font-semibold">
-                            Appointment Summary Report
-                        </h1>
+                        <h1 className="text-2xl font-semibold">Appointment Summary Report</h1>
 
-                        <p className="mt-1 text-sm text-muted-foreground">
-                            Compare appointment volumes for the previous,
-                            selected, and next month.
-                        </p>
+                        <p className="mt-1 text-sm text-muted-foreground">Compare appointment volumes for the previous, selected, and next month.</p>
                     </div>
 
                     <Link
@@ -212,19 +181,11 @@ export default function AppointmentReport({
 
                 {/* Filter */}
                 <div className="rounded-xl border border-blue-100 bg-white p-5 shadow-sm dark:border-border dark:bg-card">
-                    <h2 className="mb-4 text-sm font-medium uppercase tracking-wider text-muted-foreground">
-                        Report Filter
-                    </h2>
+                    <h2 className="mb-4 text-sm font-medium tracking-wider text-muted-foreground uppercase">Report Filter</h2>
 
-                    <form
-                        onSubmit={handleSubmit}
-                        className="grid grid-cols-1 gap-4 md:grid-cols-3 md:items-end"
-                    >
+                    <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4 md:grid-cols-3 md:items-end">
                         <div>
-                            <label
-                                htmlFor="month"
-                                className="mb-1 block text-sm font-medium"
-                            >
+                            <label htmlFor="month" className="mb-1 block text-sm font-medium">
                                 Select Month
                             </label>
 
@@ -232,9 +193,7 @@ export default function AppointmentReport({
                                 id="month"
                                 type="month"
                                 value={month}
-                                onChange={(event) =>
-                                    setMonth(event.target.value)
-                                }
+                                onChange={(event) => setMonth(event.target.value)}
                                 className="w-full rounded-lg border border-blue-100 bg-white px-3 py-2 text-sm outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-blue-100 dark:border-border dark:bg-background dark:text-foreground"
                             />
                         </div>
@@ -255,108 +214,65 @@ export default function AppointmentReport({
                         </button>
                     </form>
 
-                    {filterError && (
-                        <p className="mt-3 text-sm text-red-500">
-                            {filterError}
-                        </p>
-                    )}
+                    {filterError && <p className="mt-3 text-sm text-red-500">{filterError}</p>}
                 </div>
 
                 {/* Summary cards */}
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                     <div className="rounded-xl border border-blue-100 bg-white p-5 shadow-sm dark:border-border dark:bg-card">
-                        <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                            Previous Month
-                        </p>
+                        <p className="text-xs font-medium tracking-wider text-muted-foreground uppercase">Previous Month</p>
 
-                        <p className="mt-2 text-3xl font-semibold">
-                            {summary.previous_count}
-                        </p>
+                        <p className="mt-2 text-3xl font-semibold">{summary.previous_count}</p>
 
-                        <p className="mt-1 text-xs text-muted-foreground">
-                            {monthlyComparison[0]?.month ?? '-'}
-                        </p>
+                        <p className="mt-1 text-xs text-muted-foreground">{monthlyComparison[0]?.month ?? '-'}</p>
                     </div>
 
                     <div className="rounded-xl border border-[#2563EB] bg-white p-5 shadow-sm dark:border-primary/50 dark:bg-card">
-                        <p className="text-xs font-medium uppercase tracking-wider text-[#2563EB] dark:text-primary">
-                            Selected Month
-                        </p>
+                        <p className="text-xs font-medium tracking-wider text-[#2563EB] uppercase dark:text-primary">Selected Month</p>
 
-                        <p className="mt-2 text-3xl font-semibold">
-                            {summary.selected_count}
-                        </p>
+                        <p className="mt-2 text-3xl font-semibold">{summary.selected_count}</p>
 
-                        <p className="mt-1 text-xs text-muted-foreground">
-                            {monthlyComparison[1]?.month ?? '-'}
-                        </p>
+                        <p className="mt-1 text-xs text-muted-foreground">{monthlyComparison[1]?.month ?? '-'}</p>
                     </div>
 
                     <div className="rounded-xl border border-blue-100 bg-white p-5 shadow-sm dark:border-border dark:bg-card">
-                        <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                            Next Month Scheduled
-                        </p>
+                        <p className="text-xs font-medium tracking-wider text-muted-foreground uppercase">Next Month Scheduled</p>
 
-                        <p className="mt-2 text-3xl font-semibold">
-                            {summary.next_count}
-                        </p>
+                        <p className="mt-2 text-3xl font-semibold">{summary.next_count}</p>
 
-                        <p className="mt-1 text-xs text-muted-foreground">
-                            {monthlyComparison[2]?.month ?? '-'}
-                        </p>
+                        <p className="mt-1 text-xs text-muted-foreground">{monthlyComparison[2]?.month ?? '-'}</p>
                     </div>
                 </div>
-                                {/* Percentage changes */}
+                {/* Percentage changes */}
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div className="rounded-xl border border-blue-100 bg-white p-5 shadow-sm dark:border-border dark:bg-card">
-                        <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                            Change From Previous Month
-                        </p>
+                        <p className="text-xs font-medium tracking-wider text-muted-foreground uppercase">Change From Previous Month</p>
 
-                        <p
-                            className={`mt-2 text-2xl font-semibold ${getChangeClass(
-                                summary.change_from_previous,
-                            )}`}
-                        >
+                        <p className={`mt-2 text-2xl font-semibold ${getChangeClass(summary.change_from_previous)}`}>
                             {formatChange(summary.change_from_previous)}
                         </p>
 
-                        <p className="mt-2 text-sm text-muted-foreground">
-                            {getChangeDescription(
-                                summary.change_from_previous,
-                            )}
-                        </p>
+                        <p className="mt-2 text-sm text-muted-foreground">{getChangeDescription(summary.change_from_previous)}</p>
                     </div>
 
                     <div className="rounded-xl border border-blue-100 bg-white p-5 shadow-sm dark:border-border dark:bg-card">
-                        <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                            Change To Next Month
-                        </p>
+                        <p className="text-xs font-medium tracking-wider text-muted-foreground uppercase">Change To Next Month</p>
 
-                        <p
-                            className={`mt-2 text-2xl font-semibold ${getChangeClass(
-                                summary.change_to_next,
-                            )}`}
-                        >
+                        <p className={`mt-2 text-2xl font-semibold ${getChangeClass(summary.change_to_next)}`}>
                             {formatChange(summary.change_to_next)}
                         </p>
 
-                        <p className="mt-2 text-sm text-muted-foreground">
-                            {getChangeDescription(summary.change_to_next)}
-                        </p>
+                        <p className="mt-2 text-sm text-muted-foreground">{getChangeDescription(summary.change_to_next)}</p>
                     </div>
                 </div>
 
                 {/* Appointment trend graph */}
                 <div className="rounded-xl border border-blue-100 bg-white p-5 shadow-sm dark:border-border dark:bg-card">
                     <div className="mb-5">
-                        <h2 className="font-semibold">
-                            Appointment Volume Comparison
-                        </h2>
+                        <h2 className="font-semibold">Appointment Volume Comparison</h2>
 
                         <p className="mt-1 text-sm text-muted-foreground">
-                            The next-month figure represents appointments
-                            already scheduled in the system.
+                            The next-month figure represents appointments already scheduled in the system.
                         </p>
                     </div>
 
@@ -369,37 +285,23 @@ export default function AppointmentReport({
                         >
                             {/* Horizontal grid lines */}
                             {gridValues.map((value, index) => {
-                                const usableHeight =
-                                    chartHeight -
-                                    topPadding -
-                                    bottomPadding;
+                                const usableHeight = chartHeight - topPadding - bottomPadding;
 
-                                const y =
-                                    topPadding +
-                                    (index * usableHeight) /
-                                        (gridValues.length - 1);
+                                const y = topPadding + (index * usableHeight) / (gridValues.length - 1);
 
                                 return (
                                     <g key={`${value}-${index}`}>
                                         <line
                                             x1={leftPadding}
                                             y1={y}
-                                            x2={
-                                                chartWidth -
-                                                rightPadding
-                                            }
+                                            x2={chartWidth - rightPadding}
                                             y2={y}
                                             stroke="currentColor"
                                             strokeOpacity="0.15"
                                             strokeWidth="1"
                                         />
 
-                                        <text
-                                            x={leftPadding - 15}
-                                            y={y + 5}
-                                            textAnchor="end"
-                                            className="fill-muted-foreground text-[12px]"
-                                        >
+                                        <text x={leftPadding - 15} y={y + 5} textAnchor="end" className="fill-muted-foreground text-[12px]">
                                             {value}
                                         </text>
                                     </g>
@@ -411,9 +313,7 @@ export default function AppointmentReport({
                                 x="18"
                                 y={chartHeight / 2}
                                 textAnchor="middle"
-                                transform={`rotate(-90 18 ${
-                                    chartHeight / 2
-                                })`}
+                                transform={`rotate(-90 18 ${chartHeight / 2})`}
                                 className="fill-muted-foreground text-[12px]"
                             >
                                 Appointment count
@@ -438,17 +338,9 @@ export default function AppointmentReport({
                                     <circle
                                         cx={point.x}
                                         cy={point.y}
-                                        r={
-                                            point.key === 'selected'
-                                                ? 7
-                                                : 5
-                                        }
+                                        r={point.key === 'selected' ? 7 : 5}
                                         fill="currentColor"
-                                        className={
-                                            point.key === 'selected'
-                                                ? 'text-[#2563EB] dark:text-primary'
-                                                : 'text-foreground'
-                                        }
+                                        className={point.key === 'selected' ? 'text-[#2563EB] dark:text-primary' : 'text-foreground'}
                                     />
 
                                     <circle
@@ -457,30 +349,16 @@ export default function AppointmentReport({
                                         r="10"
                                         fill="transparent"
                                         stroke="currentColor"
-                                        strokeOpacity={
-                                            point.key === 'selected'
-                                                ? '0.45'
-                                                : '0'
-                                        }
+                                        strokeOpacity={point.key === 'selected' ? '0.45' : '0'}
                                         strokeWidth="2"
                                         className="text-[#2563EB] dark:text-primary"
                                     />
 
-                                    <text
-                                        x={point.x}
-                                        y={point.y - 12}
-                                        textAnchor="middle"
-                                        className="fill-foreground text-[14px] font-semibold"
-                                    >
+                                    <text x={point.x} y={point.y - 12} textAnchor="middle" className="fill-foreground text-[14px] font-semibold">
                                         {point.count}
                                     </text>
 
-                                    <text
-                                        x={point.x}
-                                        y={chartHeight - 30}
-                                        textAnchor="middle"
-                                        className="fill-muted-foreground text-[13px]"
-                                    >
+                                    <text x={point.x} y={chartHeight - 30} textAnchor="middle" className="fill-muted-foreground text-[13px]">
                                         {point.month}
                                     </text>
                                 </g>
@@ -492,70 +370,42 @@ export default function AppointmentReport({
                 {/* Selected-month status summary */}
                 <div className="overflow-hidden rounded-xl border border-blue-100 bg-white shadow-sm dark:border-border dark:bg-card">
                     <div className="border-b border-blue-100 p-5 dark:border-border">
-                        <h2 className="font-semibold">
-                            Selected-Month Status Summary
-                        </h2>
+                        <h2 className="font-semibold">Selected-Month Status Summary</h2>
 
-                        <p className="mt-1 text-sm text-muted-foreground">
-                            Appointment totals grouped by their current status.
-                        </p>
+                        <p className="mt-1 text-sm text-muted-foreground">Appointment totals grouped by their current status.</p>
                     </div>
 
                     <div className="overflow-x-auto">
                         <table className="w-full min-w-[500px] text-left text-sm">
-                                                        <thead className="border-b border-blue-100 bg-[#EAF5FF] dark:border-border dark:bg-accent">
+                            <thead className="border-b border-blue-100 bg-[#EAF5FF] dark:border-border dark:bg-accent">
                                 <tr>
-                                    <th className="px-5 py-3 font-medium">
-                                        Appointment Status
-                                    </th>
+                                    <th className="px-5 py-3 font-medium">Appointment Status</th>
 
-                                    <th className="px-5 py-3 text-right font-medium">
-                                        Count
-                                    </th>
+                                    <th className="px-5 py-3 text-right font-medium">Count</th>
 
-                                    <th className="px-5 py-3 text-right font-medium">
-                                        Percentage
-                                    </th>
+                                    <th className="px-5 py-3 text-right font-medium">Percentage</th>
                                 </tr>
                             </thead>
 
                             <tbody className="divide-y divide-blue-100 dark:divide-border">
                                 {statusSummary.length > 0 ? (
                                     statusSummary.map((item) => {
-                                        const percentage =
-                                            summary.selected_count > 0
-                                                ? (item.count /
-                                                      summary.selected_count) *
-                                                  100
-                                                : 0;
+                                        const percentage = summary.selected_count > 0 ? (item.count / summary.selected_count) * 100 : 0;
 
                                         return (
-                                            <tr
-                                                key={item.status}
-                                                className="transition hover:bg-[#EAF5FF] dark:hover:bg-accent"
-                                            >
-                                                <td className="px-5 py-4 font-medium">
-                                                    {item.status}
-                                                </td>
+                                            <tr key={item.status} className="transition hover:bg-[#EAF5FF] dark:hover:bg-accent">
+                                                <td className="px-5 py-4 font-medium">{item.status}</td>
 
-                                                <td className="px-5 py-4 text-right">
-                                                    {item.count}
-                                                </td>
+                                                <td className="px-5 py-4 text-right">{item.count}</td>
 
-                                                <td className="px-5 py-4 text-right">
-                                                    {percentage.toFixed(2)}%
-                                                </td>
+                                                <td className="px-5 py-4 text-right">{percentage.toFixed(2)}%</td>
                                             </tr>
                                         );
                                     })
                                 ) : (
                                     <tr>
-                                        <td
-                                            colSpan={3}
-                                            className="px-5 py-12 text-center text-muted-foreground"
-                                        >
-                                            No appointments were found for the
-                                            selected month.
+                                        <td colSpan={3} className="px-5 py-12 text-center text-muted-foreground">
+                                            No appointments were found for the selected month.
                                         </td>
                                     </tr>
                                 )}
@@ -564,17 +414,11 @@ export default function AppointmentReport({
                             {statusSummary.length > 0 && (
                                 <tfoot className="border-t border-blue-100 bg-[#EAF5FF] dark:border-border dark:bg-accent">
                                     <tr>
-                                        <td className="px-5 py-4 font-semibold">
-                                            Total
-                                        </td>
+                                        <td className="px-5 py-4 font-semibold">Total</td>
 
-                                        <td className="px-5 py-4 text-right font-semibold">
-                                            {summary.selected_count}
-                                        </td>
+                                        <td className="px-5 py-4 text-right font-semibold">{summary.selected_count}</td>
 
-                                        <td className="px-5 py-4 text-right font-semibold">
-                                            100.00%
-                                        </td>
+                                        <td className="px-5 py-4 text-right font-semibold">100.00%</td>
                                     </tr>
                                 </tfoot>
                             )}

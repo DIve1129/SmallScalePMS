@@ -420,7 +420,7 @@ class BillingController extends Controller
             'claim_status' => $validated['claim_status'],
         ]);
 
-        return back();
+        return redirect()->route('billing.index');
     }
     /* Generates and downloads the PDF bill for the selected appointment. */
     public function downloadBill($appointment_id)

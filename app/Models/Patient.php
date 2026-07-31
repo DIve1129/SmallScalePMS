@@ -26,6 +26,7 @@ class Patient extends Model
     'email',
     'insurance_name',
     'insurance_id',
+    'insurance_code',
     'notes',
 ];
 }

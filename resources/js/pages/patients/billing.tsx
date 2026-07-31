@@ -16,13 +16,7 @@ function money(value: number | string) {
 }
 
 /* Displays billing records for the selected patient. */
-export default function PatientBilling({
-    patientId,
-    billings = [],
-}: {
-    patientId: number | string;
-    billings: BillingRow[];
-}) {
+export default function PatientBilling({ patientId, billings = [] }: { patientId: number | string; billings: BillingRow[] }) {
     return (
         <AppSidebarLayout
             breadcrumbs={[
@@ -43,13 +37,9 @@ export default function PatientBilling({
                 {/* Displays the page heading and back navigation. */}
                 <div className="flex items-start justify-between gap-4">
                     <div>
-                        <h1 className="text-2xl font-semibold text-slate-900 dark:text-foreground">
-                            Patient Billing
-                        </h1>
+                        <h1 className="text-2xl font-semibold text-slate-900 dark:text-foreground">Patient Billing</h1>
 
-                        <p className="mt-1 text-sm text-slate-500 dark:text-muted-foreground">
-                            Showing billing records for Patient ID: {patientId}
-                        </p>
+                        <p className="mt-1 text-sm text-slate-500 dark:text-muted-foreground">Showing billing records for Patient ID: {patientId}</p>
                     </div>
 
                     <Link
@@ -79,21 +69,13 @@ export default function PatientBilling({
                                     key={billing.appointment_id}
                                     className="grid grid-cols-12 items-center px-5 py-4 text-sm text-slate-800 transition hover:bg-blue-50/40 dark:text-foreground dark:hover:bg-accent/50"
                                 >
-                                    <div className="col-span-2">
-                                        {billing.dos ?? '-'}
-                                    </div>
+                                    <div className="col-span-2">{billing.dos ?? '-'}</div>
 
-                                    <div className="col-span-4">
-                                        {billing.service ?? '-'}
-                                    </div>
+                                    <div className="col-span-4">{billing.service ?? '-'}</div>
 
-                                    <div className="col-span-2">
-                                        {money(billing.amount)}
-                                    </div>
+                                    <div className="col-span-2">{money(billing.amount)}</div>
 
-                                    <div className="col-span-2">
-                                        {money(billing.balance)}
-                                    </div>
+                                    <div className="col-span-2">{money(billing.balance)}</div>
 
                                     <div className="col-span-2 flex justify-end gap-2 whitespace-nowrap">
                                         <Link

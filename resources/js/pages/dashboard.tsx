@@ -36,10 +36,7 @@ type DashboardProps = {
 };
 
 /* Displays the main clinical, financial, and operational dashboard. */
-export default function Dashboard({
-    stats,
-    recent_activity = [],
-}: DashboardProps) {
+export default function Dashboard({ stats, recent_activity = [] }: DashboardProps) {
     /* Retrieves the authenticated user information shared by Inertia. */
     const { auth } = usePage().props as unknown as SharedPageProps;
 
@@ -56,9 +53,7 @@ export default function Dashboard({
     const pendingClaims = stats?.pending_claims ?? 0;
 
     return (
-        <AppSidebarLayout
-            breadcrumbs={[{ title: 'Dashboard', href: '/dashboard' }]}
-        >
+        <AppSidebarLayout breadcrumbs={[{ title: 'Dashboard', href: '/dashboard' }]}>
             <Head title="Dashboard" />
 
             <div className="min-h-full space-y-6 bg-[#F8FAFC] p-6 text-slate-800 dark:bg-background dark:text-foreground">
@@ -68,9 +63,7 @@ export default function Dashboard({
                         Clinical &amp; Financial Command Center
                     </h1>
 
-                    <p className="mt-1 text-sm text-slate-500 dark:text-muted-foreground">
-                        Real-time facility operations snapshot
-                    </p>
+                    <p className="mt-1 text-sm text-slate-500 dark:text-muted-foreground">Real-time facility operations snapshot</p>
                 </div>
 
                 {/* Displays the primary dashboard statistics. */}
@@ -84,19 +77,13 @@ export default function Dashboard({
                                 </span>
 
                                 <div className="mt-3 flex items-baseline gap-2">
-                                    <span className="text-3xl font-semibold tracking-tight text-slate-900 dark:text-foreground">
-                                        {totalPatients}
-                                    </span>
+                                    <span className="text-3xl font-semibold tracking-tight text-slate-900 dark:text-foreground">{totalPatients}</span>
 
-                                    <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400">
-                                        +4 this week
-                                    </span>
+                                    <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400">+4 this week</span>
                                 </div>
                             </div>
 
-                            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-xl dark:bg-muted">
-                                👥
-                            </div>
+                            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-xl dark:bg-muted">👥</div>
                         </div>
                     </div>
 
@@ -113,15 +100,11 @@ export default function Dashboard({
                                         Rs {todayRevenue.toFixed(2)}
                                     </span>
 
-                                    <p className="mt-1 text-xs font-medium text-slate-500 dark:text-muted-foreground">
-                                        From scheduled visits
-                                    </p>
+                                    <p className="mt-1 text-xs font-medium text-slate-500 dark:text-muted-foreground">From scheduled visits</p>
                                 </div>
                             </div>
 
-                            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50 text-xl dark:bg-muted">
-                                💳
-                            </div>
+                            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50 text-xl dark:bg-muted">💳</div>
                         </div>
                     </div>
 
@@ -134,19 +117,13 @@ export default function Dashboard({
                                 </span>
 
                                 <div className="mt-3">
-                                    <span className="text-3xl font-semibold tracking-tight text-amber-600 dark:text-amber-400">
-                                        {pendingClaims}
-                                    </span>
+                                    <span className="text-3xl font-semibold tracking-tight text-amber-600 dark:text-amber-400">{pendingClaims}</span>
 
-                                    <p className="mt-1 text-xs font-medium text-slate-500 dark:text-muted-foreground">
-                                        Awaiting processing
-                                    </p>
+                                    <p className="mt-1 text-xs font-medium text-slate-500 dark:text-muted-foreground">Awaiting processing</p>
                                 </div>
                             </div>
 
-                            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50 text-xl dark:bg-muted">
-                                📄
-                            </div>
+                            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50 text-xl dark:bg-muted">📄</div>
                         </div>
                     </div>
                 </div>
@@ -160,53 +137,47 @@ export default function Dashboard({
                                 System Direct Access
                             </h2>
 
-                            <p className="mt-1 text-xs text-slate-500 dark:text-muted-foreground">
-                                Quickly access frequently used clinic functions.
-                            </p>
+                            <p className="mt-1 text-xs text-slate-500 dark:text-muted-foreground">Quickly access frequently used clinic functions.</p>
                         </div>
 
                         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                             {/* Opens the appointment creation page. */}
                             {!isBilling && !isDoctor && (
-                            <Link
-                                href="/appointments/create"
-                                className="group flex min-h-[110px] flex-col justify-between rounded-xl border border-blue-100 bg-blue-50/60 p-4 transition duration-200 hover:-translate-y-0.5 hover:border-blue-200 hover:bg-[#EAF5FF] hover:shadow-sm dark:border-border dark:bg-muted dark:hover:border-border dark:hover:bg-accent"
-                            >
-                                <div className="flex items-center justify-between">
-                                    <span className="font-semibold text-slate-800 dark:text-foreground">
-                                        Book Visit
-                                    </span>
+                                <Link
+                                    href="/appointments/create"
+                                    className="group flex min-h-[110px] flex-col justify-between rounded-xl border border-blue-100 bg-blue-50/60 p-4 transition duration-200 hover:-translate-y-0.5 hover:border-blue-200 hover:bg-[#EAF5FF] hover:shadow-sm dark:border-border dark:bg-muted dark:hover:border-border dark:hover:bg-accent"
+                                >
+                                    <div className="flex items-center justify-between">
+                                        <span className="font-semibold text-slate-800 dark:text-foreground">Book Visit</span>
 
-                                    <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white text-lg shadow-sm dark:bg-background">
-                                        📅
-                                    </span>
-                                </div>
+                                        <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white text-lg shadow-sm dark:bg-background">
+                                            📅
+                                        </span>
+                                    </div>
 
-                                <span className="mt-3 text-xs font-medium text-slate-500 group-hover:text-[#2563EB] dark:text-muted-foreground dark:group-hover:text-accent-foreground">
-                                    New Appointment
-                                </span>
-                            </Link>
+                                    <span className="mt-3 text-xs font-medium text-slate-500 group-hover:text-[#2563EB] dark:text-muted-foreground dark:group-hover:text-accent-foreground">
+                                        New Appointment
+                                    </span>
+                                </Link>
                             )}
                             {/* Opens the patient registration page. */}
                             {!isBilling && !isDoctor && (
-                            <Link
-                                href="/patients/create"
-                                className="group flex min-h-[110px] flex-col justify-between rounded-xl border border-blue-100 bg-blue-50/60 p-4 transition duration-200 hover:-translate-y-0.5 hover:border-blue-200 hover:bg-[#EAF5FF] hover:shadow-sm dark:border-border dark:bg-muted dark:hover:border-border dark:hover:bg-accent"
-                            >
-                                <div className="flex items-center justify-between">
-                                    <span className="font-semibold text-slate-800 dark:text-foreground">
-                                        Intake Patient
-                                    </span>
+                                <Link
+                                    href="/patients/create"
+                                    className="group flex min-h-[110px] flex-col justify-between rounded-xl border border-blue-100 bg-blue-50/60 p-4 transition duration-200 hover:-translate-y-0.5 hover:border-blue-200 hover:bg-[#EAF5FF] hover:shadow-sm dark:border-border dark:bg-muted dark:hover:border-border dark:hover:bg-accent"
+                                >
+                                    <div className="flex items-center justify-between">
+                                        <span className="font-semibold text-slate-800 dark:text-foreground">Intake Patient</span>
 
-                                    <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white text-lg shadow-sm dark:bg-background">
-                                        👤
-                                    </span>
-                                </div>
+                                        <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white text-lg shadow-sm dark:bg-background">
+                                            👤
+                                        </span>
+                                    </div>
 
-                                <span className="mt-3 text-xs font-medium text-slate-500 group-hover:text-[#2563EB] dark:text-muted-foreground dark:group-hover:text-accent-foreground">
-                                    Registration Form
-                                </span>
-                            </Link>
+                                    <span className="mt-3 text-xs font-medium text-slate-500 group-hover:text-[#2563EB] dark:text-muted-foreground dark:group-hover:text-accent-foreground">
+                                        Registration Form
+                                    </span>
+                                </Link>
                             )}
                             {/* Hides the billing shortcut from receptionist users. */}
                             {!isReceptionist && (
@@ -215,9 +186,7 @@ export default function Dashboard({
                                     className="group flex min-h-[110px] flex-col justify-between rounded-xl border border-blue-100 bg-blue-50/60 p-4 transition duration-200 hover:-translate-y-0.5 hover:border-blue-200 hover:bg-[#EAF5FF] hover:shadow-sm dark:border-border dark:bg-muted dark:hover:border-border dark:hover:bg-accent"
                                 >
                                     <div className="flex items-center justify-between">
-                                        <span className="font-semibold text-slate-800 dark:text-foreground">
-                                            Open Billing
-                                        </span>
+                                        <span className="font-semibold text-slate-800 dark:text-foreground">Open Billing</span>
 
                                         <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white text-lg shadow-sm dark:bg-background">
                                             💳
@@ -237,9 +206,7 @@ export default function Dashboard({
                                     className="group flex min-h-[110px] flex-col justify-between rounded-xl border border-blue-100 bg-blue-50/60 p-4 transition duration-200 hover:-translate-y-0.5 hover:border-blue-200 hover:bg-[#EAF5FF] hover:shadow-sm dark:border-border dark:bg-muted dark:hover:border-border dark:hover:bg-accent"
                                 >
                                     <div className="flex items-center justify-between">
-                                        <span className="font-semibold text-slate-800 dark:text-foreground">
-                                            Carriers
-                                        </span>
+                                        <span className="font-semibold text-slate-800 dark:text-foreground">Carriers</span>
 
                                         <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white text-lg shadow-sm dark:bg-background">
                                             🛡️
@@ -261,32 +228,21 @@ export default function Dashboard({
                                 Live Encounter Activity Log
                             </h2>
 
-                            <p className="mt-1 text-xs text-slate-500 dark:text-muted-foreground">
-                                Recent clinical and appointment activity.
-                            </p>
+                            <p className="mt-1 text-xs text-slate-500 dark:text-muted-foreground">Recent clinical and appointment activity.</p>
                         </div>
 
                         <div className="divide-y divide-blue-50 text-sm dark:divide-border">
                             {recent_activity.length ? (
                                 recent_activity.map((item) => (
-                                    <div
-                                        key={item.id}
-                                        className="flex items-center justify-between gap-4 py-3 first:pt-0 last:pb-0"
-                                    >
+                                    <div key={item.id} className="flex items-center justify-between gap-4 py-3 first:pt-0 last:pb-0">
                                         <div className="min-w-0">
-                                            <p className="truncate font-semibold text-slate-800 dark:text-foreground">
-                                                {item.patient}
-                                            </p>
+                                            <p className="truncate font-semibold text-slate-800 dark:text-foreground">{item.patient}</p>
 
-                                            <p className="mt-0.5 truncate text-xs text-slate-500 dark:text-muted-foreground">
-                                                {item.doctor}
-                                            </p>
+                                            <p className="mt-0.5 truncate text-xs text-slate-500 dark:text-muted-foreground">{item.doctor}</p>
                                         </div>
 
                                         <div className="shrink-0 text-right">
-                                            <span className="block text-xs text-slate-500 dark:text-muted-foreground">
-                                                {item.time}
-                                            </span>
+                                            <span className="block text-xs text-slate-500 dark:text-muted-foreground">{item.time}</span>
 
                                             <span className="mt-1 inline-flex rounded-full bg-blue-50 px-2.5 py-1 text-[10px] font-semibold tracking-wider text-[#2563EB] uppercase dark:bg-muted dark:text-foreground">
                                                 {item.status}
@@ -311,8 +267,7 @@ export default function Dashboard({
                                 </h2>
 
                                 <p className="mt-1 text-sm text-slate-500 dark:text-muted-foreground">
-                                    Generate operational and financial reports
-                                    for the clinic.
+                                    Generate operational and financial reports for the clinic.
                                 </p>
                             </div>
 
@@ -320,7 +275,7 @@ export default function Dashboard({
                                 {/* Opens the revenue collection report. */}
                                 <Link
                                     href="/reports/revenue"
-                                    className="group flex min-h-[180px] flex-col justify-between rounded-xl border border-blue-100 border-l-4 border-l-[#2563EB] bg-white p-5 transition duration-200 hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-md dark:border-border dark:border-l-blue-500 dark:bg-background dark:hover:border-border"
+                                    className="group flex min-h-[180px] flex-col justify-between rounded-xl border border-l-4 border-blue-100 border-l-[#2563EB] bg-white p-5 transition duration-200 hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-md dark:border-border dark:border-l-blue-500 dark:bg-background dark:hover:border-border"
                                 >
                                     <div>
                                         <div className="flex items-start justify-between gap-4">
@@ -329,16 +284,12 @@ export default function Dashboard({
                                                     Financial
                                                 </span>
 
-                                                <h3 className="mt-3 font-semibold text-slate-900 dark:text-foreground">
-                                                    Revenue Collection Report
-                                                </h3>
+                                                <h3 className="mt-3 font-semibold text-slate-900 dark:text-foreground">Revenue Collection Report</h3>
                                             </div>
                                         </div>
 
                                         <p className="mt-3 text-sm leading-6 text-slate-500 dark:text-muted-foreground">
-                                            View payments collected for
-                                            individual services within a selected
-                                            date-of-service range.
+                                            View payments collected for individual services within a selected date-of-service range.
                                         </p>
                                     </div>
 
@@ -350,7 +301,7 @@ export default function Dashboard({
                                 {/* Opens the outstanding patient balance report. */}
                                 <Link
                                     href="/reports/outstanding"
-                                    className="group flex min-h-[180px] flex-col justify-between rounded-xl border border-blue-100 border-l-4 border-l-amber-500 bg-white p-5 transition duration-200 hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-md dark:border-border dark:border-l-amber-500 dark:bg-background dark:hover:border-border"
+                                    className="group flex min-h-[180px] flex-col justify-between rounded-xl border border-l-4 border-blue-100 border-l-amber-500 bg-white p-5 transition duration-200 hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-md dark:border-border dark:border-l-amber-500 dark:bg-background dark:hover:border-border"
                                 >
                                     <div>
                                         <div className="flex items-start justify-between gap-4">
@@ -359,16 +310,12 @@ export default function Dashboard({
                                                     Receivables
                                                 </span>
 
-                                                <h3 className="mt-3 font-semibold text-slate-900 dark:text-foreground">
-                                                    Outstanding Balance Report
-                                                </h3>
+                                                <h3 className="mt-3 font-semibold text-slate-900 dark:text-foreground">Outstanding Balance Report</h3>
                                             </div>
                                         </div>
 
                                         <p className="mt-3 text-sm leading-6 text-slate-500 dark:text-muted-foreground">
-                                            View unpaid and partially paid
-                                            service balances within a selected
-                                            date-of-service range.
+                                            View unpaid and partially paid service balances within a selected date-of-service range.
                                         </p>
                                     </div>
 
@@ -380,7 +327,7 @@ export default function Dashboard({
                                 {/* Opens the appointment summary report. */}
                                 <Link
                                     href="/reports/appointments"
-                                    className="group flex min-h-[180px] flex-col justify-between rounded-xl border border-blue-100 border-l-4 border-l-emerald-500 bg-white p-5 transition duration-200 hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-md dark:border-border dark:border-l-emerald-500 dark:bg-background dark:hover:border-border"
+                                    className="group flex min-h-[180px] flex-col justify-between rounded-xl border border-l-4 border-blue-100 border-l-emerald-500 bg-white p-5 transition duration-200 hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-md dark:border-border dark:border-l-emerald-500 dark:bg-background dark:hover:border-border"
                                 >
                                     <div>
                                         <div className="flex items-start justify-between gap-4">
@@ -389,16 +336,12 @@ export default function Dashboard({
                                                     Operations
                                                 </span>
 
-                                                <h3 className="mt-3 font-semibold text-slate-900 dark:text-foreground">
-                                                    Appointment Summary Report
-                                                </h3>
+                                                <h3 className="mt-3 font-semibold text-slate-900 dark:text-foreground">Appointment Summary Report</h3>
                                             </div>
                                         </div>
 
                                         <p className="mt-3 text-sm leading-6 text-slate-500 dark:text-muted-foreground">
-                                            Review appointment volumes and
-                                            statuses within a selected
-                                            date-of-service range.
+                                            Review appointment volumes and statuses within a selected date-of-service range.
                                         </p>
                                     </div>
 
@@ -410,7 +353,7 @@ export default function Dashboard({
                                 {/* Opens the patient billing summary report. */}
                                 <Link
                                     href="/reports/patientbilling"
-                                    className="group flex min-h-[180px] flex-col justify-between rounded-xl border border-blue-100 border-l-4 border-l-violet-500 bg-white p-5 transition duration-200 hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-md dark:border-border dark:border-l-violet-500 dark:bg-background dark:hover:border-border"
+                                    className="group flex min-h-[180px] flex-col justify-between rounded-xl border border-l-4 border-blue-100 border-l-violet-500 bg-white p-5 transition duration-200 hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-md dark:border-border dark:border-l-violet-500 dark:bg-background dark:hover:border-border"
                                 >
                                     <div>
                                         <div className="flex items-start justify-between gap-4">
@@ -420,16 +363,13 @@ export default function Dashboard({
                                                 </span>
 
                                                 <h3 className="mt-3 font-semibold text-slate-900 dark:text-foreground">
-                                                    Patient Billing Summary
-                                                    Report
+                                                    Patient Billing Summary Report
                                                 </h3>
                                             </div>
                                         </div>
 
                                         <p className="mt-3 text-sm leading-6 text-slate-500 dark:text-muted-foreground">
-                                            Select a patient and review their
-                                            consolidated charges, payments, and
-                                            outstanding balances.
+                                            Select a patient and review their consolidated charges, payments, and outstanding balances.
                                         </p>
                                     </div>
 

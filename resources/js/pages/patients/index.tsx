@@ -11,13 +11,7 @@ type Patient = {
 };
 
 /* Displays the searchable patient directory and patient-related actions. */
-export default function PatientsIndex({
-    patients,
-    search,
-}: {
-    patients: Patient[];
-    search?: string;
-}) {
+export default function PatientsIndex({ patients, search }: { patients: Patient[]; search?: string }) {
     const [term, setTerm] = useState(search ?? '');
 
     /* Keeps the local search input synchronized with the current URL search value. */
@@ -70,21 +64,15 @@ export default function PatientsIndex({
     `;
 
     return (
-        <AppSidebarLayout
-            breadcrumbs={[{ title: 'Patients', href: '/patients' }]}
-        >
+        <AppSidebarLayout breadcrumbs={[{ title: 'Patients', href: '/patients' }]}>
             <Head title="Patients" />
 
             <div className="min-h-full space-y-6 bg-[#F8FAFC] p-6 text-slate-800 dark:bg-background dark:text-foreground">
                 {/* Displays the patient directory heading and supporting description. */}
                 <div>
-                    <h1 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-foreground">
-                        Patient Directory
-                    </h1>
+                    <h1 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-foreground">Patient Directory</h1>
 
-                    <p className="mt-1 text-sm text-slate-500 dark:text-muted-foreground">
-                        Search, review, and manage registered clinic patients.
-                    </p>
+                    <p className="mt-1 text-sm text-slate-500 dark:text-muted-foreground">Search, review, and manage registered clinic patients.</p>
                 </div>
 
                 {/* Displays the patient search controls and registration shortcut. */}
@@ -98,19 +86,11 @@ export default function PatientsIndex({
                         />
 
                         <div className="flex flex-wrap items-center gap-3">
-                            <Link
-                                href="/patients"
-                                data={{ search: term }}
-                                className={searchButtonClass}
-                                preserveScroll
-                            >
+                            <Link href="/patients" data={{ search: term }} className={searchButtonClass} preserveScroll>
                                 Search
                             </Link>
 
-                            <Link
-                                href="/patients/create"
-                                className={primaryButtonClass}
-                            >
+                            <Link href="/patients/create" className={primaryButtonClass}>
                                 Add Patient
                             </Link>
                         </div>
@@ -131,15 +111,9 @@ export default function PatientsIndex({
                     <div className="divide-y divide-blue-50 dark:divide-border">
                         {patients?.length ? (
                             patients.map((patient) => {
-                                const fullName =
-                                    `${patient.first_name ?? ''} ${
-                                        patient.last_name ?? ''
-                                    }`.trim() || '-';
+                                const fullName = `${patient.first_name ?? ''} ${patient.last_name ?? ''}`.trim() || '-';
 
-                                const initials =
-                                    `${patient.first_name?.charAt(0) ?? ''}${
-                                        patient.last_name?.charAt(0) ?? ''
-                                    }`.toUpperCase() || 'P';
+                                const initials = `${patient.first_name?.charAt(0) ?? ''}${patient.last_name?.charAt(0) ?? ''}`.toUpperCase() || 'P';
 
                                 return (
                                     <div
@@ -148,15 +122,11 @@ export default function PatientsIndex({
                                     >
                                         {/* Displays the patient name. */}
                                         <div className="flex items-center gap-3 md:col-span-4">
-
                                             <div className="min-w-0">
-                                                <p className="truncate font-semibold text-slate-900 dark:text-foreground">
-                                                    {fullName}
-                                                </p>
+                                                <p className="truncate font-semibold text-slate-900 dark:text-foreground">{fullName}</p>
 
                                                 <p className="mt-0.5 text-xs text-slate-500 md:hidden dark:text-muted-foreground">
-                                                    Patient ID:{' '}
-                                                    {patient.patient_id}
+                                                    Patient ID: {patient.patient_id}
                                                 </p>
                                             </div>
                                         </div>
@@ -167,9 +137,7 @@ export default function PatientsIndex({
                                                 DOB:
                                             </span>
 
-                                            <span className="text-slate-700 dark:text-foreground">
-                                                {patient.dob ?? '-'}
-                                            </span>
+                                            <span className="text-slate-700 dark:text-foreground">{patient.dob ?? '-'}</span>
                                         </div>
 
                                         {/* Displays the system patient identifier. */}
@@ -183,7 +151,7 @@ export default function PatientsIndex({
                                         <div className="flex flex-wrap gap-2 md:col-span-3 md:justify-end">
                                             <Link
                                                 href={`/patients/${patient.patient_id}`}
-                                                className="rounded-lg border border-blue-100 bg-white px-3 py-2 text-xs font-medium text-slate -700 transition-colors hover:bg-[#EAF5FF] hover:text-[#2563EB] dark:border-border dark:bg-background dark:text-foreground dark:hover:bg-accent"
+                                                className="text-slate -700 rounded-lg border border-blue-100 bg-white px-3 py-2 text-xs font-medium transition-colors hover:bg-[#EAF5FF] hover:text-[#2563EB] dark:border-border dark:bg-background dark:text-foreground dark:hover:bg-accent"
                                             >
                                                 View
                                             </Link>
@@ -211,13 +179,10 @@ export default function PatientsIndex({
                                     👤
                                 </div>
 
-                                <h2 className="mt-4 font-semibold text-slate-900 dark:text-foreground">
-                                    No matching patients found
-                                </h2>
+                                <h2 className="mt-4 font-semibold text-slate-900 dark:text-foreground">No matching patients found</h2>
 
                                 <p className="mt-1 text-sm text-slate-500 dark:text-muted-foreground">
-                                    Try changing the search term or register a
-                                    new patient.
+                                    Try changing the search term or register a new patient.
                                 </p>
                             </div>
                         )}

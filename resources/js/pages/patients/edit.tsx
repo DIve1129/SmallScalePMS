@@ -12,12 +12,24 @@ type Patient = {
     phone?: string | null;
     email?: string | null;
     insurance_name?: string | null;
+    insurance_code?: string | null;
     insurance_id?: string | null;
     notes?: string | null;
 };
 
-/* Displays the patient edit form and submits updated patient information. */
-export default function PatientEdit({ patient }: { patient: Patient }) {
+type Insurance = {
+    insurance_code: string;
+    insurance_name: string;
+};
+
+type PatientEditProps = {
+    patient: Patient;
+    insurances: Insurance[];
+};
+
+/* Displays the patient edit form and submits updated patient information.*/
+export default function PatientEdit({ patient , insurances = [],
+}: PatientEditProps) {
     const { data, setData, put, processing, errors } = useForm({
         patient_id: String(patient.patient_id ?? ''),
         first_name: patient.first_name ?? '',
@@ -29,6 +41,7 @@ export default function PatientEdit({ patient }: { patient: Patient }) {
         phone: patient.phone ?? '',
         email: patient.email ?? '',
         insurance_name: patient.insurance_name ?? '',
+        insurance_code: patient.insurance_code ?? '',
         insurance_id: patient.insurance_id ?? '',
         notes: patient.notes ?? '',
     });
@@ -56,8 +69,7 @@ export default function PatientEdit({ patient }: { patient: Patient }) {
         dark:focus:ring-ring/30
     `;
 
-    const labelClass =
-        'mb-2 block text-sm font-medium text-slate-700 dark:text-foreground';
+    const labelClass = 'mb-2 block text-sm font-medium text-slate-700 dark:text-foreground';
 
     const buttonPrimary = `
         rounded-lg
@@ -104,13 +116,9 @@ export default function PatientEdit({ patient }: { patient: Patient }) {
                     {/* Displays the page heading and back action. */}
                     <div className="mb-6 flex items-center justify-between gap-4">
                         <div>
-                            <h1 className="text-2xl font-semibold text-slate-900 dark:text-foreground">
-                                Edit Patient
-                            </h1>
+                            <h1 className="text-2xl font-semibold text-slate-900 dark:text-foreground">Edit Patient</h1>
 
-                            <p className="mt-1 text-sm text-slate-500 dark:text-muted-foreground">
-                                Demographic details
-                            </p>
+                            <p className="mt-1 text-sm text-slate-500 dark:text-muted-foreground">Demographic details</p>
                         </div>
 
                         <Link href="/patients" className={buttonSecondary}>
@@ -123,17 +131,13 @@ export default function PatientEdit({ patient }: { patient: Patient }) {
                         className="space-y-5 rounded-xl border border-blue-100 bg-white p-6 shadow-sm dark:border-border dark:bg-card"
                         onSubmit={submit}
                     >
-                        <h2 className="text-lg font-semibold text-slate-900 dark:text-foreground">
-                            Demographic
-                        </h2>
+                        <h2 className="text-lg font-semibold text-slate-900 dark:text-foreground">Demographic</h2>
 
                         <Field
                             label="Chart Number (optional)"
                             placeholder="Leave blank to auto-generate"
                             value={data.patient_id}
-                            onChange={(value) =>
-                                setData('patient_id', value)
-                            }
+                            onChange={(value) => setData('patient_id', value)}
                             error={errors.patient_id}
                         />
 
@@ -141,18 +145,14 @@ export default function PatientEdit({ patient }: { patient: Patient }) {
                             <Field
                                 label="First Name"
                                 value={data.first_name}
-                                onChange={(value) =>
-                                    setData('first_name', value)
-                                }
+                                onChange={(value) => setData('first_name', value)}
                                 error={errors.first_name}
                             />
 
                             <Field
                                 label="Last Name"
                                 value={data.last_name}
-                                onChange={(value) =>
-                                    setData('last_name', value)
-                                }
+                                onChange={(value) => setData('last_name', value)}
                                 error={errors.last_name}
                             />
                         </div>
@@ -166,58 +166,43 @@ export default function PatientEdit({ patient }: { patient: Patient }) {
                                 error={errors.dob}
                             />
 
-                            <Field
-                                label="Age"
-                                value={data.age}
-                                onChange={(value) => setData('age', value)}
-                                error={errors.age}
-                            />
+                            <Field label="Age" value={data.age} onChange={(value) => setData('age', value)} error={errors.age} />
                         </div>
 
-                        <Field
-                            label="NIC"
-                            value={data.nic}
-                            onChange={(value) => setData('nic', value)}
-                            error={errors.nic}
-                        />
+                        <Field label="NIC" value={data.nic} onChange={(value) => setData('nic', value)} error={errors.nic} />
 
-                        <Field
-                            label="Address"
-                            value={data.address}
-                            onChange={(value) => setData('address', value)}
-                            error={errors.address}
-                        />
+                        <Field label="Address" value={data.address} onChange={(value) => setData('address', value)} error={errors.address} />
 
-                        <Field
-                            label="Phone"
-                            value={data.phone}
-                            onChange={(value) => setData('phone', value)}
-                            error={errors.phone}
-                        />
+                        <Field label="Phone" value={data.phone} onChange={(value) => setData('phone', value)} error={errors.phone} />
 
-                        <Field
-                            label="Email"
-                            value={data.email}
-                            onChange={(value) => setData('email', value)}
-                            error={errors.email}
-                        />
+                        <Field label="Email" value={data.email} onChange={(value) => setData('email', value)} error={errors.email} />
 
                         <div className="space-y-5 border-t border-blue-100 pt-4 dark:border-border">
-                            <Field
-                                label="Insurance Name"
-                                value={data.insurance_name}
-                                onChange={(value) =>
-                                    setData('insurance_name', value)
+                            <select
+                                id="insurance_code"
+                                value={data.insurance_code}
+                                onChange={(event) =>
+                                    setData('insurance_code', event.target.value)
                                 }
-                                error={errors.insurance_name}
-                            />
+                                className={inputClass}
+                            >
+                                <option value="">
+                                    Select an insurance company
+                                </option>
 
+                                {insurances.map((insurance) => (
+                                    <option
+                                        key={insurance.insurance_code}
+                                        value={insurance.insurance_code}
+                                    >
+                                        {insurance.insurance_name}
+                                    </option>
+                                ))}
+                            </select>
                             <Field
                                 label="Insurance ID"
                                 value={data.insurance_id}
-                                onChange={(value) =>
-                                    setData('insurance_id', value)
-                                }
+                                onChange={(value) => setData('insurance_id', value)}
                                 error={errors.insurance_id}
                             />
                         </div>
@@ -229,31 +214,18 @@ export default function PatientEdit({ patient }: { patient: Patient }) {
                                 className={`${inputClass} min-h-[90px] resize-y`}
                                 placeholder="Notes..."
                                 value={data.notes}
-                                onChange={(event) =>
-                                    setData('notes', event.target.value)
-                                }
+                                onChange={(event) => setData('notes', event.target.value)}
                             />
 
-                            {errors.notes && (
-                                <p className="mt-1 text-xs text-red-500">
-                                    {errors.notes}
-                                </p>
-                            )}
+                            {errors.notes && <p className="mt-1 text-xs text-red-500">{errors.notes}</p>}
                         </div>
 
                         <div className="flex gap-3 pt-2">
-                            <button
-                                type="submit"
-                                disabled={processing}
-                                className={buttonPrimary}
-                            >
+                            <button type="submit" disabled={processing} className={buttonPrimary}>
                                 {processing ? 'Saving...' : 'Save'}
                             </button>
 
-                            <Link
-                                href="/patients"
-                                className={buttonSecondary}
-                            >
+                            <Link href="/patients" className={buttonSecondary}>
                                 Cancel
                             </Link>
                         </div>
@@ -280,35 +252,16 @@ function Field({
 }) {
     return (
         <div>
-            <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-foreground">
-                {label}
-            </label>
+            <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-foreground">{label}</label>
 
             <input
-                className="
-                    w-full rounded-lg
-                    border border-blue-100
-                    bg-white px-3 py-2
-                    text-sm text-slate-800
-                    outline-none transition
-                    placeholder:text-slate-400
-                    focus:border-[#2563EB]
-                    focus:ring-2 focus:ring-blue-100
-                    dark:border-border
-                    dark:bg-background
-                    dark:text-foreground
-                    dark:placeholder:text-muted-foreground
-                    dark:focus:border-ring
-                    dark:focus:ring-ring/30
-                "
+                className="w-full rounded-lg border border-blue-100 bg-white px-3 py-2 text-sm text-slate-800 transition outline-none placeholder:text-slate-400 focus:border-[#2563EB] focus:ring-2 focus:ring-blue-100 dark:border-border dark:bg-background dark:text-foreground dark:placeholder:text-muted-foreground dark:focus:border-ring dark:focus:ring-ring/30"
                 placeholder={placeholder}
                 value={value}
                 onChange={(event) => onChange(event.target.value)}
             />
 
-            {error && (
-                <p className="mt-1 text-xs text-red-500">{error}</p>
-            )}
+            {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
         </div>
     );
 }

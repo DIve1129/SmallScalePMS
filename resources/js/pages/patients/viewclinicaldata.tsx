@@ -21,13 +21,8 @@ type ClinicalRecord = {
 };
 
 /* Displays the saved clinical record for a completed appointment. */
-export default function ViewClinicalData({
-    record,
-}: {
-    record: ClinicalRecord;
-}) {
-    const labelClass =
-        'mb-1 block text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-muted-foreground';
+export default function ViewClinicalData({ record }: { record: ClinicalRecord }) {
+    const labelClass = 'mb-1 block text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-muted-foreground';
 
     const dataBoxClass =
         'min-h-[40px] w-full whitespace-pre-wrap rounded-lg border border-blue-100 bg-[#F8FBFF] px-3 py-2.5 text-sm text-slate-800 dark:border-border dark:bg-muted dark:text-foreground';
@@ -56,17 +51,11 @@ export default function ViewClinicalData({
                 <div className="mx-auto w-full max-w-5xl space-y-6">
                     {/* Displays the clinical record actions. */}
                     <div className="flex items-center gap-3">
-                        <a
-                            href={`/billing/${record.appointment_id}/downloadclinicaldata`}
-                            className={secondaryButtonClass}
-                        >
+                        <a href={`/billing/${record.appointment_id}/downloadclinicaldata`} className={secondaryButtonClass}>
                             Download PDF
                         </a>
 
-                        <Link
-                            href={`/patients/${record.patient_id}/billing`}
-                            className={secondaryButtonClass}
-                        >
+                        <Link href={`/patients/${record.patient_id}/billing`} className={secondaryButtonClass}>
                             Back to Billing History
                         </Link>
                     </div>
@@ -74,9 +63,7 @@ export default function ViewClinicalData({
                     {/* Displays patient and appointment context. */}
                     <div className="grid grid-cols-1 gap-4 rounded-xl border border-blue-100 bg-white p-4 text-sm shadow-sm md:grid-cols-4 dark:border-border dark:bg-card">
                         <div>
-                            <span className="block text-xs font-medium text-slate-500 dark:text-muted-foreground">
-                                Patient Name
-                            </span>
+                            <span className="block text-xs font-medium text-slate-500 dark:text-muted-foreground">Patient Name</span>
 
                             <span className="font-semibold text-slate-900 dark:text-foreground">
                                 {record.patient_name} (ID: {record.patient_id})
@@ -84,33 +71,21 @@ export default function ViewClinicalData({
                         </div>
 
                         <div>
-                            <span className="block text-xs font-medium text-slate-500 dark:text-muted-foreground">
-                                Attending Consultant
-                            </span>
+                            <span className="block text-xs font-medium text-slate-500 dark:text-muted-foreground">Attending Consultant</span>
 
-                            <span className="font-semibold text-slate-900 dark:text-foreground">
-                                {record.doctor_name}
-                            </span>
+                            <span className="font-semibold text-slate-900 dark:text-foreground">{record.doctor_name}</span>
                         </div>
 
                         <div>
-                            <span className="block text-xs font-medium text-slate-500 dark:text-muted-foreground">
-                                Initial Context
-                            </span>
+                            <span className="block text-xs font-medium text-slate-500 dark:text-muted-foreground">Initial Context</span>
 
-                            <span className="font-semibold text-slate-900 dark:text-foreground">
-                                {record.appointment_reason}
-                            </span>
+                            <span className="font-semibold text-slate-900 dark:text-foreground">{record.appointment_reason}</span>
                         </div>
 
                         <div>
-                            <span className="block text-xs font-medium text-slate-500 dark:text-muted-foreground">
-                                Date of Service
-                            </span>
+                            <span className="block text-xs font-medium text-slate-500 dark:text-muted-foreground">Date of Service</span>
 
-                            <span className="font-semibold text-slate-900 dark:text-foreground">
-                                {record.appointment_date}
-                            </span>
+                            <span className="font-semibold text-slate-900 dark:text-foreground">{record.appointment_date}</span>
                         </div>
                     </div>
 
@@ -122,49 +97,27 @@ export default function ViewClinicalData({
 
                         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
                             <div>
-                                <span className={labelClass}>
-                                    Blood Pressure
-                                </span>
+                                <span className={labelClass}>Blood Pressure</span>
 
-                                <div className={dataBoxClass}>
-                                    {record.blood_pressure || '-'}
-                                </div>
+                                <div className={dataBoxClass}>{record.blood_pressure || '-'}</div>
                             </div>
 
                             <div>
-                                <span className={labelClass}>
-                                    Pulse Rate (bpm)
-                                </span>
+                                <span className={labelClass}>Pulse Rate (bpm)</span>
 
-                                <div className={dataBoxClass}>
-                                    {record.pulse_rate
-                                        ? `${record.pulse_rate} bpm`
-                                        : '-'}
-                                </div>
+                                <div className={dataBoxClass}>{record.pulse_rate ? `${record.pulse_rate} bpm` : '-'}</div>
                             </div>
 
                             <div>
-                                <span className={labelClass}>
-                                    Temperature (°C)
-                                </span>
+                                <span className={labelClass}>Temperature (°C)</span>
 
-                                <div className={dataBoxClass}>
-                                    {record.temperature_c
-                                        ? `${record.temperature_c} °C`
-                                        : '-'}
-                                </div>
+                                <div className={dataBoxClass}>{record.temperature_c ? `${record.temperature_c} °C` : '-'}</div>
                             </div>
 
                             <div>
-                                <span className={labelClass}>
-                                    Body Weight (kg)
-                                </span>
+                                <span className={labelClass}>Body Weight (kg)</span>
 
-                                <div className={dataBoxClass}>
-                                    {record.weight_kg
-                                        ? `${record.weight_kg} kg`
-                                        : '-'}
-                                </div>
+                                <div className={dataBoxClass}>{record.weight_kg ? `${record.weight_kg} kg` : '-'}</div>
                             </div>
                         </div>
                     </div>
@@ -177,35 +130,23 @@ export default function ViewClinicalData({
 
                         <div className="space-y-4">
                             <div>
-                                <span className={labelClass}>
-                                    Chief Complaint / History of Present Illness
-                                </span>
+                                <span className={labelClass}>Chief Complaint / History of Present Illness</span>
 
-                                <div className={dataBoxClass}>
-                                    {record.appointment_reason || '-'}
-                                </div>
+                                <div className={dataBoxClass}>{record.appointment_reason || '-'}</div>
                             </div>
 
                             <div>
-                                <span className={labelClass}>
-                                    Physical / Clinical Examination Notes
-                                </span>
+                                <span className={labelClass}>Physical / Clinical Examination Notes</span>
 
-                                <div className={dataBoxClass}>
-                                    {record.clinical_examination ||
-                                        'No clinical examination details logged.'}
-                                </div>
+                                <div className={dataBoxClass}>{record.clinical_examination || 'No clinical examination details logged.'}</div>
                             </div>
 
                             <div>
-                                <span className={labelClass}>
-                                    Working or Final Diagnosis
-                                </span>
+                                <span className={labelClass}>Working or Final Diagnosis</span>
 
                                 <div className={dataBoxClass}>
                                     <span className="font-medium text-emerald-600 dark:text-emerald-400">
-                                        {record.diagnosis ||
-                                            'No structural diagnosis mapped.'}
+                                        {record.diagnosis || 'No structural diagnosis mapped.'}
                                     </span>
                                 </div>
                             </div>
@@ -220,25 +161,15 @@ export default function ViewClinicalData({
 
                         <div className="space-y-4">
                             <div>
-                                <span className={labelClass}>
-                                    Prescribed Medications & Dosage Protocols
-                                </span>
+                                <span className={labelClass}>Prescribed Medications & Dosage Protocols</span>
 
-                                <div className={dataBoxClass}>
-                                    {record.prescribed_medication ||
-                                        'No medications issued.'}
-                                </div>
+                                <div className={dataBoxClass}>{record.prescribed_medication || 'No medications issued.'}</div>
                             </div>
 
                             <div>
-                                <span className={labelClass}>
-                                    Plan of Management / Care Directives
-                                </span>
+                                <span className={labelClass}>Plan of Management / Care Directives</span>
 
-                                <div className={dataBoxClass}>
-                                    {record.plan_of_management ||
-                                        'No secondary follow-up orders specified.'}
-                                </div>
+                                <div className={dataBoxClass}>{record.plan_of_management || 'No secondary follow-up orders specified.'}</div>
                             </div>
                         </div>
                     </div>

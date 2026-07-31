@@ -113,7 +113,6 @@ class ReportController extends Controller
 
     /**
      * Patient Billing Summary Report
-     * Allows management users to select a patient and view a consolidated breakdown of the patient's billed services, payments, and balances.
     */
     public function patientBilling(Request $request){
         $validated = $request->validate([
